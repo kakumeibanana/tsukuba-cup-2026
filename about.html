@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大会について — TSUKUBA CUP 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --p50:#faf5ff;--p100:#f3e8ff;--p600:#9333ea;--p700:#7e22ce;--p900:#4c1d95;
+      --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;
+      --s400:#94a3b8;--s500:#64748b;--s700:#334155;--s800:#1e293b;
+      --white:#fff;--r:16px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--s50);color:var(--s800);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+    header{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:0;z-index:50}
+    .hdr{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:8px}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .logo-icon{width:34px;height:34px;background:var(--p900);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800}
+    .logo-text{font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--s800)}
+    nav{display:flex;gap:4px;margin-left:auto}
+    nav a{text-decoration:none;color:var(--s500);font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:color .15s;white-space:nowrap}
+    nav a:hover{color:var(--p700)}
+    nav a.active{color:var(--p700);background:var(--p50)}
+    .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--s800);margin:4px 0;border-radius:2px}
+
+    .page-header{background:var(--white);border-bottom:1px solid var(--s200);padding:28px 24px}
+    .page-header-inner{max-width:1280px;margin:0 auto}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--s400);margin-bottom:8px}
+    .breadcrumb a{text-decoration:none;color:var(--s400)}
+    .breadcrumb a:hover{color:var(--p700)}
+    .page-title{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+    .page-sub{font-size:13px;color:var(--s500)}
+
+    /* SIDE NAV + CONTENT */
+    .main-wrap{max-width:1280px;margin:0 auto;padding:36px 24px;display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start}
+    .side-nav{background:var(--white);border-radius:var(--r);border:1px solid var(--s200);overflow:hidden;position:sticky;top:80px}
+    .side-nav-item{
+      display:flex;align-items:center;gap:10px;
+      padding:13px 18px;border-bottom:1px solid var(--s100);
+      font-size:13px;font-weight:600;color:var(--s500);
+      cursor:pointer;transition:all .15s;text-decoration:none;
+    }
+    .side-nav-item:last-child{border-bottom:none}
+    .side-nav-item:hover{color:var(--p700);background:var(--p50)}
+    .side-nav-item.active{color:var(--p700);background:var(--p50);border-left:3px solid var(--p700)}
+    .side-nav-item .dot{width:6px;height:6px;border-radius:50%;background:var(--s300);flex-shrink:0}
+    .side-nav-item.active .dot{background:var(--p700)}
+
+    .content{display:flex;flex-direction:column;gap:28px}
+
+    /* SECTION CARD */
+    .sec-card{background:var(--white);border-radius:var(--r);border:1px solid var(--s200);overflow:hidden}
+    .sec-card-hdr{
+      padding:20px 24px;border-bottom:1px solid var(--s200);
+      display:flex;align-items:center;gap:12px;
+      background:linear-gradient(to right,var(--p50),transparent);
+    }
+    .sec-ico{width:36px;height:36px;border-radius:9px;background:var(--p700);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+    .sec-title{font-size:17px;font-weight:800;letter-spacing:-.01em}
+    .sec-body{padding:24px}
+
+    /* OVERVIEW GRID */
+    .overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+    .ov-box{background:var(--s50);border-radius:10px;padding:16px;text-align:center}
+    .ov-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--p700);line-height:1}
+    .ov-label{font-size:11px;color:var(--s400);font-weight:600;margin-top:4px}
+
+    /* RULES */
+    .rule-block{margin-bottom:22px}
+    .rule-block:last-child{margin-bottom:0}
+    .rule-title{font-size:15px;font-weight:800;color:var(--s800);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .rule-title::before{content:'';display:inline-block;width:4px;height:16px;background:var(--p700);border-radius:2px;flex-shrink:0}
+    .rule-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .rule-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--s700);line-height:1.6}
+    .rule-list li::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--p600);flex-shrink:0;margin-top:7px}
+    .rule-note{
+      background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);
+      border-radius:10px;padding:12px 16px;font-size:13px;color:var(--s700);
+      display:flex;align-items:flex-start;gap:10px;margin-top:16px;
+    }
+    .rule-note .ico{flex-shrink:0;font-size:16px}
+
+    /* SCHEDULE TABLE */
+    .sched-table{width:100%;border-collapse:collapse}
+    .sched-table th{padding:10px 14px;text-align:left;font-size:12px;font-weight:700;color:var(--s400);border-bottom:1px solid var(--s200);background:var(--s50)}
+    .sched-table td{padding:13px 14px;font-size:13px;border-bottom:1px solid var(--s100);vertical-align:top}
+    .sched-table tr:last-child td{border-bottom:none}
+    .sched-table tr:hover td{background:var(--s50)}
+    .phase-badge{display:inline-block;padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700}
+    .phase-group{background:var(--p50);color:var(--p700)}
+    .phase-ko{background:#dcfce7;color:#15803d}
+    .phase-final{background:#fef9c3;color:#854d0e}
+
+    /* VENUE */
+    .venue-card{background:var(--s50);border-radius:12px;padding:20px;display:flex;gap:16px;align-items:flex-start}
+    .venue-ico{font-size:28px;flex-shrink:0}
+    .venue-name{font-size:16px;font-weight:800;margin-bottom:4px}
+    .venue-detail{font-size:13px;color:var(--s500);line-height:1.7}
+
+    /* STAFF */
+    .staff-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--s100)}
+    .staff-row:last-child{border-bottom:none}
+    .staff-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--p700),var(--p900));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex-shrink:0}
+    .staff-role{font-size:11px;color:var(--p700);font-weight:700;margin-bottom:2px}
+    .staff-name{font-size:14px;font-weight:700}
+    .staff-dept{font-size:11px;color:var(--s400)}
+
+    @media(max-width:900px){
+      nav{display:none}.hamburger{display:block}
+      .main-wrap{grid-template-columns:1fr}
+      .side-nav{position:static;display:flex;overflow-x:auto}
+      .side-nav-item{white-space:nowrap;border-bottom:none;border-right:1px solid var(--s100)}
+      .side-nav-item:last-child{border-right:none}
+      .side-nav-item.active{border-left:none;border-bottom:3px solid var(--p700)}
+      .overview-grid{grid-template-columns:repeat(3,1fr)}
+    }
+    @media(max-width:480px){
+      .main-wrap{padding:20px 16px}
+      .page-header{padding:20px 16px}
+      .overview-grid{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">TC</div>
+      <span class="logo-text">TSUKUBA CUP 2026</span>
+    </a>
+    <nav>
+      <a href="index.html">ホーム</a>
+      <a href="matches.html">試合・結果</a>
+      <a href="standings.html">順位・ランキング</a>
+      <a href="teams.html">チーム</a>
+      <a href="about.html" class="active">大会について</a>
+    </nav>
+    <button class="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb"><a href="index.html">ホーム</a><span>›</span><span>大会について</span></div>
+    <div class="page-title">大会について</div>
+    <div class="page-sub">実施要項・ルール・会場・運営体制</div>
+  </div>
+</div>
+
+<main class="main-wrap">
+
+  <!-- SIDE NAV -->
+  <nav class="side-nav" aria-label="セクションナビ">
+    <a href="#overview" class="side-nav-item active"><div class="dot"></div>大会概要</a>
+    <a href="#schedule" class="side-nav-item"><div class="dot"></div>日程・スケジュール</a>
+    <a href="#rules" class="side-nav-item"><div class="dot"></div>試合ルール</a>
+    <a href="#helper" class="side-nav-item"><div class="dot"></div>助っ人制度</a>
+    <a href="#venue" class="side-nav-item"><div class="dot"></div>会場について</a>
+    <a href="#staff" class="side-nav-item"><div class="dot"></div>運営体制</a>
+  </nav>
+
+  <div class="content">
+
+    <!-- 概要 -->
+    <div class="sec-card" id="overview">
+      <div class="sec-card-hdr">
+        <div class="sec-ico">🏆</div>
+        <div class="sec-title">大会概要</div>
+      </div>
+      <div class="sec-body">
+        <div class="overview-grid">
+          <div class="ov-box"><div class="ov-val">15</div><div class="ov-label">参加チーム</div></div>
+          <div class="ov-box"><div class="ov-val">40+</div><div class="ov-label">総試合数</div></div>
+          <div class="ov-box"><div class="ov-val">5/12</div><div class="ov-label">開幕日</div></div>
+        </div>
+        <p style="font-size:14px;line-height:1.9;color:var(--s700);margin-bottom:16px">
+          TSUKUBA CUP 2026は、筑波大学附属高等学校の生徒が主体となって企画・運営するフットサル大会です。クラスや学年、部活の枠を超えて、全校生徒が参加できます。
+        </p>
+        <p style="font-size:14px;line-height:1.9;color:var(--s700)">
+          昼休みの短い時間を最大限に活用した「10分間の熱戦」が特徴。誰でも楽しめるルール設計で、フットサル未経験者も大歓迎です。
+        </p>
+      </div>
+    </div>
+
+    <!-- スケジュール -->
+    <div class="sec-card" id="schedule">
+      <div class="sec-card-hdr">
+        <div class="sec-ico">📅</div>
+        <div class="sec-title">日程・スケジュール</div>
+      </div>
+      <div class="sec-body" style="padding:0">
+        <table class="sched-table">
+          <thead><tr><th>日付</th><th>フェーズ</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">5/12（月）</td><td><span class="phase-badge phase-group">予選リーグ</span></td><td>A・B・Cグループ 第1試合</td></tr>
+            <tr><td style="font-weight:700">5/13（火）</td><td><span class="phase-badge phase-group">予選リーグ</span></td><td>A・Bグループ 第2試合</td></tr>
+            <tr><td style="font-weight:700">5/14（水）</td><td><span class="phase-badge phase-group">予選リーグ</span></td><td>A・Cグループ 第3試合 / 女子グループ戦</td></tr>
+            <tr><td style="font-weight:700">5/16（金）</td><td><span class="phase-badge phase-group">予選リーグ</span></td><td>全グループ最終戦</td></tr>
+            <tr><td style="font-weight:700">5/19（月）</td><td><span class="phase-badge phase-ko">決勝トーナメント</span></td><td>準々決勝（男子）</td></tr>
+            <tr><td style="font-weight:700">5/21（水）</td><td><span class="phase-badge phase-ko">決勝トーナメント</span></td><td>準決勝（男子・女子）</td></tr>
+            <tr><td style="font-weight:700">5/23（金）</td><td><span class="phase-badge phase-final">🏆 決勝</span></td><td>男子決勝・女子決勝・3位決定戦・表彰式</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ルール -->
+    <div class="sec-card" id="rules">
+      <div class="sec-card-hdr">
+        <div class="sec-ico">📋</div>
+        <div class="sec-title">試合ルール</div>
+      </div>
+      <div class="sec-body">
+        <div class="rule-block">
+          <div class="rule-title">基本ルール</div>
+          <ul class="rule-list">
+            <li>試合時間は前後半各5分（計10分）、ハーフタイムなし</li>
+            <li>1チームのコート上人数は5名（GK含む）</li>
+            <li>交代は自由（フライングチェンジ可）</li>
+            <li>キックイン方式（スローインなし）</li>
+            <li>GKはペナルティエリア外にボールを保持できない（4秒ルール）</li>
+          </ul>
+        </div>
+        <div class="rule-block">
+          <div class="rule-title">予選リーグ方式</div>
+          <ul class="rule-list">
+            <li>各グループ4〜5チームのリーグ戦</li>
+            <li>勝点：勝利3・引分1・敗北0</li>
+            <li>同勝点の場合は①得失点差②総得点③直接対決の順で決定</li>
+            <li>各グループ上位2チームが決勝トーナメント進出</li>
+          </ul>
+        </div>
+        <div class="rule-block">
+          <div class="rule-title">決勝トーナメント方式</div>
+          <ul class="rule-list">
+            <li>ノックアウト方式（1試合負けで敗退）</li>
+            <li>90秒のPK戦（同点の場合）</li>
+            <li>3位決定戦あり</li>
+          </ul>
+        </div>
+        <div class="rule-note">
+          <span class="ico">⚠️</span>
+          <span>スパイク・タックル・スライディングは禁止です。安全に楽しく戦いましょう。違反した場合は退場となる場合があります。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 助っ人制度 -->
+    <div class="sec-card" id="helper">
+      <div class="sec-card-hdr">
+        <div class="sec-ico">🤝</div>
+        <div class="sec-title">助っ人制度</div>
+      </div>
+      <div class="sec-body">
+        <div class="rule-block">
+          <div class="rule-title">制度概要</div>
+          <ul class="rule-list">
+            <li>各チーム最大2名まで「助っ人」として他チームの選手を登録可能</li>
+            <li>助っ人は同グループの別チームの選手は不可</li>
+            <li>決勝トーナメントでは助っ人は1名まで</li>
+            <li>助っ人の得点・アシストは通常通りランキングに計上</li>
+          </ul>
+        </div>
+        <div class="rule-note">
+          <span class="ico">💡</span>
+          <span>人数が足りないチームはAdmin画面から助っ人募集を掲示できます。運営に相談してください。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 会場 -->
+    <div class="sec-card" id="venue">
+      <div class="sec-card-hdr">
+        <div class="sec-ico">📍</div>
+        <div class="sec-title">会場について</div>
+      </div>
+      <div class="sec-body">
+        <div class="venue-card" style="margin-bottom:16px">
+          <div class="venue-ico">🏟️</div>
+          <div>
+            <div class="venue-name">体育館 コート面</div>
+            <div class="venue-detail">
+              メイン会場。人工芝コート1面。<br>
+              更衣室あり / 観覧スペースあり<br>
+              <strong>使用時間：</strong>昼休み 12:20〜12:50
+            </div>
+          </div>
+        </div>
+        <div class="venue-card">
+          <div class="venue-ico">🌿</div>
+          <div>
+            <div class="venue-name">グラウンド（雨天時代替）</div>
+            <div class="venue-detail">
+              雨天・強風時は体育館内コートを使用。<br>
+              変更の場合は当日朝にお知らせ欄で通知します。<br>
+              <strong>シューズ：</strong>体育館シューズ必須
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 運営体制 -->
+    <div class="sec-card" id="staff">
+      <div class="sec-card-hdr">
+        <div class="sec-ico">👥</div>
+        <div class="sec-title">運営体制</div>
+      </div>
+      <div class="sec-body">
+        <div class="staff-row">
+          <div class="staff-avatar">笹</div>
+          <div>
+            <div class="staff-role">大会委員長</div>
+            <div class="staff-name">笹谷 奏太</div>
+            <div class="staff-dept">3年 · 全体統括・スケジュール管理</div>
+          </div>
+        </div>
+        <div class="staff-row">
+          <div class="staff-avatar">山</div>
+          <div>
+            <div class="staff-role">審判長</div>
+            <div class="staff-name">山田 蒼</div>
+            <div class="staff-dept">3年 · 審判・ルール管理</div>
+          </div>
+        </div>
+        <div class="staff-row">
+          <div class="staff-avatar">中</div>
+          <div>
+            <div class="staff-role">記録・広報</div>
+            <div class="staff-name">中島 陽向</div>
+            <div class="staff-dept">2年 · スコア記録・SNS運用</div>
+          </div>
+        </div>
+        <div class="staff-row">
+          <div class="staff-avatar">林</div>
+          <div>
+            <div class="staff-role">会場担当</div>
+            <div class="staff-name">林 大翔</div>
+            <div class="staff-dept">2年 · 会場設営・後片付け</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer style="background:var(--s800);color:rgba(255,255,255,.5);padding:36px 24px;margin-top:32px">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;background:#4c1d95;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">TC</div>
+      <span style="font-weight:700;font-size:14px;color:rgba(255,255,255,.7)">TSUKUBA CUP 2026</span>
+    </div>
+    <span style="font-size:12px">© 2026 筑波大学附属高等学校フットサル部</span>
+  </div>
+</footer>
+
+<script>
+  const items = document.querySelectorAll('.side-nav-item');
+  const sections = document.querySelectorAll('.sec-card');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+    items.forEach(i => {
+      i.classList.toggle('active', i.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>

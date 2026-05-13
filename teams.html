@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>チーム — TSUKUBA CUP 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --p50:#faf5ff;--p100:#f3e8ff;--p600:#9333ea;--p700:#7e22ce;--p900:#4c1d95;
+      --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;
+      --s400:#94a3b8;--s500:#64748b;--s700:#334155;--s800:#1e293b;
+      --white:#fff;--r:16px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--s50);color:var(--s800);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+    header{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:0;z-index:50}
+    .hdr{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:8px}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .logo-icon{width:34px;height:34px;background:var(--p900);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800}
+    .logo-text{font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--s800)}
+    nav{display:flex;gap:4px;margin-left:auto}
+    nav a{text-decoration:none;color:var(--s500);font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:color .15s;white-space:nowrap}
+    nav a:hover{color:var(--p700)}
+    nav a.active{color:var(--p700);background:var(--p50)}
+    .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--s800);margin:4px 0;border-radius:2px}
+
+    .page-header{background:var(--white);border-bottom:1px solid var(--s200);padding:28px 24px}
+    .page-header-inner{max-width:1280px;margin:0 auto}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--s400);margin-bottom:8px}
+    .breadcrumb a{text-decoration:none;color:var(--s400)}
+    .breadcrumb a:hover{color:var(--p700)}
+    .page-title{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+    .page-sub{font-size:13px;color:var(--s500)}
+
+    .tab-bar{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:64px;z-index:40}
+    .tab-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex}
+    .tab-btn{padding:14px 24px;font-size:14px;font-weight:700;color:var(--s500);background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;transition:all .18s}
+    .tab-btn.active{color:var(--p700);border-bottom-color:var(--p700)}
+
+    .main-wrap{max-width:1280px;margin:0 auto;padding:36px 24px}
+
+    /* ── TEAM GRID ── */
+    .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+    .team-card{
+      background:var(--white);border-radius:var(--r);
+      border:1px solid var(--s200);overflow:hidden;
+      text-decoration:none;color:inherit;
+      transition:all .2s;display:block;
+      cursor:pointer;
+    }
+    .team-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.1);border-color:var(--p600)}
+
+    .team-card-banner{height:80px;position:relative;display:flex;align-items:flex-end;padding:12px 16px}
+    .team-card-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.35))}
+    .team-banner-group{position:relative;z-index:1;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.05em}
+
+    .team-card-body{padding:18px 20px 16px}
+    .team-logo-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+    .team-logo-lg{
+      width:52px;height:52px;border-radius:13px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;font-weight:800;color:#fff;flex-shrink:0;
+      box-shadow:0 4px 14px rgba(0,0,0,.16);
+      margin-top:-36px;position:relative;z-index:1;
+      border:3px solid var(--white);
+    }
+    .team-name-block{flex:1;padding-top:4px}
+    .team-name{font-size:17px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+    .team-name-en{font-size:11px;color:var(--s400);font-weight:500}
+    .team-desc{font-size:12px;color:var(--s500);line-height:1.6;margin-bottom:14px;min-height:36px}
+
+    .team-stats-row{display:flex;gap:0;border-top:1px solid var(--s100);padding-top:14px}
+    .tstat{flex:1;text-align:center}
+    .tstat-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--p700);line-height:1}
+    .tstat-label{font-size:10px;color:var(--s400);font-weight:600;margin-top:2px}
+    .tstat + .tstat{border-left:1px solid var(--s100)}
+
+    .team-members-preview{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+    .member-chip{display:inline-flex;align-items:center;gap:5px;background:var(--s100);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--s700);font-weight:500}
+
+    @media(max-width:900px){
+      nav{display:none}.hamburger{display:block}
+      .team-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:540px){
+      .team-grid{grid-template-columns:1fr}
+      .main-wrap{padding:20px 16px}
+      .page-header{padding:20px 16px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">TC</div>
+      <span class="logo-text">TSUKUBA CUP 2026</span>
+    </a>
+    <nav>
+      <a href="index.html">ホーム</a>
+      <a href="matches.html">試合・結果</a>
+      <a href="standings.html">順位・ランキング</a>
+      <a href="teams.html" class="active">チーム</a>
+      <a href="about.html">大会について</a>
+    </nav>
+    <button class="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb"><a href="index.html">ホーム</a><span>›</span><span>チーム</span></div>
+    <div class="page-title">チーム一覧</div>
+    <div class="page-sub">参加全チームの情報・メンバー・成績</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab-inner">
+    <button class="tab-btn active">男子（9チーム）</button>
+    <button class="tab-btn">女子（6チーム）</button>
+  </div>
+</div>
+
+<main class="main-wrap">
+  <div class="team-grid">
+
+    <a href="team-detail.html" class="team-card">
+      <div class="team-card-banner" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)">
+        <span class="team-banner-group">男子 Aグループ · 1位</span>
+      </div>
+      <div class="team-card-body">
+        <div class="team-logo-row">
+          <div class="team-logo-lg" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 2L3 7v7c0 5 3.7 9.7 10 11.5C19.3 23.7 23 19 23 14V7L13 2z" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.7)" stroke-width="1.2"/></svg>
+          </div>
+          <div class="team-name-block">
+            <div class="team-name">FC紫炎</div>
+            <div class="team-name-en">FC SHIEN</div>
+          </div>
+        </div>
+        <div class="team-desc">昨年度準優勝チーム。今年こそ頂点を狙う紫と炎のチーム。</div>
+        <div class="team-members-preview">
+          <span class="member-chip">田中 悠真</span>
+          <span class="member-chip">末吉 航平</span>
+          <span class="member-chip">河井 蒼</span>
+          <span class="member-chip">+5名</span>
+        </div>
+        <div class="team-stats-row">
+          <div class="tstat"><div class="tstat-val">2</div><div class="tstat-label">試合</div></div>
+          <div class="tstat"><div class="tstat-val">2</div><div class="tstat-label">勝利</div></div>
+          <div class="tstat"><div class="tstat-val" style="color:#16a34a">+5</div><div class="tstat-label">得失点差</div></div>
+          <div class="tstat"><div class="tstat-val">7</div><div class="tstat-label">総得点</div></div>
+        </div>
+      </div>
+    </a>
+
+    <a href="team-detail.html" class="team-card">
+      <div class="team-card-banner" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">
+        <span class="team-banner-group">男子 Aグループ · 2位</span>
+      </div>
+      <div class="team-card-body">
+        <div class="team-logo-row">
+          <div class="team-logo-lg" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">L</div>
+          <div class="team-name-block">
+            <div class="team-name">Libertà</div>
+            <div class="team-name-en">LIBERTA</div>
+          </div>
+        </div>
+        <div class="team-desc">イタリア語で「自由」。型にはまらない自由なフットサルを。</div>
+        <div class="team-members-preview">
+          <span class="member-chip">鈴木 大地</span>
+          <span class="member-chip">伊藤 悠</span>
+          <span class="member-chip">+6名</span>
+        </div>
+        <div class="team-stats-row">
+          <div class="tstat"><div class="tstat-val">2</div><div class="tstat-label">試合</div></div>
+          <div class="tstat"><div class="tstat-val">1</div><div class="tstat-label">勝利</div></div>
+          <div class="tstat"><div class="tstat-val" style="color:#16a34a">+1</div><div class="tstat-label">得失点差</div></div>
+          <div class="tstat"><div class="tstat-val">4</div><div class="tstat-label">総得点</div></div>
+        </div>
+      </div>
+    </a>
+
+    <a href="team-detail.html" class="team-card">
+      <div class="team-card-banner" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">
+        <span class="team-banner-group">男子 Aグループ · 3位</span>
+      </div>
+      <div class="team-card-body">
+        <div class="team-logo-row">
+          <div class="team-logo-lg" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">BW</div>
+          <div class="team-name-block">
+            <div class="team-name">Blue Wave</div>
+            <div class="team-name-en">BLUE WAVE</div>
+          </div>
+        </div>
+        <div class="team-desc">青い波のように、勢いで上位を目指す新鋭チーム。</div>
+        <div class="team-members-preview">
+          <span class="member-chip">山本 陸</span>
+          <span class="member-chip">木村 蒼空</span>
+          <span class="member-chip">+5名</span>
+        </div>
+        <div class="team-stats-row">
+          <div class="tstat"><div class="tstat-val">2</div><div class="tstat-label">試合</div></div>
+          <div class="tstat"><div class="tstat-val">1</div><div class="tstat-label">勝利</div></div>
+          <div class="tstat"><div class="tstat-val" style="color:#dc2626">-1</div><div class="tstat-label">得失点差</div></div>
+          <div class="tstat"><div class="tstat-val">3</div><div class="tstat-label">総得点</div></div>
+        </div>
+      </div>
+    </a>
+
+    <a href="team-detail.html" class="team-card">
+      <div class="team-card-banner" style="background:linear-gradient(135deg,#0891b2,#0e7490)">
+        <span class="team-banner-group">男子 Aグループ · 4位</span>
+      </div>
+      <div class="team-card-body">
+        <div class="team-logo-row">
+          <div class="team-logo-lg" style="background:linear-gradient(135deg,#0891b2,#0e7490)">FC</div>
+          <div class="team-name-block">
+            <div class="team-name">FC筑附</div>
+            <div class="team-name-en">FC TSUKUFU</div>
+          </div>
+        </div>
+        <div class="team-desc">筑附の名を背負うチーム。全員で粘り強く戦う。</div>
+        <div class="team-members-preview">
+          <span class="member-chip">佐藤 翔</span>
+          <span class="member-chip">松本 颯</span>
+          <span class="member-chip">坂本 大翔</span>
+          <span class="member-chip">+5名</span>
+        </div>
+        <div class="team-stats-row">
+          <div class="tstat"><div class="tstat-val">2</div><div class="tstat-label">試合</div></div>
+          <div class="tstat"><div class="tstat-val">0</div><div class="tstat-label">勝利</div></div>
+          <div class="tstat"><div class="tstat-val" style="color:#dc2626">-5</div><div class="tstat-label">得失点差</div></div>
+          <div class="tstat"><div class="tstat-val">5</div><div class="tstat-label">総得点</div></div>
+        </div>
+      </div>
+    </a>
+
+    <a href="team-detail.html" class="team-card">
+      <div class="team-card-banner" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">
+        <span class="team-banner-group">男子 Bグループ · 1位</span>
+      </div>
+      <div class="team-card-body">
+        <div class="team-logo-row">
+          <div class="team-logo-lg" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">AV</div>
+          <div class="team-name-block">
+            <div class="team-name">AVANTI</div>
+            <div class="team-name-en">AVANTI</div>
+          </div>
+        </div>
+        <div class="team-desc">イタリア語で「前へ」。攻撃的スタイルで突き進む。</div>
+        <div class="team-members-preview">
+          <span class="member-chip">高草木 悠</span>
+          <span class="member-chip">中村 蓮</span>
+          <span class="member-chip">+6名</span>
+        </div>
+        <div class="team-stats-row">
+          <div class="tstat"><div class="tstat-val">1</div><div class="tstat-label">試合</div></div>
+          <div class="tstat"><div class="tstat-val">0</div><div class="tstat-label">勝利</div></div>
+          <div class="tstat"><div class="tstat-val" style="color:#94a3b8">0</div><div class="tstat-label">得失点差</div></div>
+          <div class="tstat"><div class="tstat-val">3</div><div class="tstat-label">総得点</div></div>
+        </div>
+      </div>
+    </a>
+
+    <a href="team-detail.html" class="team-card">
+      <div class="team-card-banner" style="background:linear-gradient(135deg,#d97706,#b45309)">
+        <span class="team-banner-group">男子 Bグループ · 2位</span>
+      </div>
+      <div class="team-card-body">
+        <div class="team-logo-row">
+          <div class="team-logo-lg" style="background:linear-gradient(135deg,#d97706,#b45309)">OR</div>
+          <div class="team-name-block">
+            <div class="team-name">ORANGE</div>
+            <div class="team-name-en">ORANGE FC</div>
+          </div>
+        </div>
+        <div class="team-desc">熱いオレンジカラーのチーム。勝利への執念が強み。</div>
+        <div class="team-members-preview">
+          <span class="member-chip">中村 蓮</span>
+          <span class="member-chip">+7名</span>
+        </div>
+        <div class="team-stats-row">
+          <div class="tstat"><div class="tstat-val">1</div><div class="tstat-label">試合</div></div>
+          <div class="tstat"><div class="tstat-val">0</div><div class="tstat-label">勝利</div></div>
+          <div class="tstat"><div class="tstat-val" style="color:#94a3b8">0</div><div class="tstat-label">得失点差</div></div>
+          <div class="tstat"><div class="tstat-val">1</div><div class="tstat-label">総得点</div></div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<footer style="background:var(--s800);color:rgba(255,255,255,.5);padding:36px 24px;margin-top:32px">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;background:#4c1d95;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">TC</div>
+      <span style="font-weight:700;font-size:14px;color:rgba(255,255,255,.7)">TSUKUBA CUP 2026</span>
+    </div>
+    <span style="font-size:12px">© 2026 筑波大学附属高等学校フットサル部</span>
+  </div>
+</footer>
+</body>
+</html>

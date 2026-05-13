@@ -1,0 +1,398 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>順位・ランキング — TSUKUBA CUP 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --p50:#faf5ff;--p100:#f3e8ff;--p600:#9333ea;--p700:#7e22ce;--p900:#4c1d95;
+      --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;
+      --s400:#94a3b8;--s500:#64748b;--s700:#334155;--s800:#1e293b;
+      --white:#fff;--r:16px;
+      --gold:#f59e0b;--silver:#94a3b8;--bronze:#b87333;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--s50);color:var(--s800);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    header{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:0;z-index:50}
+    .hdr{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:8px}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .logo-icon{width:34px;height:34px;background:var(--p900);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800}
+    .logo-text{font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--s800)}
+    nav{display:flex;gap:4px;margin-left:auto}
+    nav a{text-decoration:none;color:var(--s500);font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:color .15s;white-space:nowrap}
+    nav a:hover{color:var(--p700)}
+    nav a.active{color:var(--p700);background:var(--p50)}
+    .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--s800);margin:4px 0;border-radius:2px}
+
+    .page-header{background:var(--white);border-bottom:1px solid var(--s200);padding:28px 24px}
+    .page-header-inner{max-width:1280px;margin:0 auto}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--s400);margin-bottom:8px}
+    .breadcrumb a{text-decoration:none;color:var(--s400)}
+    .breadcrumb a:hover{color:var(--p700)}
+    .page-title{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+    .page-sub{font-size:13px;color:var(--s500)}
+
+    .tab-bar{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:64px;z-index:40}
+    .tab-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex}
+    .tab-btn{padding:14px 24px;font-size:14px;font-weight:700;color:var(--s500);background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;transition:all .18s}
+    .tab-btn.active{color:var(--p700);border-bottom-color:var(--p700)}
+    .tab-btn:hover:not(.active){color:var(--s800)}
+
+    .main-wrap{max-width:1280px;margin:0 auto;padding:32px 24px;display:flex;flex-direction:column;gap:40px}
+
+    /* ── STANDINGS TABLE ── */
+    .group-section{display:flex;flex-direction:column;gap:16px}
+    .group-label{
+      display:flex;align-items:center;gap:10px;
+      font-size:18px;font-weight:800;letter-spacing:-.02em;
+    }
+    .group-badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:28px;height:28px;border-radius:8px;
+      background:var(--p700);color:#fff;font-size:13px;font-weight:800;
+    }
+
+    .std-card{background:var(--white);border-radius:var(--r);border:1px solid var(--s200);overflow:hidden}
+    .std-head{
+      display:grid;grid-template-columns:44px 1fr 48px 48px 48px 48px 56px;
+      gap:0;padding:10px 20px;
+      font-size:11px;font-weight:700;color:var(--s400);
+      background:var(--s50);border-bottom:1px solid var(--s200);
+    }
+    .std-head > div{text-align:center}
+    .std-head > div:nth-child(2){text-align:left}
+    .std-row{
+      display:grid;grid-template-columns:44px 1fr 48px 48px 48px 48px 56px;
+      gap:0;padding:14px 20px;border-bottom:1px solid var(--s100);
+      align-items:center;transition:background .15s;cursor:pointer;
+    }
+    .std-row:last-child{border-bottom:none}
+    .std-row:hover{background:var(--s50)}
+    .std-row.promote{background:linear-gradient(to right,rgba(124,34,206,.04),transparent)}
+    .rank-cell{display:flex;align-items:center;justify-content:center}
+    .rank-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;line-height:1}
+    .rank-gold{color:var(--gold)} .rank-silver{color:var(--silver)} .rank-bronze{color:var(--bronze)}
+    .rank-dim{color:var(--s300)}
+    .team-cell{display:flex;align-items:center;gap:10px}
+    .tlogo{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+    .tname{font-size:14px;font-weight:700}
+    .stat-cell{text-align:center;font-size:14px;font-weight:600;color:var(--s700)}
+    .pts-cell{text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--p700)}
+    .gd-cell{text-align:center;font-size:13px;font-weight:700}
+    .pos{color:#16a34a}.neg{color:#dc2626}.zero{color:var(--s400)}
+    .promote-tag{
+      display:inline-block;padding:2px 8px;border-radius:100px;
+      font-size:10px;font-weight:700;background:rgba(124,34,206,.1);color:var(--p700);
+      margin-left:6px;
+    }
+
+    /* ── SCORER TABLE ── */
+    .scorer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+    .scorer-card{background:var(--white);border-radius:var(--r);border:1px solid var(--s200);overflow:hidden}
+    .scorer-card-hdr{padding:16px 20px;border-bottom:1px solid var(--s200);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:space-between}
+    .scorer-card-hdr .sub{font-size:12px;font-weight:400;color:var(--s400)}
+    .scorer-row{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:1px solid var(--s100);transition:background .15s;cursor:pointer}
+    .scorer-row:last-child{border-bottom:none}
+    .scorer-row:hover{background:var(--s50)}
+    .scorer-row.top1{background:linear-gradient(to right,rgba(245,158,11,.06),transparent)}
+    .scorer-rank{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--s300);width:24px;text-align:center;flex-shrink:0}
+    .scorer-logo{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+    .scorer-info{flex:1}
+    .scorer-name{font-size:14px;font-weight:700}
+    .scorer-team{font-size:11px;color:var(--s400)}
+    .scorer-goals{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--p700);white-space:nowrap}
+    .scorer-goals span{font-size:12px;font-weight:600;color:var(--s400)}
+
+    /* ── MVP ── */
+    .mvp-card{
+      background:var(--white);border-radius:var(--r);border:1px solid var(--s200);
+      padding:28px;display:flex;align-items:center;gap:24px;
+      background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(124,34,206,.06));
+      border:1px solid rgba(245,158,11,.2);
+    }
+    .mvp-badge{
+      width:64px;height:64px;border-radius:16px;
+      background:linear-gradient(135deg,#f59e0b,#d97706);
+      display:flex;align-items:center;justify-content:center;
+      font-size:28px;flex-shrink:0;
+      box-shadow:0 6px 20px rgba(245,158,11,.35);
+    }
+    .mvp-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+    .mvp-name{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:2px}
+    .mvp-team{font-size:13px;color:var(--s500)}
+    .mvp-stats{margin-left:auto;text-align:right;flex-shrink:0}
+    .mvp-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--p700);line-height:1}
+    .mvp-stat-label{font-size:11px;color:var(--s400)}
+
+    @media(max-width:900px){
+      nav{display:none}.hamburger{display:block}
+      .std-head,.std-row{grid-template-columns:44px 1fr 48px 56px}
+      .stat-cell:not(.pts-cell):not(.gd-cell){display:none}
+      .scorer-grid{grid-template-columns:1fr}
+      .mvp-stats{display:none}
+    }
+    @media(max-width:480px){
+      .main-wrap{padding:20px 16px}
+      .page-header{padding:20px 16px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">TC</div>
+      <span class="logo-text">TSUKUBA CUP 2026</span>
+    </a>
+    <nav>
+      <a href="index.html">ホーム</a>
+      <a href="matches.html">試合・結果</a>
+      <a href="standings.html" class="active">順位・ランキング</a>
+      <a href="teams.html">チーム</a>
+      <a href="about.html">大会について</a>
+    </nav>
+    <button class="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb"><a href="index.html">ホーム</a><span>›</span><span>順位・ランキング</span></div>
+    <div class="page-title">順位・ランキング</div>
+    <div class="page-sub">グループ順位表・得点ランキング・MVP</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab-inner">
+    <button class="tab-btn active">男子</button>
+    <button class="tab-btn">女子</button>
+  </div>
+</div>
+
+<main class="main-wrap">
+
+  <!-- MVP -->
+  <section>
+    <div style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:16px">🏅 現在のMVP候補</div>
+    <div class="mvp-card">
+      <div class="mvp-badge">🏆</div>
+      <div>
+        <div class="mvp-label">MVP — 男子部門</div>
+        <div class="mvp-name">田中 悠真</div>
+        <div class="mvp-team">FC紫炎 · FW</div>
+      </div>
+      <div class="mvp-stats">
+        <div class="mvp-stat-val">7</div>
+        <div class="mvp-stat-label">得点</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Group Standings -->
+  <section>
+    <div style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:24px">グループ順位表</div>
+
+    <!-- A Group -->
+    <div class="group-section" style="margin-bottom:28px">
+      <div class="group-label"><div class="group-badge">A</div>Aグループ</div>
+      <div class="std-card">
+        <div class="std-head">
+          <div>順位</div><div>チーム</div>
+          <div>試合</div><div>勝</div><div>分</div><div>負</div><div>勝点</div>
+        </div>
+        <div class="std-row promote">
+          <div class="rank-cell"><span class="rank-num rank-gold">1</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)">紫</div><span class="tname">FC紫炎</span><span class="promote-tag">突破</span></div>
+          <div class="stat-cell">2</div><div class="stat-cell">2</div><div class="stat-cell">0</div><div class="stat-cell">0</div>
+          <div class="pts-cell">6</div>
+        </div>
+        <div class="std-row promote">
+          <div class="rank-cell"><span class="rank-num rank-silver">2</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">L</div><span class="tname">Libertà</span><span class="promote-tag">突破</span></div>
+          <div class="stat-cell">2</div><div class="stat-cell">1</div><div class="stat-cell">0</div><div class="stat-cell">1</div>
+          <div class="pts-cell">3</div>
+        </div>
+        <div class="std-row">
+          <div class="rank-cell"><span class="rank-num rank-bronze">3</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">BW</div><span class="tname">Blue Wave</span></div>
+          <div class="stat-cell">2</div><div class="stat-cell">1</div><div class="stat-cell">0</div><div class="stat-cell">1</div>
+          <div class="pts-cell">3</div>
+        </div>
+        <div class="std-row">
+          <div class="rank-cell"><span class="rank-num rank-dim">4</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">FC</div><span class="tname">FC筑附</span></div>
+          <div class="stat-cell">2</div><div class="stat-cell">0</div><div class="stat-cell">0</div><div class="stat-cell">2</div>
+          <div class="pts-cell" style="color:var(--s300)">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B Group -->
+    <div class="group-section" style="margin-bottom:28px">
+      <div class="group-label"><div class="group-badge">B</div>Bグループ</div>
+      <div class="std-card">
+        <div class="std-head">
+          <div>順位</div><div>チーム</div>
+          <div>試合</div><div>勝</div><div>分</div><div>負</div><div>勝点</div>
+        </div>
+        <div class="std-row promote">
+          <div class="rank-cell"><span class="rank-num rank-gold">1</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">AV</div><span class="tname">AVANTI</span><span class="promote-tag">突破</span></div>
+          <div class="stat-cell">1</div><div class="stat-cell">0</div><div class="stat-cell">1</div><div class="stat-cell">0</div>
+          <div class="pts-cell">1</div>
+        </div>
+        <div class="std-row promote">
+          <div class="rank-cell"><span class="rank-num rank-silver">2</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#d97706,#b45309)">OR</div><span class="tname">ORANGE</span><span class="promote-tag">突破</span></div>
+          <div class="stat-cell">1</div><div class="stat-cell">0</div><div class="stat-cell">1</div><div class="stat-cell">0</div>
+          <div class="pts-cell">1</div>
+        </div>
+        <div class="std-row">
+          <div class="rank-cell"><span class="rank-num rank-bronze">3</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#059669,#047857)">SP</div><span class="tname">Sparks</span></div>
+          <div class="stat-cell">0</div><div class="stat-cell">0</div><div class="stat-cell">0</div><div class="stat-cell">0</div>
+          <div class="pts-cell" style="color:var(--s300)">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C Group -->
+    <div class="group-section">
+      <div class="group-label"><div class="group-badge">C</div>Cグループ</div>
+      <div class="std-card">
+        <div class="std-head">
+          <div>順位</div><div>チーム</div>
+          <div>試合</div><div>勝</div><div>分</div><div>負</div><div>勝点</div>
+        </div>
+        <div class="std-row promote">
+          <div class="rank-cell"><span class="rank-num rank-gold">1</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">FC</div><span class="tname">FC筑附</span><span class="promote-tag">突破</span></div>
+          <div class="stat-cell">1</div><div class="stat-cell">1</div><div class="stat-cell">0</div><div class="stat-cell">0</div>
+          <div class="pts-cell">3</div>
+        </div>
+        <div class="std-row">
+          <div class="rank-cell"><span class="rank-num rank-silver">2</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#475569,#334155)">GR</div><span class="tname">Gray FC</span></div>
+          <div class="stat-cell">0</div><div class="stat-cell">0</div><div class="stat-cell">0</div><div class="stat-cell">0</div>
+          <div class="pts-cell" style="color:var(--s300)">0</div>
+        </div>
+        <div class="std-row">
+          <div class="rank-cell"><span class="rank-num rank-dim">3</span></div>
+          <div class="team-cell"><div class="tlogo" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">AV</div><span class="tname">AVANTI B</span></div>
+          <div class="stat-cell">1</div><div class="stat-cell">0</div><div class="stat-cell">0</div><div class="stat-cell">1</div>
+          <div class="pts-cell" style="color:var(--s300)">0</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scorer Rankings -->
+  <section>
+    <div style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:16px">得点ランキング</div>
+    <div class="scorer-grid">
+      <!-- 男子 -->
+      <div class="scorer-card">
+        <div class="scorer-card-hdr">得点ランキング <span class="sub">男子</span></div>
+        <div class="scorer-row top1">
+          <div class="scorer-rank" style="color:var(--gold)">1</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)">田</div>
+          <div class="scorer-info"><div class="scorer-name">田中 悠真</div><div class="scorer-team">FC紫炎</div></div>
+          <div class="scorer-goals">7 <span>得点</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank" style="color:var(--silver)">2</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">佐</div>
+          <div class="scorer-info"><div class="scorer-name">佐藤 翔</div><div class="scorer-team">FC筑附</div></div>
+          <div class="scorer-goals">5 <span>得点</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank" style="color:var(--bronze)">3</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">鈴</div>
+          <div class="scorer-info"><div class="scorer-name">鈴木 大地</div><div class="scorer-team">Libertà</div></div>
+          <div class="scorer-goals">4 <span>得点</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank">4</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">山</div>
+          <div class="scorer-info"><div class="scorer-name">山本 陸</div><div class="scorer-team">Blue Wave</div></div>
+          <div class="scorer-goals">3 <span>得点</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank">5</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">高</div>
+          <div class="scorer-info"><div class="scorer-name">高草木 悠</div><div class="scorer-team">AVANTI</div></div>
+          <div class="scorer-goals">3 <span>得点</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank">6</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">松</div>
+          <div class="scorer-info"><div class="scorer-name">松本 颯</div><div class="scorer-team">FC筑附</div></div>
+          <div class="scorer-goals">2 <span>得点</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank">7</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">河</div>
+          <div class="scorer-info"><div class="scorer-name">河井 蒼</div><div class="scorer-team">FC紫炎</div></div>
+          <div class="scorer-goals">1 <span>得点</span></div>
+        </div>
+      </div>
+
+      <!-- アシスト -->
+      <div class="scorer-card">
+        <div class="scorer-card-hdr">アシストランキング <span class="sub">男子</span></div>
+        <div class="scorer-row top1">
+          <div class="scorer-rank" style="color:var(--gold)">1</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)">末</div>
+          <div class="scorer-info"><div class="scorer-name">末吉 航平</div><div class="scorer-team">FC紫炎</div></div>
+          <div class="scorer-goals">5 <span>A</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank" style="color:var(--silver)">2</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">伊</div>
+          <div class="scorer-info"><div class="scorer-name">伊藤 悠</div><div class="scorer-team">Libertà</div></div>
+          <div class="scorer-goals">3 <span>A</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank" style="color:var(--bronze)">3</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">木</div>
+          <div class="scorer-info"><div class="scorer-name">木村 蒼空</div><div class="scorer-team">Blue Wave</div></div>
+          <div class="scorer-goals">2 <span>A</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank">4</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">中</div>
+          <div class="scorer-info"><div class="scorer-name">中村 蓮</div><div class="scorer-team">AVANTI</div></div>
+          <div class="scorer-goals">2 <span>A</span></div>
+        </div>
+        <div class="scorer-row">
+          <div class="scorer-rank">5</div>
+          <div class="scorer-logo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">坂</div>
+          <div class="scorer-info"><div class="scorer-name">坂本 大翔</div><div class="scorer-team">FC筑附</div></div>
+          <div class="scorer-goals">1 <span>A</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer style="background:var(--s800);color:rgba(255,255,255,.5);padding:36px 24px;margin-top:32px">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;background:#4c1d95;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">TC</div>
+      <span style="font-weight:700;font-size:14px;color:rgba(255,255,255,.7)">TSUKUBA CUP 2026</span>
+    </div>
+    <span style="font-size:12px">© 2026 筑波大学附属高等学校フットサル部</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面 — TSUKUBA CUP 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --p50:#faf5ff;--p100:#f3e8ff;--p600:#9333ea;--p700:#7e22ce;--p900:#4c1d95;
+      --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;
+      --s400:#94a3b8;--s500:#64748b;--s700:#334155;--s800:#1e293b;
+      --white:#fff;--r:16px;
+      --green:#16a34a;--red:#dc2626;--amber:#d97706;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--s50);color:var(--s800);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    /* ── LOGIN SCREEN ── */
+    #login-screen{
+      position:fixed;inset:0;z-index:1000;
+      background:linear-gradient(135deg,#1E3A9F 0%,#4c1d95 50%,#6b21a8 100%);
+      display:flex;align-items:center;justify-content:center;padding:24px;
+    }
+    .login-box{
+      background:var(--white);border-radius:24px;
+      padding:40px 32px;width:100%;max-width:380px;
+      box-shadow:0 24px 80px rgba(0,0,0,.3);
+      text-align:center;
+    }
+    .login-logo{
+      width:56px;height:56px;background:linear-gradient(135deg,#1E3A9F,#7C3AED);
+      border-radius:16px;display:flex;align-items:center;justify-content:center;
+      color:#fff;font-size:20px;font-weight:800;margin:0 auto 20px;
+      box-shadow:0 6px 20px rgba(109,40,217,.4);
+    }
+    .login-title{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+    .login-sub{font-size:13px;color:var(--s400);margin-bottom:28px}
+    .login-note{
+      background:var(--s50);border-radius:10px;padding:12px 16px;
+      font-size:12px;color:var(--s500);margin-bottom:24px;line-height:1.7;
+      text-align:left;
+    }
+    .login-note strong{color:var(--s800)}
+    .login-email-wrap{position:relative;margin-bottom:12px;text-align:left}
+    .login-email-label{font-size:12px;font-weight:700;color:var(--s500);margin-bottom:6px;display:block}
+    .login-email-in{
+      width:100%;padding:12px 14px;border-radius:10px;
+      border:1.5px solid var(--s200);font-size:14px;font-family:inherit;
+      color:var(--s800);background:var(--white);outline:none;
+      transition:border-color .18s;
+    }
+    .login-email-in:focus{border-color:#6D28D9}
+    .login-email-in.error{border-color:#dc2626;background:#fff5f5}
+    .login-error{
+      display:none;background:#fee2e2;border:1px solid #fecaca;
+      border-radius:10px;padding:10px 14px;font-size:12px;color:#dc2626;
+      font-weight:600;margin-bottom:14px;text-align:left;line-height:1.5;
+    }
+    .login-error.show{display:block}
+    .btn-google{
+      width:100%;padding:14px;border-radius:12px;
+      border:1px solid var(--s200);background:var(--white);
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      font-size:15px;font-weight:700;color:var(--s800);cursor:pointer;
+      transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.06);
+    }
+    .btn-google:hover{background:var(--s50);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+    .btn-google:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+    .g-icon{width:22px;height:22px}
+
+    /* ── ADMIN HEADER ── */
+    header{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:0;z-index:50}
+    .hdr{max-width:900px;margin:0 auto;padding:0 20px;height:60px;display:flex;align-items:center;gap:12px}
+    .hdr-logo{display:flex;align-items:center;gap:10px}
+    .hdr-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#1E3A9F,#7C3AED);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800}
+    .hdr-title{font-weight:800;font-size:15px;letter-spacing:-.01em}
+    .hdr-badge{background:var(--p50);color:var(--p700);font-size:11px;font-weight:700;padding:2px 10px;border-radius:100px}
+    .hdr-user{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--s500)}
+    .hdr-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1E3A9F,#7C3AED);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800}
+    .btn-logout{background:none;border:1px solid var(--s200);padding:5px 12px;border-radius:8px;font-size:12px;color:var(--s500);cursor:pointer;font-family:inherit;transition:all .15s}
+    .btn-logout:hover{background:var(--s50);color:var(--s800)}
+
+    /* ── MAIN ── */
+    .main{max-width:900px;margin:0 auto;padding:24px 20px;display:flex;flex-direction:column;gap:20px}
+
+    /* ── STATUS BANNER ── */
+    .status-banner{
+      border-radius:var(--r);padding:18px 20px;
+      display:flex;align-items:center;gap:14px;
+    }
+    .status-banner.open{background:#dcfce7;border:1px solid #bbf7d0}
+    .status-banner.closed{background:#fee2e2;border:1px solid #fecaca}
+    .status-banner.warn{background:#fef9c3;border:1px solid #fde68a}
+    .status-ico{font-size:24px;flex-shrink:0}
+    .status-text{flex:1}
+    .status-label{font-size:12px;font-weight:700;color:var(--s500);margin-bottom:2px}
+    .status-msg{font-size:15px;font-weight:700}
+    .status-actions{display:flex;gap:8px;flex-shrink:0}
+    .btn-sm{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+    .btn-open{background:#16a34a;color:#fff}
+    .btn-open:hover{background:#15803d}
+    .btn-closed{background:#dc2626;color:#fff}
+    .btn-closed:hover{background:#b91c1c}
+    .btn-warn{background:#d97706;color:#fff}
+    .btn-warn:hover{background:#b45309}
+
+    /* ── SECTION ── */
+    .sec{background:var(--white);border-radius:var(--r);border:1px solid var(--s200);overflow:hidden}
+    .sec-hdr{
+      padding:16px 20px;border-bottom:1px solid var(--s200);
+      display:flex;align-items:center;justify-content:space-between;
+      background:linear-gradient(to right,var(--p50),transparent);
+    }
+    .sec-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+    .sec-title .ico{font-size:17px}
+    .sec-body{padding:20px}
+
+    /* ── MATCH RESULT INPUT ── */
+    .match-input-row{
+      background:var(--s50);border-radius:12px;padding:16px;
+      display:flex;align-items:center;gap:12px;
+      margin-bottom:12px;
+    }
+    .match-input-row:last-child{margin-bottom:0}
+    .match-input-team{flex:1;font-size:14px;font-weight:700;text-align:center}
+    .score-inputs{display:flex;align-items:center;gap:8px}
+    .score-in{
+      width:52px;height:52px;border-radius:12px;border:2px solid var(--s200);
+      text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;
+      color:var(--p700);background:var(--white);outline:none;cursor:pointer;
+      transition:border-color .15s;
+    }
+    .score-in:focus{border-color:var(--p600)}
+    .score-sep{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--s300)}
+    .match-input-meta{font-size:11px;color:var(--s400);text-align:center;margin-top:4px}
+    .btn-save{
+      padding:9px 18px;border-radius:10px;background:var(--p700);color:#fff;
+      border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+      transition:all .18s;white-space:nowrap;flex-shrink:0;
+    }
+    .btn-save:hover{background:var(--p900);transform:translateY(-1px)}
+    .btn-save:active{transform:translateY(0)}
+    .saved-badge{display:none;background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700}
+
+    /* ── SCORER INPUT ── */
+    .scorer-input-wrap{display:flex;flex-direction:column;gap:10px}
+    .scorer-row{display:flex;gap:8px;align-items:center}
+    .sel{
+      flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--s200);
+      font-size:13px;font-family:inherit;color:var(--s800);background:var(--white);
+      outline:none;cursor:pointer;transition:border-color .15s;
+    }
+    .sel:focus{border-color:var(--p600)}
+    .num-in{
+      width:60px;padding:10px 8px;border-radius:10px;border:1px solid var(--s200);
+      font-size:13px;font-family:inherit;text-align:center;color:var(--s800);
+      background:var(--white);outline:none;transition:border-color .15s;
+    }
+    .num-in:focus{border-color:var(--p600)}
+    .btn-del{width:32px;height:32px;border-radius:8px;border:1px solid var(--s200);background:var(--white);color:var(--s400);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+    .btn-del:hover{background:#fee2e2;border-color:#fecaca;color:var(--red)}
+    .btn-add-row{
+      width:100%;padding:10px;border-radius:10px;border:1px dashed var(--s300);
+      background:transparent;color:var(--s500);font-size:13px;font-weight:600;
+      cursor:pointer;font-family:inherit;transition:all .15s;
+    }
+    .btn-add-row:hover{border-color:var(--p600);color:var(--p700);background:var(--p50)}
+
+    /* ── NOTICE INPUT ── */
+    .notice-form{display:flex;flex-direction:column;gap:10px}
+    .inp{
+      width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--s200);
+      font-size:13px;font-family:inherit;color:var(--s800);background:var(--white);
+      outline:none;transition:border-color .15s;
+    }
+    .inp:focus{border-color:var(--p600)}
+    textarea.inp{resize:vertical;min-height:72px;line-height:1.6}
+    .btn-primary{
+      padding:12px 20px;border-radius:10px;background:var(--p700);color:#fff;
+      border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+      transition:all .18s;
+    }
+    .btn-primary:hover{background:var(--p900)}
+
+    /* ── NOTICE LIST ── */
+    .notice-item{
+      display:flex;align-items:center;gap:12px;padding:12px 0;
+      border-bottom:1px solid var(--s100);
+    }
+    .notice-item:last-child{border-bottom:none}
+    .notice-date{font-size:12px;font-weight:700;color:var(--p700);min-width:36px}
+    .notice-text{font-size:13px;flex:1}
+    .btn-icon{width:28px;height:28px;border-radius:6px;border:1px solid var(--s200);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--s400);transition:all .15s;flex-shrink:0}
+    .btn-icon:hover{background:#fee2e2;border-color:#fecaca;color:var(--red)}
+
+    /* ── QUICK ACTIONS ── */
+    .quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .quick-btn{
+      background:var(--white);border:1px solid var(--s200);border-radius:14px;
+      padding:18px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+      cursor:pointer;transition:all .2s;text-align:left;font-family:inherit;
+    }
+    .quick-btn:hover{border-color:var(--p600);box-shadow:0 4px 16px rgba(109,40,217,.1);transform:translateY(-2px)}
+    .quick-btn .q-ico{font-size:22px}
+    .quick-btn .q-label{font-size:14px;font-weight:700;color:var(--s800)}
+    .quick-btn .q-sub{font-size:11px;color:var(--s400)}
+
+    /* ── TOAST ── */
+    .toast{
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+      background:var(--s800);color:#fff;padding:12px 20px;border-radius:12px;
+      font-size:13px;font-weight:600;z-index:999;
+      transition:transform .3s ease;pointer-events:none;white-space:nowrap;
+      box-shadow:0 8px 32px rgba(0,0,0,.25);
+    }
+    .toast.show{transform:translateX(-50%) translateY(0)}
+
+    @media(max-width:600px){
+      .main{padding:16px}
+      .status-actions{flex-direction:column}
+      .quick-grid{grid-template-columns:1fr}
+      .match-input-row{flex-direction:column;gap:8px}
+      .btn-save{width:100%}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">TC</div>
+    <div class="login-title">管理画面ログイン</div>
+    <div class="login-sub">TSUKUBA CUP 2026 運営スタッフ専用</div>
+    <div class="login-note">
+      運営スタッフとして登録されたメールアドレスのみ入れます。
+    </div>
+    <div id="login-error" class="login-error">
+      このメールアドレスは管理画面へのアクセス権がありません。<br>
+      運営担当者に連絡してください。
+    </div>
+    <div class="login-email-wrap">
+      <label class="login-email-label" for="login-email">メールアドレス</label>
+      <input class="login-email-in" type="email" id="login-email"
+        placeholder="xxxxx@sgh-tsukuba.org"
+        oninput="onEmailInput()">
+    </div>
+    <button class="btn-google" id="login-btn" onclick="doLogin()" disabled>
+      <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+  </div>
+</div>
+
+<!-- ADMIN UI (hidden until login) -->
+<div id="admin-ui" style="display:none">
+
+<header>
+  <div class="hdr">
+    <div class="hdr-logo">
+      <div class="hdr-logo-icon">TC</div>
+      <span class="hdr-title">TSUKUBA CUP 2026</span>
+    </div>
+    <span class="hdr-badge">管理画面</span>
+    <div class="hdr-user">
+      <div class="hdr-avatar">笹</div>
+      <span>笹谷 奏太</span>
+      <button class="btn-logout" onclick="doLogout()">ログアウト</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- 開催状況バナー -->
+  <div class="status-banner open" id="status-banner">
+    <div class="status-ico">✅</div>
+    <div class="status-text">
+      <div class="status-label">本日の開催状況</div>
+      <div class="status-msg" id="status-msg">本日の試合は予定通り開催します</div>
+    </div>
+    <div class="status-actions">
+      <button class="btn-sm btn-open" onclick="setStatus('open')">開催</button>
+      <button class="btn-sm btn-warn" onclick="setStatus('delay')">遅延</button>
+      <button class="btn-sm btn-closed" onclick="setStatus('cancel')">中止</button>
+    </div>
+  </div>
+
+  <!-- クイックアクション -->
+  <section class="sec">
+    <div class="sec-hdr"><div class="sec-title"><span class="ico">⚡</span>クイックアクション</div></div>
+    <div class="sec-body">
+      <div class="quick-grid">
+        <button class="quick-btn" onclick="scrollTo('result-sec')">
+          <span class="q-ico">⚽</span>
+          <span class="q-label">試合結果を入力</span>
+          <span class="q-sub">スコア・得点者を記録</span>
+        </button>
+        <button class="quick-btn" onclick="scrollTo('notice-sec')">
+          <span class="q-ico">📢</span>
+          <span class="q-label">お知らせを投稿</span>
+          <span class="q-sub">ホームに表示される</span>
+        </button>
+        <button class="quick-btn" onclick="scrollTo('scorer-sec')">
+          <span class="q-ico">🏆</span>
+          <span class="q-label">得点者を修正</span>
+          <span class="q-sub">ランキングに反映</span>
+        </button>
+        <button class="quick-btn" onclick="window.open('matches.html','_blank')">
+          <span class="q-ico">👁</span>
+          <span class="q-label">サイトを確認</span>
+          <span class="q-sub">閲覧ページを開く</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 試合結果入力 -->
+  <section class="sec" id="result-sec">
+    <div class="sec-hdr">
+      <div class="sec-title"><span class="ico">⚽</span>試合結果入力</div>
+      <span style="font-size:12px;color:var(--s400)">5月13日（火）の試合</span>
+    </div>
+    <div class="sec-body">
+
+      <!-- Match 1 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:12px;font-weight:700;color:var(--s400);margin-bottom:8px;letter-spacing:.05em">男子 Aグループ 第2試合 · 12:25</div>
+        <div class="match-input-row">
+          <div class="match-input-team">
+            <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#1E3A9F,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;margin:0 auto 6px">紫</div>
+            FC紫炎
+          </div>
+          <div style="flex:none">
+            <div class="score-inputs">
+              <input class="score-in" type="number" min="0" max="20" value="" placeholder="0" id="s1a">
+              <span class="score-sep">–</span>
+              <input class="score-in" type="number" min="0" max="20" value="" placeholder="0" id="s1b">
+            </div>
+            <div class="match-input-meta">スコア入力</div>
+          </div>
+          <div class="match-input-team">
+            <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#7c5a2e,#c09040);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;margin:0 auto 6px">L</div>
+            Libertà
+          </div>
+          <button class="btn-save" onclick="saveResult(1)">保存</button>
+        </div>
+      </div>
+
+      <!-- Match 2 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:12px;font-weight:700;color:var(--s400);margin-bottom:8px;letter-spacing:.05em">男子 Bグループ 第2試合 · 12:40</div>
+        <div class="match-input-row">
+          <div class="match-input-team">
+            <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#059669,#047857);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;margin:0 auto 6px">SP</div>
+            Sparks
+          </div>
+          <div style="flex:none">
+            <div class="score-inputs">
+              <input class="score-in" type="number" min="0" max="20" value="" placeholder="0" id="s2a">
+              <span class="score-sep">–</span>
+              <input class="score-in" type="number" min="0" max="20" value="" placeholder="0" id="s2b">
+            </div>
+            <div class="match-input-meta">スコア入力</div>
+          </div>
+          <div class="match-input-team">
+            <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#d97706,#b45309);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;margin:0 auto 6px">OR</div>
+            ORANGE
+          </div>
+          <button class="btn-save" onclick="saveResult(2)">保存</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 得点者入力 -->
+  <section class="sec" id="scorer-sec">
+    <div class="sec-hdr"><div class="sec-title"><span class="ico">🏆</span>得点者入力</div></div>
+    <div class="sec-body">
+      <div style="font-size:12px;font-weight:700;color:var(--s400);margin-bottom:12px">FC紫炎 vs Libertà の得点者</div>
+      <div class="scorer-input-wrap" id="scorer-rows">
+        <div class="scorer-row">
+          <select class="sel">
+            <option value="">チームを選択</option>
+            <option>FC紫炎</option>
+            <option>Libertà</option>
+          </select>
+          <select class="sel">
+            <option value="">選手を選択</option>
+            <option>田中 悠真</option>
+            <option>末吉 航平</option>
+            <option>河井 蒼</option>
+          </select>
+          <input class="num-in" type="number" min="1" max="9" value="1" placeholder="本">
+          <button class="btn-del" onclick="delRow(this)">×</button>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn-add-row" style="flex:1" onclick="addRow()">＋ 得点者を追加</button>
+        <button class="btn-primary" onclick="saveScorers()" style="flex-shrink:0;padding:10px 20px;font-size:13px">保存</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- お知らせ投稿 -->
+  <section class="sec" id="notice-sec">
+    <div class="sec-hdr"><div class="sec-title"><span class="ico">📢</span>お知らせ管理</div></div>
+    <div class="sec-body">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px">新しいお知らせを投稿</div>
+      <div class="notice-form">
+        <input class="inp" type="text" placeholder="タイトル（例：本日の試合は予定通り開催します）" id="notice-title">
+        <div style="display:flex;gap:8px">
+          <button class="btn-primary" onclick="postNotice()" style="font-size:13px;padding:11px 20px">投稿する</button>
+        </div>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;margin:20px 0 10px">投稿済みお知らせ</div>
+      <div id="notice-list">
+        <div class="notice-item"><span class="notice-date">5/13</span><span class="notice-text">本日の試合は予定通り開催します</span><button class="btn-icon" onclick="delNotice(this)">🗑</button></div>
+        <div class="notice-item"><span class="notice-date">5/12</span><span class="notice-text">大会ルール・会場使用ルールを更新しました</span><button class="btn-icon" onclick="delNotice(this)">🗑</button></div>
+        <div class="notice-item"><span class="notice-date">5/10</span><span class="notice-text">得点ランキングを更新しました</span><button class="btn-icon" onclick="delNotice(this)">🗑</button></div>
+        <div class="notice-item"><span class="notice-date">5/8</span><span class="notice-text">各チームの出場選手登録をお願いします</span><button class="btn-icon" onclick="delNotice(this)">🗑</button></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── 許可メールアドレス一覧 ──────────────────────────
+  const ALLOWED_EMAILS = [
+    'sasasout361@sgh-tsukuba.org',
+  ];
+  // ────────────────────────────────────────────────────
+
+  function onEmailInput() {
+    const val = document.getElementById('login-email').value.trim().toLowerCase();
+    const btn = document.getElementById('login-btn');
+    // メアドとして最低限の形式になったらボタンを有効化
+    btn.disabled = !val.includes('@');
+    // エラー表示をリセット
+    document.getElementById('login-error').classList.remove('show');
+    document.getElementById('login-email').classList.remove('error');
+  }
+
+  function doLogin() {
+    const email = document.getElementById('login-email').value.trim().toLowerCase();
+    if (!ALLOWED_EMAILS.includes(email)) {
+      document.getElementById('login-error').classList.add('show');
+      document.getElementById('login-email').classList.add('error');
+      document.getElementById('login-email').focus();
+      return;
+    }
+    // ログイン成功
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-ui').style.display = 'block';
+    // ヘッダーのユーザー名をメアドのローカルパートで表示
+    const localPart = email.split('@')[0];
+    document.querySelector('.hdr-user span').textContent = localPart;
+  }
+
+  function doLogout() {
+    document.getElementById('admin-ui').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-email').classList.remove('error');
+    document.getElementById('login-error').classList.remove('show');
+    document.getElementById('login-btn').disabled = true;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✅ ' + msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  const statusMessages = {
+    open:   { msg:'本日の試合は予定通り開催します', cls:'open', ico:'✅' },
+    delay:  { msg:'試合開始を15分遅らせます（準備中）', cls:'warn', ico:'⏰' },
+    cancel: { msg:'本日の試合は中止となりました', cls:'closed', ico:'❌' },
+  };
+  function setStatus(type) {
+    const s = statusMessages[type];
+    const banner = document.getElementById('status-banner');
+    banner.className = 'status-banner ' + s.cls;
+    banner.querySelector('.status-ico').textContent = s.ico;
+    document.getElementById('status-msg').textContent = s.msg;
+    showToast('開催状況を更新しました');
+  }
+
+  function saveResult(n) {
+    const a = document.getElementById('s'+n+'a').value;
+    const b = document.getElementById('s'+n+'b').value;
+    if (a === '' || b === '') { showToast('スコアを入力してください'); return; }
+    showToast('試合結果を保存しました（' + a + ' – ' + b + '）');
+  }
+
+  function addRow() {
+    const wrap = document.getElementById('scorer-rows');
+    const row = document.createElement('div');
+    row.className = 'scorer-row';
+    row.innerHTML = `
+      <select class="sel"><option value="">チームを選択</option><option>FC紫炎</option><option>Libertà</option></select>
+      <select class="sel"><option value="">選手を選択</option><option>田中 悠真</option><option>末吉 航平</option><option>河井 蒼</option></select>
+      <input class="num-in" type="number" min="1" max="9" value="1">
+      <button class="btn-del" onclick="delRow(this)">×</button>`;
+    wrap.appendChild(row);
+  }
+  function delRow(btn) { btn.closest('.scorer-row').remove(); }
+  function saveScorers() { showToast('得点者を保存しました'); }
+
+  function postNotice() {
+    const title = document.getElementById('notice-title').value.trim();
+    if (!title) { showToast('タイトルを入力してください'); return; }
+    const list = document.getElementById('notice-list');
+    const d = new Date();
+    const label = (d.getMonth()+1) + '/' + d.getDate();
+    const item = document.createElement('div');
+    item.className = 'notice-item';
+    item.innerHTML = `<span class="notice-date">${label}</span><span class="notice-text">${title}</span><button class="btn-icon" onclick="delNotice(this)">🗑</button>`;
+    list.insertBefore(item, list.firstChild);
+    document.getElementById('notice-title').value = '';
+    showToast('お知らせを投稿しました');
+  }
+  function delNotice(btn) {
+    if (confirm('このお知らせを削除しますか？')) {
+      btn.closest('.notice-item').remove();
+      showToast('削除しました');
+    }
+  }
+
+  function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+</script>
+</body>
+</html>

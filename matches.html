@@ -1,0 +1,472 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>試合・結果 — TSUKUBA CUP 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --p50:#faf5ff;--p100:#f3e8ff;--p600:#9333ea;--p700:#7e22ce;--p900:#4c1d95;
+      --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;
+      --s400:#94a3b8;--s500:#64748b;--s700:#334155;--s800:#1e293b;
+      --white:#fff;--r:16px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--s50);color:var(--s800);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    /* ── HEADER ── */
+    header{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:0;z-index:50}
+    .hdr{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:8px}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .logo-icon{width:34px;height:34px;background:var(--p900);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;flex-shrink:0}
+    .logo-text{font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--s800)}
+    nav{display:flex;gap:4px;margin-left:auto}
+    nav a{text-decoration:none;color:var(--s500);font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:color .15s;white-space:nowrap}
+    nav a:hover{color:var(--p700)}
+    nav a.active{color:var(--p700);background:var(--p50)}
+    .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--s800);margin:4px 0;border-radius:2px}
+
+    /* ── PAGE HEADER ── */
+    .page-header{background:var(--white);border-bottom:1px solid var(--s200);padding:28px 24px}
+    .page-header-inner{max-width:1280px;margin:0 auto}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--s400);margin-bottom:8px}
+    .breadcrumb a{text-decoration:none;color:var(--s400);transition:color .15s}
+    .breadcrumb a:hover{color:var(--p700)}
+    .page-title{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+    .page-sub{font-size:13px;color:var(--s500)}
+
+    /* ── GENDER TAB ── */
+    .tab-bar{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:64px;z-index:40}
+    .tab-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;gap:0}
+    .tab-btn{
+      padding:14px 24px;font-size:14px;font-weight:700;
+      color:var(--s500);background:none;border:none;cursor:pointer;
+      border-bottom:3px solid transparent;margin-bottom:-1px;transition:all .18s;
+    }
+    .tab-btn.active{color:var(--p700);border-bottom-color:var(--p700)}
+    .tab-btn:hover:not(.active){color:var(--s800)}
+
+    /* ── MAIN ── */
+    .main-wrap{max-width:1280px;margin:0 auto;padding:32px 24px;display:flex;flex-direction:column;gap:32px}
+
+    /* ── SECTION TITLE ── */
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .sec-title{font-size:17px;font-weight:800;letter-spacing:-.02em}
+    .sec-sub{font-size:12px;color:var(--s400);font-weight:500;margin-top:2px}
+    .see-all{font-size:13px;color:var(--p700);text-decoration:none;font-weight:600}
+    .see-all:hover{text-decoration:underline}
+
+    /* ── MATCH DAY GROUP ── */
+    .day-group{display:flex;flex-direction:column;gap:12px}
+    .day-label{
+      display:inline-flex;align-items:center;gap:10px;
+      font-size:13px;font-weight:700;color:var(--s500);
+      padding:0 0 10px;border-bottom:1px solid var(--s200);
+    }
+    .day-label .date-num{font-size:18px;font-weight:800;color:var(--s800)}
+
+    /* ── MATCH CARD ── */
+    .match-card{
+      background:var(--white);border-radius:var(--r);
+      border:1px solid var(--s200);
+      overflow:hidden;transition:box-shadow .18s;cursor:pointer;
+    }
+    .match-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08)}
+    .match-card-inner{padding:18px 20px;display:flex;align-items:center;gap:16px}
+    .match-time-col{
+      min-width:58px;text-align:center;flex-shrink:0;
+    }
+    .mtime{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--p900);line-height:1}
+    .mcat{font-size:10px;color:var(--s400);font-weight:600;margin-top:3px;line-height:1.3}
+    .match-divider{width:1px;height:52px;background:var(--s200);flex-shrink:0}
+    .match-teams-row{flex:1;display:flex;align-items:center;gap:0}
+    .mt{display:flex;align-items:center;gap:10px;flex:1}
+    .mt.right{flex-direction:row-reverse;text-align:right}
+    .tlogo{
+      width:42px;height:42px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:800;color:#fff;flex-shrink:0;
+      box-shadow:0 2px 8px rgba(0,0,0,.12);
+    }
+    .tname{font-size:14px;font-weight:700}
+    .score-block{
+      min-width:72px;text-align:center;flex-shrink:0;
+      padding:0 12px;
+    }
+    .score-num{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:28px;font-weight:800;color:var(--s800);line-height:1;
+    }
+    .score-dash{font-size:14px;color:var(--s300);margin:0 4px}
+    .score-upcoming{
+      font-size:13px;color:var(--s400);font-weight:600;
+      display:flex;flex-direction:column;align-items:center;gap:2px;
+    }
+    .score-upcoming .vs{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--s300)}
+    .match-meta-col{
+      display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+      flex-shrink:0;min-width:90px;
+    }
+    .result-badge{
+      display:inline-block;padding:3px 10px;border-radius:100px;
+      font-size:11px;font-weight:700;
+    }
+    .win{background:#dcfce7;color:#15803d}
+    .draw{background:#fef9c3;color:#854d0e}
+    .loss{background:#fee2e2;color:#dc2626}
+    .upcoming-badge{background:var(--p50);color:var(--p700)}
+    .venue-info{font-size:11px;color:var(--s400);display:flex;align-items:center;gap:4px}
+
+    /* Scorer pills */
+    .scorer-pills{
+      padding:10px 20px 14px;border-top:1px solid var(--s100);
+      display:flex;gap:8px;flex-wrap:wrap;
+    }
+    .scorer-pill{
+      display:inline-flex;align-items:center;gap:5px;
+      background:var(--s100);border-radius:100px;padding:3px 10px;
+      font-size:11px;color:var(--s700);font-weight:500;
+    }
+    .scorer-pill .goal-ico{font-size:10px}
+
+    /* ── TOURNAMENT BRACKET ── */
+    .bracket-wrap{background:var(--white);border-radius:var(--r);border:1px solid var(--s200);padding:24px;overflow-x:auto}
+    .bracket{display:flex;gap:0;min-width:600px}
+    .bracket-round{display:flex;flex-direction:column;flex:1;padding:0 12px}
+    .bracket-round-title{
+      font-size:11px;font-weight:700;color:var(--s400);
+      text-transform:uppercase;letter-spacing:.1em;
+      text-align:center;margin-bottom:16px;padding-bottom:10px;
+      border-bottom:1px solid var(--s100);
+    }
+    .bracket-matches{display:flex;flex-direction:column;justify-content:space-around;height:100%;gap:16px}
+    .bracket-match{
+      background:var(--s50);border-radius:12px;border:1px solid var(--s200);overflow:hidden;
+    }
+    .bracket-team{
+      display:flex;align-items:center;gap:8px;padding:10px 12px;
+      border-bottom:1px solid var(--s200);font-size:13px;font-weight:600;
+    }
+    .bracket-team:last-child{border-bottom:none}
+    .bracket-team.winner{color:var(--p700);background:var(--p50)}
+    .bracket-team .bscore{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--s700)}
+    .bracket-team.winner .bscore{color:var(--p700)}
+    .blogo{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+    .bracket-tbd{color:var(--s300)!important;font-style:italic}
+    /* connector lines */
+    .bracket-connector{display:flex;align-items:center;padding:0 0}
+    .bracket-connector::before{content:'';display:block;width:12px;height:2px;background:var(--s200)}
+    .final-crown{
+      font-size:11px;font-weight:700;color:var(--s400);
+      text-align:center;margin-top:8px;
+    }
+
+    /* ── GROUP FILTER ── */
+    .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+    .filter-btn{
+      padding:6px 16px;border-radius:100px;border:1px solid var(--s200);
+      background:var(--white);font-size:12px;font-weight:600;color:var(--s500);
+      cursor:pointer;transition:all .15s;
+    }
+    .filter-btn:hover{border-color:var(--p600);color:var(--p700)}
+    .filter-btn.active{background:var(--p700);border-color:var(--p700);color:#fff}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      nav{display:none}.hamburger{display:block}
+      .match-meta-col{display:none}
+      .mcat{display:none}
+    }
+    @media(max-width:480px){
+      .main-wrap{padding:20px 16px}
+      .tab-inner{padding:0 16px}
+      .page-header{padding:20px 16px}
+      .score-num{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">TC</div>
+      <span class="logo-text">TSUKUBA CUP 2026</span>
+    </a>
+    <nav>
+      <a href="index.html">ホーム</a>
+      <a href="matches.html" class="active">試合・結果</a>
+      <a href="standings.html">順位・ランキング</a>
+      <a href="teams.html">チーム</a>
+      <a href="about.html">大会について</a>
+    </nav>
+    <button class="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="index.html">ホーム</a>
+      <span>›</span>
+      <span>試合・結果</span>
+    </div>
+    <div class="page-title">試合・結果</div>
+    <div class="page-sub">全試合の日程・スコア・得点情報</div>
+  </div>
+</div>
+
+<!-- GENDER TAB -->
+<div class="tab-bar">
+  <div class="tab-inner">
+    <button class="tab-btn active" onclick="switchGender(this,'men')">男子</button>
+    <button class="tab-btn" onclick="switchGender(this,'women')">女子</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main-wrap">
+
+  <!-- ── 決勝トーナメント ── -->
+  <section id="tournament">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">決勝トーナメント</div>
+        <div class="sec-sub">予選リーグ終了後・順次更新</div>
+      </div>
+    </div>
+    <div class="bracket-wrap">
+      <div class="bracket">
+        <!-- QF -->
+        <div class="bracket-round">
+          <div class="bracket-round-title">準々決勝</div>
+          <div class="bracket-matches">
+            <div class="bracket-match">
+              <div class="bracket-team winner"><div class="blogo" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)">紫</div>FC紫炎<span class="bscore">3</span></div>
+              <div class="bracket-team"><div class="blogo" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">BW</div>Blue Wave<span class="bscore">1</span></div>
+            </div>
+            <div class="bracket-match">
+              <div class="bracket-team winner"><div class="blogo" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">L</div>Libertà<span class="bscore">2</span></div>
+              <div class="bracket-team"><div class="blogo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">FC</div>FC筑附<span class="bscore">1</span></div>
+            </div>
+            <div class="bracket-match">
+              <div class="bracket-team winner"><div class="blogo" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">AV</div>AVANTI<span class="bscore">2</span></div>
+              <div class="bracket-team"><div class="blogo" style="background:linear-gradient(135deg,#059669,#047857)">SP</div>Sparks<span class="bscore">0</span></div>
+            </div>
+            <div class="bracket-match">
+              <div class="bracket-team winner"><div class="blogo" style="background:linear-gradient(135deg,#d97706,#b45309)">OR</div>ORANGE<span class="bscore">3</span></div>
+              <div class="bracket-team"><div class="blogo" style="background:linear-gradient(135deg,#475569,#334155)">GR</div>Gray FC<span class="bscore">2</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- SF -->
+        <div class="bracket-round">
+          <div class="bracket-round-title">準決勝</div>
+          <div class="bracket-matches" style="justify-content:space-evenly">
+            <div class="bracket-match">
+              <div class="bracket-team winner"><div class="blogo" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)">紫</div>FC紫炎<span class="bscore">4</span></div>
+              <div class="bracket-team"><div class="blogo" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">L</div>Libertà<span class="bscore">2</span></div>
+            </div>
+            <div class="bracket-match">
+              <div class="bracket-team bracket-tbd"><div class="blogo" style="background:var(--s300)">?</div>TBD<span class="bscore" style="color:var(--s300)">-</span></div>
+              <div class="bracket-team bracket-tbd"><div class="blogo" style="background:var(--s300)">?</div>TBD<span class="bscore" style="color:var(--s300)">-</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Final -->
+        <div class="bracket-round">
+          <div class="bracket-round-title">🏆 決勝</div>
+          <div class="bracket-matches" style="justify-content:center">
+            <div>
+              <div class="bracket-match">
+                <div class="bracket-team bracket-tbd"><div class="blogo" style="background:var(--s300)">?</div>TBD<span class="bscore" style="color:var(--s300)">-</span></div>
+                <div class="bracket-team bracket-tbd"><div class="blogo" style="background:var(--s300)">?</div>TBD<span class="bscore" style="color:var(--s300)">-</span></div>
+              </div>
+              <div class="final-crown">🏆 優勝チーム決定</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 予選リーグ ── -->
+  <section id="group-stage">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">予選リーグ</div>
+        <div class="sec-sub">男子 全グループ</div>
+      </div>
+    </div>
+
+    <!-- Group filter -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterGroup(this,'all')">すべて</button>
+      <button class="filter-btn" onclick="filterGroup(this,'A')">Aグループ</button>
+      <button class="filter-btn" onclick="filterGroup(this,'B')">Bグループ</button>
+      <button class="filter-btn" onclick="filterGroup(this,'C')">Cグループ</button>
+    </div>
+
+    <!-- Day: 5/12 -->
+    <div class="day-group" style="margin-bottom:24px" data-group="A B C">
+      <div class="day-label"><span class="date-num">5/12</span>（月） — 全グループ</div>
+
+      <div class="match-card" data-group="A">
+        <div class="match-card-inner">
+          <div class="match-time-col"><div class="mtime">12:10</div><div class="mcat">男子 A<br>第1試合</div></div>
+          <div class="match-divider"></div>
+          <div class="match-teams-row">
+            <div class="mt"><div class="tlogo" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6v7c0 4 3 7.7 8 9 5-1.3 8-5 8-9V6L11 2z" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.7)" stroke-width="1"/></svg></div><span class="tname">FC紫炎</span></div>
+            <div class="score-block"><span class="score-num">3<span class="score-dash">–</span>1</span></div>
+            <div class="mt right"><span class="tname">Blue Wave</span><div class="tlogo" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">BW</div></div>
+          </div>
+          <div class="match-meta-col"><span class="result-badge win">WIN</span><span class="venue-info">コート面</span></div>
+        </div>
+        <div class="scorer-pills">
+          <div class="scorer-pill"><span class="goal-ico">⚽</span>田中 悠真 ×2</div>
+          <div class="scorer-pill"><span class="goal-ico">⚽</span>河井 ×1</div>
+          <div class="scorer-pill" style="background:#fee2e2;color:#991b1b"><span class="goal-ico">⚽</span>山本 ×1</div>
+        </div>
+      </div>
+
+      <div class="match-card" data-group="B">
+        <div class="match-card-inner">
+          <div class="match-time-col"><div class="mtime">12:25</div><div class="mcat">男子 B<br>第1試合</div></div>
+          <div class="match-divider"></div>
+          <div class="match-teams-row">
+            <div class="mt"><div class="tlogo" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">AV</div><span class="tname">AVANTI</span></div>
+            <div class="score-block"><span class="score-num">1<span class="score-dash">–</span>1</span></div>
+            <div class="mt right"><span class="tname">ORANGE</span><div class="tlogo" style="background:linear-gradient(135deg,#d97706,#b45309)">OR</div></div>
+          </div>
+          <div class="match-meta-col"><span class="result-badge draw">DRAW</span><span class="venue-info">コート面</span></div>
+        </div>
+        <div class="scorer-pills">
+          <div class="scorer-pill"><span class="goal-ico">⚽</span>高草木 ×1</div>
+          <div class="scorer-pill" style="background:#fef9c3;color:#854d0e"><span class="goal-ico">⚽</span>中村 ×1</div>
+        </div>
+      </div>
+
+      <div class="match-card" data-group="C">
+        <div class="match-card-inner">
+          <div class="match-time-col"><div class="mtime">12:40</div><div class="mcat">男子 C<br>第1試合</div></div>
+          <div class="match-divider"></div>
+          <div class="match-teams-row">
+            <div class="mt"><div class="tlogo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">FC</div><span class="tname">FC筑附</span></div>
+            <div class="score-block"><span class="score-num">5<span class="score-dash">–</span>0</span></div>
+            <div class="mt right"><span class="tname">AVANTI</span><div class="tlogo" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">AV</div></div>
+          </div>
+          <div class="match-meta-col"><span class="result-badge win">WIN</span><span class="venue-info">コート面</span></div>
+        </div>
+        <div class="scorer-pills">
+          <div class="scorer-pill"><span class="goal-ico">⚽</span>佐藤 翔 ×3</div>
+          <div class="scorer-pill"><span class="goal-ico">⚽</span>松本 ×2</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day: 5/13 -->
+    <div class="day-group" style="margin-bottom:24px" data-group="A B">
+      <div class="day-label"><span class="date-num">5/13</span>（火） — A・Bグループ</div>
+
+      <div class="match-card" data-group="A">
+        <div class="match-card-inner">
+          <div class="match-time-col"><div class="mtime">12:25</div><div class="mcat">男子 A<br>第2試合</div></div>
+          <div class="match-divider"></div>
+          <div class="match-teams-row">
+            <div class="mt"><div class="tlogo" style="background:linear-gradient(135deg,#1E3A9F,#7C3AED)"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6v7c0 4 3 7.7 8 9 5-1.3 8-5 8-9V6L11 2z" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.7)" stroke-width="1"/></svg></div><span class="tname">FC紫炎</span></div>
+            <div class="score-block">
+              <div class="score-upcoming">
+                <span class="vs">VS</span>
+                <span style="font-size:10px;color:var(--s400)">進行中</span>
+              </div>
+            </div>
+            <div class="mt right"><span class="tname">Libertà</span><div class="tlogo" style="background:linear-gradient(135deg,#7c5a2e,#c09040)">L</div></div>
+          </div>
+          <div class="match-meta-col"><span class="result-badge upcoming-badge">進行中</span><span class="venue-info">コート面</span></div>
+        </div>
+      </div>
+
+      <div class="match-card" data-group="B">
+        <div class="match-card-inner">
+          <div class="match-time-col"><div class="mtime">12:40</div><div class="mcat">男子 B<br>第2試合</div></div>
+          <div class="match-divider"></div>
+          <div class="match-teams-row">
+            <div class="mt"><div class="tlogo" style="background:linear-gradient(135deg,#059669,#047857)">SP</div><span class="tname">Sparks</span></div>
+            <div class="score-block"><div class="score-upcoming"><span class="vs">VS</span></div></div>
+            <div class="mt right"><span class="tname">ORANGE</span><div class="tlogo" style="background:linear-gradient(135deg,#d97706,#b45309)">OR</div></div>
+          </div>
+          <div class="match-meta-col"><span class="result-badge" style="background:var(--s100);color:var(--s500)">未開始</span><span class="venue-info">コート面</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day: 5/14 -->
+    <div class="day-group" data-group="A C">
+      <div class="day-label"><span class="date-num">5/14</span>（水） — A・Cグループ</div>
+      <div class="match-card" data-group="A">
+        <div class="match-card-inner">
+          <div class="match-time-col"><div class="mtime">12:25</div><div class="mcat">男子 A<br>第3試合</div></div>
+          <div class="match-divider"></div>
+          <div class="match-teams-row">
+            <div class="mt"><div class="tlogo" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">BW</div><span class="tname">Blue Wave</span></div>
+            <div class="score-block"><div class="score-upcoming"><span class="vs">VS</span></div></div>
+            <div class="mt right"><span class="tname">FC筑附</span><div class="tlogo" style="background:linear-gradient(135deg,#0891b2,#0e7490)">FC</div></div>
+          </div>
+          <div class="match-meta-col"><span class="result-badge" style="background:var(--s100);color:var(--s500)">未開始</span><span class="venue-info">コート面</span></div>
+        </div>
+      </div>
+      <div class="match-card" data-group="C">
+        <div class="match-card-inner">
+          <div class="match-time-col"><div class="mtime">12:40</div><div class="mcat">男子 C<br>第2試合</div></div>
+          <div class="match-divider"></div>
+          <div class="match-teams-row">
+            <div class="mt"><div class="tlogo" style="background:linear-gradient(135deg,#475569,#334155)">GR</div><span class="tname">Gray FC</span></div>
+            <div class="score-block"><div class="score-upcoming"><span class="vs">VS</span></div></div>
+            <div class="mt right"><span class="tname">Sparks</span><div class="tlogo" style="background:linear-gradient(135deg,#059669,#047857)">SP</div></div>
+          </div>
+          <div class="match-meta-col"><span class="result-badge" style="background:var(--s100);color:var(--s500)">未開始</span><span class="venue-info">コート面</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer style="background:var(--s800);color:rgba(255,255,255,.5);padding:36px 24px;margin-top:32px">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;background:#4c1d95;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">TC</div>
+      <span style="font-weight:700;font-size:14px;color:rgba(255,255,255,.7)">TSUKUBA CUP 2026</span>
+    </div>
+    <span style="font-size:12px">© 2026 筑波大学附属高等学校フットサル部</span>
+  </div>
+</footer>
+
+<script>
+  function switchGender(btn, gender) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function filterGroup(btn, group) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.match-card').forEach(card => {
+      if (group === 'all') { card.style.display = ''; return; }
+      card.style.display = (card.dataset.group === group) ? '' : 'none';
+    });
+    document.querySelectorAll('.day-group').forEach(dg => {
+      if (group === 'all') { dg.style.display = ''; return; }
+      const visible = [...dg.querySelectorAll('.match-card')].some(c => c.style.display !== 'none');
+      dg.style.display = visible ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>

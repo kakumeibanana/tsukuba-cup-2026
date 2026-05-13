@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FC紫炎 — TSUKUBA CUP 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --p50:#faf5ff;--p100:#f3e8ff;--p600:#9333ea;--p700:#7e22ce;--p900:#4c1d95;
+      --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;
+      --s400:#94a3b8;--s500:#64748b;--s700:#334155;--s800:#1e293b;
+      --white:#fff;--r:16px;
+      --team-a:#1E3A9F;--team-b:#7C3AED;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--s50);color:var(--s800);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+    header{background:var(--white);border-bottom:1px solid var(--s200);position:sticky;top:0;z-index:50}
+    .hdr{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:8px}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .logo-icon{width:34px;height:34px;background:var(--p900);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800}
+    .logo-text{font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--s800)}
+    nav{display:flex;gap:4px;margin-left:auto}
+    nav a{text-decoration:none;color:var(--s500);font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;transition:color .15s;white-space:nowrap}
+    nav a:hover{color:var(--p700)}
+    nav a.active{color:var(--p700);background:var(--p50)}
+    .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--s800);margin:4px 0;border-radius:2px}
+
+    /* ── TEAM HERO ── */
+    .team-hero{
+      background:linear-gradient(135deg,var(--team-a),var(--team-b));
+      padding:40px 24px 56px;position:relative;overflow:hidden;
+    }
+    .team-hero::before{
+      content:'';position:absolute;right:-60px;top:-60px;
+      width:300px;height:300px;border-radius:50%;
+      background:rgba(255,255,255,.06);
+    }
+    .team-hero::after{
+      content:'';position:absolute;left:-40px;bottom:-80px;
+      width:240px;height:240px;border-radius:50%;
+      background:rgba(255,255,255,.04);
+    }
+    .team-hero-inner{max-width:1280px;margin:0 auto;position:relative;z-index:1}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.6);margin-bottom:24px}
+    .breadcrumb a{text-decoration:none;color:rgba(255,255,255,.6)}
+    .breadcrumb a:hover{color:#fff}
+    .team-hero-main{display:flex;align-items:center;gap:24px}
+    .team-hero-logo{
+      width:80px;height:80px;border-radius:20px;
+      background:rgba(255,255,255,.15);
+      border:3px solid rgba(255,255,255,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;font-weight:800;color:#fff;
+      flex-shrink:0;backdrop-filter:blur(8px);
+    }
+    .team-hero-info{flex:1}
+    .team-hero-badge{
+      display:inline-block;padding:3px 12px;border-radius:100px;
+      background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);
+      font-size:11px;font-weight:700;margin-bottom:8px;
+    }
+    .team-hero-name{font-size:32px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.1;margin-bottom:4px}
+    .team-hero-en{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.08em}
+    .team-hero-stats{display:flex;gap:32px;margin-top:28px}
+    .hstat{text-align:center}
+    .hstat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:#fff;line-height:1}
+    .hstat-label{font-size:11px;color:rgba(255,255,255,.6);font-weight:600;margin-top:2px}
+
+    /* ── MAIN ── */
+    .main-wrap{max-width:1280px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 320px;gap:24px}
+    .col-l{display:flex;flex-direction:column;gap:20px}
+    .col-r{display:flex;flex-direction:column;gap:20px}
+
+    .card{background:var(--white);border-radius:var(--r);border:1px solid var(--s200)}
+    .card-hdr{padding:16px 20px;border-bottom:1px solid var(--s200);display:flex;align-items:center;justify-content:space-between}
+    .card-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
+
+    /* Captain comment */
+    .comment-card{
+      background:var(--white);border-radius:var(--r);border:1px solid var(--s200);
+      padding:24px;position:relative;overflow:hidden;
+    }
+    .comment-card::before{
+      content:'❝';position:absolute;top:-8px;left:16px;
+      font-size:80px;color:var(--p100);line-height:1;font-family:serif;
+      pointer-events:none;
+    }
+    .comment-label{font-size:11px;font-weight:700;color:var(--p700);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .comment-text{font-size:15px;line-height:1.8;color:var(--s700);position:relative;z-index:1}
+    .comment-author{display:flex;align-items:center;gap:10px;margin-top:16px}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1E3A9F,#7C3AED);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800}
+    .author-name{font-size:13px;font-weight:700}
+    .author-role{font-size:11px;color:var(--s400)}
+
+    /* Members table */
+    .member-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--s100);transition:background .15s}
+    .member-row:last-child{border-bottom:none}
+    .member-row:hover{background:var(--s50)}
+    .member-num{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--s300);width:28px;text-align:center;flex-shrink:0}
+    .member-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1E3A9F,#7C3AED);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0}
+    .member-info{flex:1}
+    .member-name{font-size:14px;font-weight:700}
+    .member-pos{font-size:11px;color:var(--s400)}
+    .member-goals{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--p700)}
+    .pos-badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700}
+    .pos-fw{background:#fef9c3;color:#92400e}
+    .pos-mf{background:#dbeafe;color:#1e40af}
+    .pos-df{background:#dcfce7;color:#166534}
+    .pos-gk{background:#f3e8ff;color:#6b21a8}
+    .captain-star{color:#f59e0b;font-size:14px}
+
+    /* Match history */
+    .hist-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--s100);transition:background .15s;cursor:pointer}
+    .hist-row:last-child{border-bottom:none}
+    .hist-row:hover{background:var(--s50)}
+    .hist-date{font-size:11px;color:var(--s400);min-width:48px;flex-shrink:0}
+    .hist-vs{font-size:13px;font-weight:600;flex:1}
+    .hist-score{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--s800)}
+    .result-badge{display:inline-block;padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700;min-width:40px;text-align:center}
+    .win{background:#dcfce7;color:#15803d}
+    .draw{background:#fef9c3;color:#854d0e}
+    .loss{background:#fee2e2;color:#dc2626}
+
+    /* Sidebar stats */
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
+    .stat-box{background:var(--s50);border-radius:10px;padding:14px;text-align:center}
+    .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--p700);line-height:1}
+    .stat-label{font-size:11px;color:var(--s400);font-weight:600;margin-top:4px}
+
+    @media(max-width:900px){
+      nav{display:none}.hamburger{display:block}
+      .main-wrap{grid-template-columns:1fr}
+      .col-r{order:-1}
+      .team-hero-stats{gap:20px}
+    }
+    @media(max-width:480px){
+      .main-wrap{padding:20px 16px}
+      .team-hero{padding:28px 16px 44px}
+      .team-hero-name{font-size:24px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">TC</div>
+      <span class="logo-text">TSUKUBA CUP 2026</span>
+    </a>
+    <nav>
+      <a href="index.html">ホーム</a>
+      <a href="matches.html">試合・結果</a>
+      <a href="standings.html">順位・ランキング</a>
+      <a href="teams.html" class="active">チーム</a>
+      <a href="about.html">大会について</a>
+    </nav>
+    <button class="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- TEAM HERO -->
+<div class="team-hero">
+  <div class="team-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">ホーム</a><span>›</span>
+      <a href="teams.html">チーム</a><span>›</span>
+      <span>FC紫炎</span>
+    </div>
+    <div class="team-hero-main">
+      <div class="team-hero-logo">
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none"><path d="M19 3L5 10v11c0 7 5.2 13.5 14 15.7C27.8 34.5 33 28 33 21V10L19 3z" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.7)" stroke-width="1.5"/></svg>
+      </div>
+      <div class="team-hero-info">
+        <div class="team-hero-badge">男子 Aグループ · 1位通過</div>
+        <div class="team-hero-name">FC紫炎</div>
+        <div class="team-hero-en">FC SHIEN · TSUKUBA CUP 2026</div>
+      </div>
+    </div>
+    <div class="team-hero-stats">
+      <div class="hstat"><div class="hstat-val">2</div><div class="hstat-label">試合</div></div>
+      <div class="hstat"><div class="hstat-val">2</div><div class="hstat-label">勝利</div></div>
+      <div class="hstat"><div class="hstat-val">0</div><div class="hstat-label">引分</div></div>
+      <div class="hstat"><div class="hstat-val">0</div><div class="hstat-label">敗北</div></div>
+      <div class="hstat"><div class="hstat-val">7</div><div class="hstat-label">総得点</div></div>
+      <div class="hstat"><div class="hstat-val">+5</div><div class="hstat-label">得失点差</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main-wrap">
+  <div class="col-l">
+
+    <!-- Captain comment -->
+    <div class="comment-card">
+      <div class="comment-label">キャプテンコメント</div>
+      <div class="comment-text">「去年の悔しさを忘れない。今年は絶対に優勝する。チーム全員で戦い抜く。」</div>
+      <div class="comment-author">
+        <div class="author-avatar">田</div>
+        <div>
+          <div class="author-name">田中 悠真 <span class="captain-star">★</span></div>
+          <div class="author-role">キャプテン · FW</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members -->
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">メンバー</div><span style="font-size:12px;color:var(--s400)">8名</span></div>
+      <div class="member-row">
+        <div class="member-num">10</div>
+        <div class="member-avatar">田</div>
+        <div class="member-info">
+          <div class="member-name">田中 悠真 <span class="captain-star">★</span></div>
+          <div class="member-pos"><span class="pos-badge pos-fw">FW</span></div>
+        </div>
+        <div class="member-goals">7⚽</div>
+      </div>
+      <div class="member-row">
+        <div class="member-num">8</div>
+        <div class="member-avatar">末</div>
+        <div class="member-info">
+          <div class="member-name">末吉 航平</div>
+          <div class="member-pos"><span class="pos-badge pos-mf">MF</span></div>
+        </div>
+        <div class="member-goals">1⚽</div>
+      </div>
+      <div class="member-row">
+        <div class="member-num">7</div>
+        <div class="member-avatar">河</div>
+        <div class="member-info">
+          <div class="member-name">河井 蒼</div>
+          <div class="member-pos"><span class="pos-badge pos-fw">FW</span></div>
+        </div>
+        <div class="member-goals">1⚽</div>
+      </div>
+      <div class="member-row">
+        <div class="member-num">5</div>
+        <div class="member-avatar">渡</div>
+        <div class="member-info">
+          <div class="member-name">渡辺 陽</div>
+          <div class="member-pos"><span class="pos-badge pos-df">DF</span></div>
+        </div>
+        <div class="member-goals" style="color:var(--s300)">0⚽</div>
+      </div>
+      <div class="member-row">
+        <div class="member-num">3</div>
+        <div class="member-avatar">小</div>
+        <div class="member-info">
+          <div class="member-name">小林 海斗</div>
+          <div class="member-pos"><span class="pos-badge pos-df">DF</span></div>
+        </div>
+        <div class="member-goals" style="color:var(--s300)">0⚽</div>
+      </div>
+      <div class="member-row">
+        <div class="member-num">1</div>
+        <div class="member-avatar">加</div>
+        <div class="member-info">
+          <div class="member-name">加藤 蒼</div>
+          <div class="member-pos"><span class="pos-badge pos-gk">GK</span></div>
+        </div>
+        <div class="member-goals" style="color:var(--s300)">0⚽</div>
+      </div>
+    </div>
+
+    <!-- Match history -->
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">試合結果</div></div>
+      <div class="hist-row">
+        <div class="hist-date">5/12</div>
+        <div class="hist-vs">vs Blue Wave<br><span style="font-size:11px;color:var(--s400)">男子 Aグループ 第1試合</span></div>
+        <div class="hist-score">3–1</div>
+        <span class="result-badge win">WIN</span>
+      </div>
+      <div class="hist-row">
+        <div class="hist-date">5/13</div>
+        <div class="hist-vs">vs Libertà<br><span style="font-size:11px;color:var(--s400)">男子 Aグループ 第2試合</span></div>
+        <div class="hist-score">進行中</div>
+        <span class="result-badge" style="background:var(--p50);color:var(--p700)">NOW</span>
+      </div>
+      <div class="hist-row">
+        <div class="hist-date">5/14</div>
+        <div class="hist-vs">vs FC筑附<br><span style="font-size:11px;color:var(--s400)">男子 Aグループ 第3試合</span></div>
+        <div class="hist-score" style="color:var(--s300)">–</div>
+        <span class="result-badge" style="background:var(--s100);color:var(--s400)">未定</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-r">
+
+    <!-- Quick stats -->
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">チーム成績</div></div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-val">6</div><div class="stat-label">勝点</div></div>
+        <div class="stat-box"><div class="stat-val">7</div><div class="stat-label">総得点</div></div>
+        <div class="stat-box"><div class="stat-val">2</div><div class="stat-label">失点</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:#16a34a">+5</div><div class="stat-label">得失点差</div></div>
+      </div>
+    </div>
+
+    <!-- Group position -->
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">グループ内順位</div></div>
+      <div style="padding:16px 20px;display:flex;align-items:center;gap:14px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:#f59e0b;line-height:1">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700">Aグループ 首位</div>
+          <div style="font-size:12px;color:var(--s400);margin-top:2px">決勝トーナメント進出確定</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top scorer -->
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">チームトップスコアラー</div></div>
+      <div style="padding:18px 20px;display:flex;align-items:center;gap:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1E3A9F,#7C3AED);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0">田</div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:800">田中 悠真</div>
+          <div style="font-size:11px;color:var(--s400)">FW · キャプテン</div>
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--p700)">7<span style="font-size:13px;font-weight:600;color:var(--s400)"> 得点</span></div>
+      </div>
+    </div>
+
+    <!-- Back to list -->
+    <a href="teams.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--white);border-radius:var(--r);border:1px solid var(--s200);text-decoration:none;color:var(--s500);font-size:13px;font-weight:600;transition:all .15s">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      チーム一覧に戻る
+    </a>
+
+  </div>
+</main>
+
+<footer style="background:var(--s800);color:rgba(255,255,255,.5);padding:36px 24px;margin-top:32px">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;background:#4c1d95;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800">TC</div>
+      <span style="font-weight:700;font-size:14px;color:rgba(255,255,255,.7)">TSUKUBA CUP 2026</span>
+    </div>
+    <span style="font-size:12px">© 2026 筑波大学附属高等学校フットサル部</span>
+  </div>
+</footer>
+</body>
+</html>
