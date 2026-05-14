@@ -855,3 +855,319 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   /* Card */
   .card { padding: 18px 16px; }
 }
+
+/* ===== Hide hamburger on desktop ===== */
+.menu-btn { display: none; }
+
+/* ===== Page header (shared across inner pages) ===== */
+.page-head {
+  padding: 28px 0 18px;
+}
+.page-title {
+  font-family: "Outfit", "Manrope", sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--ink-900);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* ===== Match list ===== */
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.match-row {
+  position: relative;
+  padding: 16px 20px 14px;
+  cursor: default;
+}
+.match-row.match-upcoming {
+  background: #fbf9ff;
+}
+.match-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.match-meta .num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-500);
+}
+.match-league {
+  font-size: 11px;
+  color: var(--purple-700);
+  background: var(--purple-50);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.match-body {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+.match-team { display: flex; align-items: center; }
+.match-team-away { justify-content: flex-end; }
+.match-team-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+.match-team.winner .match-team-name { color: var(--purple-700); }
+.match-score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 96px;
+}
+.match-time { font-size: 11.5px; color: var(--ink-500); }
+.match-score {
+  font-family: "Manrope", sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--ink-900);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.match-score .dash { color: var(--ink-400); font-size: 20px; font-weight: 500; }
+.match-score .w-side { color: var(--purple-700); }
+.match-vs {
+  font-family: "Manrope", sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--ink-400);
+  letter-spacing: 0.08em;
+  padding: 4px 0;
+}
+.match-court { font-size: 10.5px; color: var(--ink-400); }
+.match-row .pill {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+}
+
+/* ===== Standings page ===== */
+.standings-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table th.r { text-align: right; }
+.table td.pts {
+  font-family: "Manrope", sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--purple-700);
+  text-align: right;
+}
+
+/* ===== Teams page ===== */
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.team-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.team-card:hover {
+  box-shadow: 0 8px 32px -8px rgba(91,33,182,0.15);
+  transform: translateY(-2px);
+}
+.team-card-accent { height: 5px; }
+.team-card-body { padding: 18px 18px 20px; }
+.team-gender {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.team-gender-m { background: #dbeafe; color: #1d4ed8; }
+.team-gender-w { background: #fce7f3; color: #be185d; }
+.team-card-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink-900);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.team-card-desc {
+  font-size: 12.5px;
+  color: var(--ink-500);
+  line-height: 1.65;
+  margin: 0;
+}
+.team-card-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.team-stat-item { display: flex; flex-direction: column; gap: 2px; }
+.team-stat-label {
+  font-size: 10px;
+  color: var(--ink-400);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.team-stat-value {
+  font-family: "Manrope", sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--ink-900);
+}
+
+/* ===== About page ===== */
+.about-hero {
+  position: relative;
+  background: linear-gradient(135deg, #160b35 0%, #2d1065 40%, #3d1f8a 70%, #1a0c42 100%);
+  border-radius: 16px;
+  padding: 36px 40px 40px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.about-grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+.about-hero-content { position: relative; }
+.about-hero-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.about-hero-title {
+  font-family: "Outfit", "Manrope", sans-serif;
+  font-weight: 900;
+  font-size: clamp(32px, 5vw, 52px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  background: linear-gradient(135deg, #ffffff 0%, #e9d5ff 60%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 16px;
+}
+.about-hero-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+.about-hero-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.about-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+}
+.about-content-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+}
+.about-info-list { display: flex; flex-direction: column; }
+.about-info-row {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.about-info-row:first-child { padding-top: 2px; }
+.about-info-row:last-child { border-bottom: 0; }
+.about-info-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink-500);
+  padding-top: 2px;
+}
+.about-info-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+.about-info-sub {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-500);
+  font-weight: 400;
+  margin-top: 2px;
+}
+.sched-day-list { display: flex; flex-direction: column; }
+.sched-day-row {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.sched-day-row:last-child { border-bottom: 0; }
+.sched-day-date {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--purple-700);
+  background: var(--purple-50);
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+.sched-day-events { display: flex; flex-direction: column; gap: 3px; padding-top: 3px; }
+.sched-day-event { font-size: 13px; color: var(--ink-800); }
+
+/* ===== Responsive overrides for new pages ===== */
+@media (max-width: 900px) {
+  .menu-btn { display: inline-flex; }
+  .teams-grid { grid-template-columns: repeat(2, 1fr); }
+  .about-content-grid { grid-template-columns: 1fr; }
+  .th-hide { display: none; }
+}
+@media (max-width: 640px) {
+  .page-title { font-size: 22px; }
+  .match-team-name { font-size: 14px; }
+  .match-score { font-size: 24px; }
+  .match-score-block { min-width: 76px; }
+  .about-hero { padding: 24px 20px 28px; border-radius: 14px; }
+  .about-hero-title { font-size: 28px; }
+  .teams-grid { gap: 10px; }
+  .team-card-name { font-size: 17px; }
+}

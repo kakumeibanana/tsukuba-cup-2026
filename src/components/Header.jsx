@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 export default function Header() {
   const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
 
   return (
     <>
@@ -15,10 +17,10 @@ export default function Header() {
             </div>
           </div>
           <nav className="nav" aria-label="メインメニュー">
-            <a href="#matches" className="active">試合・結果</a>
-            <a href="#ranking">順位・ランキング</a>
-            <a href="#teams">チーム</a>
-            <a href="#about">大会について</a>
+            <Link to="/matches" className={pathname === '/matches' ? 'active' : ''}>試合・結果</Link>
+            <Link to="/standings" className={pathname === '/standings' ? 'active' : ''}>順位・ランキング</Link>
+            <Link to="/teams" className={pathname === '/teams' ? 'active' : ''}>チーム</Link>
+            <Link to="/about" className={pathname === '/about' ? 'active' : ''}>大会について</Link>
           </nav>
           <button className="menu-btn" aria-label="メニューを開く" onClick={() => setOpen(true)}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -37,10 +39,10 @@ export default function Header() {
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
-          <a href="#matches" onClick={() => setOpen(false)}>試合・結果</a>
-          <a href="#ranking" onClick={() => setOpen(false)}>順位・ランキング</a>
-          <a href="#teams" onClick={() => setOpen(false)}>チーム</a>
-          <a href="#about" onClick={() => setOpen(false)}>大会について</a>
+          <Link to="/matches" onClick={() => setOpen(false)}>試合・結果</Link>
+          <Link to="/standings" onClick={() => setOpen(false)}>順位・ランキング</Link>
+          <Link to="/teams" onClick={() => setOpen(false)}>チーム</Link>
+          <Link to="/about" onClick={() => setOpen(false)}>大会について</Link>
         </div>
       </div>
     </>
