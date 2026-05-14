@@ -3,6 +3,7 @@ export default function Hero() {
     <section className="hero">
       <div className="hero-grid">
         <div className="hero-copy">
+          <span className="hero-year-bg" aria-hidden="true">2026</span>
           <div className="hero-status">
             <span className="dot"></span>
             開催中 · 5月10日 - 6月2日
