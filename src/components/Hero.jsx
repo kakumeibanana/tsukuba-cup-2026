@@ -57,10 +57,6 @@ export default function Hero() {
           <img className="hero-photo" src="/futsal-image.png" alt="" />
           <div className="hero-media-overlay"></div>
           <div className="grid-bg"></div>
-          <div className="badge-corner">
-            <span className="dot"></span>
-            開催中
-          </div>
         </div>
       </div>
     </section>
