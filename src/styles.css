@@ -237,13 +237,14 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   width: 100%; height: 100%;
   object-fit: cover;
   object-position: center;
+  filter: brightness(0.78) saturate(0.75);
 }
 .hero-media-overlay {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right,  rgba(30,0,70,0.95) 0%, rgba(30,0,70,0.5) 30%, transparent 60%),
-    linear-gradient(to bottom, rgba(30,0,70,0.9)  0%, rgba(30,0,70,0.4) 30%, transparent 65%);
+    linear-gradient(to right,  rgba(45,0,90,0.88) 0%, rgba(45,0,90,0.35) 28%, transparent 55%),
+    linear-gradient(to bottom, rgba(45,0,90,0.92) 0%, rgba(45,0,90,0.78) 20%, rgba(45,0,90,0.45) 40%, rgba(45,0,90,0.0) 70%);
 }
 .hero-media .grid-bg {
   position: absolute; inset: 0;
