@@ -8,17 +8,7 @@ export default function Header() {
       <header className="header">
         <div className="header-inner">
           <div className="brand">
-            <svg className="brand-crest" viewBox="0 0 44 44" aria-hidden="true">
-              <defs>
-                <linearGradient id="crestG" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor="#7c3aed" />
-                  <stop offset="1" stopColor="#4c1d95" />
-                </linearGradient>
-              </defs>
-              <path d="M22 2 L40 8 V22 C40 32 32 39 22 42 C12 39 4 32 4 22 V8 Z" fill="url(#crestG)" />
-              <path d="M22 12 L28 22 L22 32 L16 22 Z" fill="#fff" opacity="0.95" />
-              <circle cx="22" cy="22" r="2.4" fill="#4c1d95" />
-            </svg>
+            <img src="/logo.png" alt="" className="brand-crest" />
             <div className="brand-text">
               <div className="name">TSUKUBA CUP 2026</div>
               <div className="sub">筑波大学附属高校 フットサル大会</div>

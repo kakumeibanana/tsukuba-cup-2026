@@ -56,7 +56,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   height: 64px;
 }
 .brand { display: flex; align-items: center; gap: 14px; }
-.brand-crest { width: 44px; height: 44px; }
+.brand-crest { width: 44px; height: 44px; object-fit: contain; }
 .brand-text .name {
   font-family: "Manrope", sans-serif;
   font-weight: 800;
@@ -105,17 +105,12 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   border-radius: 20px;
   overflow: hidden;
   background: linear-gradient(135deg, #160b35 0%, #2d1065 40%, #3d1f8a 70%, #1a0c42 100%);
-  min-height: 380px;
-}
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  align-items: stretch;
 }
 .hero-copy {
   position: relative;
-  padding: 44px 32px 44px 8px;
+  padding: 36px 48px 40px;
   display: flex; flex-direction: column; justify-content: center;
+  max-width: 620px;
   background: transparent;
 }
 .hero-year-bg {
@@ -259,7 +254,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
     linear-gradient(to right,  rgba(45,0,90,0.88) 0%, rgba(45,0,90,0.35) 28%, transparent 55%),
     linear-gradient(to bottom, rgba(45,0,90,0.92) 0%, rgba(45,0,90,0.78) 20%, rgba(45,0,90,0.45) 40%, rgba(45,0,90,0.0) 70%);
 }
-.hero-media .grid-bg {
+.hero .grid-bg {
   position: absolute; inset: 0;
   background-image:
     linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
@@ -807,7 +802,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
   /* Hero */
   .hero { border-radius: 16px; margin-top: 12px; }
-  .hero-copy { padding: 28px 20px 24px; }
+  .hero-copy { padding: 28px 20px 32px; max-width: 100%; }
   .hero-title { font-size: clamp(40px, 11vw, 56px); }
   .hero-tag { margin: 14px 0 16px; font-size: 13px; }
   .hero-tag .script { font-size: 24px; }
