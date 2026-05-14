@@ -41,10 +41,8 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(246, 244, 251, 0.88);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(236, 233, 243, 0.7);
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
 }
 .header-inner {
   max-width: 1120px;
