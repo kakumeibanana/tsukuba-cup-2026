@@ -13,8 +13,8 @@ import Footer from './components/Footer.jsx'
 export default function App() {
   return (
     <>
-      <div className="page">
-        <Header />
+      <Header />
+      <main className="page">
         <Hero />
         <div className="body-grid">
           <div className="col">
@@ -30,7 +30,7 @@ export default function App() {
             <AboutCard />
           </div>
         </div>
-      </div>
+      </main>
       <Footer />
     </>
   )

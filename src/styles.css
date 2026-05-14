@@ -38,10 +38,22 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
 /* ===== Header ===== */
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(246, 244, 251, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(236, 233, 243, 0.7);
+}
+.header-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 0 18px;
+  height: 64px;
 }
 .brand { display: flex; align-items: center; gap: 14px; }
 .brand-crest { width: 44px; height: 44px; }
@@ -89,10 +101,10 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 /* ===== Hero ===== */
 .hero {
   position: relative;
-  margin-top: 8px;
+  margin-top: 16px;
   border-radius: 20px;
   overflow: hidden;
-  background: #fff;
+  background: linear-gradient(135deg, #160b35 0%, #2d1065 40%, #3d1f8a 70%, #1a0c42 100%);
   min-height: 380px;
 }
 .hero-grid {
@@ -101,25 +113,27 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   align-items: stretch;
 }
 .hero-copy {
-  padding: 36px 32px 36px 8px;
+  padding: 44px 32px 44px 8px;
   display: flex; flex-direction: column; justify-content: center;
-  background: #fff;
+  background: transparent;
 }
 .hero-status {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 12px 6px 10px;
   border-radius: 999px;
-  background: rgba(124, 58, 237, 0.08);
-  color: var(--purple-700);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 12px; font-weight: 700;
   letter-spacing: 0.04em;
   align-self: flex-start;
   margin-bottom: 18px;
+  backdrop-filter: blur(8px);
 }
 .hero-status .dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: var(--purple-600);
-  box-shadow: 0 0 0 0 rgba(124,58,237,0.6);
+  background: #a78bfa;
+  box-shadow: 0 0 0 0 rgba(167,139,250,0.6);
   animation: pulse 2s ease-out infinite;
 }
 @keyframes pulse {
@@ -129,25 +143,28 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 .hero-title {
   position: relative;
-  font-family: "Manrope", sans-serif;
+  font-family: "Outfit", "Manrope", sans-serif;
   font-weight: 900;
   font-size: clamp(52px, 6.4vw, 78px);
   line-height: 0.95;
   letter-spacing: -0.02em;
-  color: var(--ink-900);
   margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #e9d5ff 60%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .hero-tag {
   display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
   margin: 22px 0 24px;
-  color: var(--ink-500);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 15px;
 }
 .hero-tag .script {
   font-family: "Caveat", cursive;
   font-weight: 700;
   font-size: 30px;
-  color: #d946a8;
+  color: #f0abfc;
   transform: rotate(-4deg) translateY(2px);
   display: inline-block;
   line-height: 1;
@@ -156,22 +173,23 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   display: flex; gap: 24px; flex-wrap: nowrap;
   margin: 0 0 24px;
   padding: 12px 16px;
-  background: linear-gradient(180deg, #faf8ff, #f4f0fb);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   align-self: flex-start;
+  backdrop-filter: blur(8px);
 }
-.hero-stat .label { font-size: 10px; color: var(--ink-500); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+.hero-stat .label { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
 .hero-stat .value {
-  font-family: "Manrope", sans-serif;
+  font-family: "Outfit", "Manrope", sans-serif;
   font-weight: 800;
   font-size: 17px;
-  color: var(--ink-900);
+  color: #fff;
   margin-top: 2px;
   letter-spacing: -0.01em;
   white-space: nowrap;
 }
-.hero-stat .value .unit { font-size: 11px; color: var(--ink-500); font-weight: 600; margin-left: 3px; }
+.hero-stat .value .unit { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; margin-left: 3px; }
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn {
   display: inline-flex; align-items: center; gap: 12px;
@@ -184,30 +202,33 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 .btn .arrow { width: 14px; height: 14px; }
 .btn-primary {
-  background: var(--purple-700);
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
   color: #fff;
-  box-shadow: 0 6px 18px -8px rgba(91,33,182,0.55);
+  box-shadow: 0 6px 20px -6px rgba(109,40,217,0.6);
 }
-.btn-primary:hover { background: var(--purple-800); transform: translateY(-1px); }
+.btn-primary:hover { background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%); transform: translateY(-1px); box-shadow: 0 10px 24px -6px rgba(91,33,182,0.65); }
 .btn-ghost {
-  background: #fff;
-  color: var(--ink-900);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
 }
-.btn-ghost:hover { border-color: #d8d3e5; }
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.4); }
 .hero-insta {
   margin-top: 24px;
   display: inline-flex; align-items: center; gap: 10px;
-  color: var(--purple-700);
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 600;
   font-size: 13px;
+  transition: color .15s;
 }
+.hero-insta:hover { color: #fff; }
 .hero-insta svg { width: 18px; height: 18px; }
 
 .hero-media {
   position: relative;
   min-height: 400px;
-  background: radial-gradient(120% 90% at 70% 110%, #6b5fa3 0%, #3b2f6b 40%, #1b1640 100%);
+  background: radial-gradient(80% 80% at 60% 50%, rgba(124,58,237,0.2) 0%, transparent 70%);
   overflow: hidden;
 }
 .hero-media .grid-bg {
@@ -270,6 +291,11 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   border-radius: 14px;
   border: 1px solid var(--line);
   padding: 22px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card:hover {
+  box-shadow: 0 8px 32px -8px rgba(91,33,182,0.13);
+  transform: translateY(-2px);
 }
 .card-pad-sm { padding: 18px 20px; }
 .card-head {
@@ -681,6 +707,15 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   font-size: 11.5px; color: var(--ink-500);
 }
 
+/* ===== Animations ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-copy { animation: fadeInUp 0.55s ease-out both; }
+.hero-media { animation: fadeInUp 0.55s ease-out 0.1s both; }
+.body-grid { animation: fadeInUp 0.5s ease-out 0.2s both; }
+
 /* ===== Mobile nav drawer ===== */
 .mobile-nav {
   display: none;
@@ -743,8 +778,8 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   .brand-crest { width: 36px; height: 36px; }
 
   /* Hero */
-  .hero { border-radius: 16px; }
-  .hero-copy { padding: 24px 20px 20px; }
+  .hero { border-radius: 16px; margin-top: 12px; }
+  .hero-copy { padding: 28px 20px 24px; }
   .hero-title { font-size: clamp(40px, 11vw, 56px); }
   .hero-tag { margin: 14px 0 16px; font-size: 13px; }
   .hero-tag .script { font-size: 24px; }
