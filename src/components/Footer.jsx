@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import BrandCrest from './BrandCrest.jsx'
 
 export default function Footer() {
   return (
@@ -6,7 +7,7 @@ export default function Footer() {
       <div className="footer-inner">
         <div>
           <div className="brand">
-            <img src="/logo.png" alt="" className="brand-crest" style={{ width: 36, height: 36 }} />
+            <BrandCrest size={36} />
             <div className="brand-text">
               <div className="name">TSUKUBA CUP 2026</div>
               <div className="sub">筑波大学附属高校 フットサル大会</div>
