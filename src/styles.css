@@ -27,6 +27,7 @@ body {
   background: var(--lavender-bg);
   color: var(--ink-900);
   font-size: 14px;
+  padding-top: 67px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
@@ -38,8 +39,10 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
 /* ===== Header ===== */
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   background: rgba(255,255,255,0.72);
   backdrop-filter: blur(16px);
@@ -55,7 +58,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   justify-content: space-between;
   height: 64px;
 }
-.brand { display: flex; align-items: center; gap: 14px; }
+.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
 .brand-crest { width: 44px; height: 44px; object-fit: contain; }
 .brand-text .name {
   font-family: "Manrope", sans-serif;
@@ -797,6 +800,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
   /* Header */
   .header { padding: 16px 0 14px; }
+  body { padding-top: 60px; }
   .brand-text .name { font-size: 18px; }
   .brand-crest { width: 36px; height: 36px; }
 

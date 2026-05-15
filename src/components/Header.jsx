@@ -8,13 +8,13 @@ export default function Header() {
     <>
       <header className="header">
         <div className="header-inner">
-          <div className="brand">
+          <Link to="/" className="brand">
             <img src="/logo.png" alt="" className="brand-crest" />
             <div className="brand-text">
               <div className="name">TSUKUBA CUP 2026</div>
               <div className="sub">筑波大学附属高校 フットサル大会</div>
             </div>
-          </div>
+          </Link>
           <nav className="nav" aria-label="メインメニュー">
             <Link to="/matches"   className={pathname === '/matches'   ? 'active' : ''}>試合・結果</Link>
             <Link to="/standings" className={pathname === '/standings' ? 'active' : ''}>順位・ランキング</Link>
