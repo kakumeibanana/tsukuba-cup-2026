@@ -2,28 +2,125 @@ import { useState } from 'react'
 
 const allMatches = [
   // 男子 予選リーグ
-  { id: 1,  gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00', home: { name: 'FC紫炎',   scorers: ['田中 悠真 ×2', '鈴木 大地'] }, away: { name: 'Blue Wave', scorers: ['山本 陸'] },    scoreH: 3, scoreA: 1, status: 'finished' },
-  { id: 2,  gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20', home: { name: 'Libertà',  scorers: [] },                          away: { name: 'FC筑附',   scorers: [] },              scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 3,  gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '12:40', home: { name: '筑嶺男',  scorers: [] },                           away: { name: 'AVANTI',   scorers: [] },              scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 4,  gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '14:00', home: { name: 'T.A.S.',  scorers: [] },                           away: { name: 'Nordica',  scorers: [] },              scoreH: null, scoreA: null, status: 'live' },
-  { id: 5,  gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '10:00', home: { name: 'FC筑附',  scorers: [] },                           away: { name: 'Phoenix',  scorers: [] },              scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 6,  gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '11:20', home: { name: 'FC紫炎',  scorers: [] },                           away: { name: 'T.A.S.',   scorers: [] },              scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 1,  gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00',
+    home: { name: 'FC紫炎',  scorers: ['田中 悠真 ×2', '鈴木 大地'] },
+    away: { name: 'Blue Wave', scorers: ['山本 陸'] },
+    scoreH: 3, scoreA: 1, status: 'finished' },
+  { id: 2,  gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20',
+    home: { name: 'Libertà',   scorers: [] },
+    away: { name: 'FC筑附',    scorers: [] },
+    scoreH: 2, scoreA: 0, minute: "24'", status: 'live' },
+  { id: 3,  gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '12:40',
+    home: { name: '筑嶺男',    scorers: [] },
+    away: { name: 'AVANTI',    scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 4,  gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '14:00',
+    home: { name: 'T.A.S.',    scorers: [] },
+    away: { name: 'Nordica',   scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 5,  gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '10:00',
+    home: { name: 'FC筑附',    scorers: [] },
+    away: { name: 'Phoenix',   scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 6,  gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '11:20',
+    home: { name: 'FC紫炎',    scorers: [] },
+    away: { name: 'T.A.S.',    scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
   // 男子 決勝トーナメント
-  { id: 7,  gender: '男子', stage: 'tournament', round: '準決勝', date: '7/6',  dow: '月', time: '10:00', home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] }, scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 8,  gender: '男子', stage: 'tournament', round: '決勝',   date: '7/12', dow: '月', time: '14:00', home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] }, scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 7,  gender: '男子', stage: 'tournament', round: '準決勝', date: '7/6',  dow: '月', time: '10:00',
+    home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 8,  gender: '男子', stage: 'tournament', round: '決勝',   date: '7/12', dow: '月', time: '14:00',
+    home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
   // 女子 予選リーグ
-  { id: 9,  gender: '女子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00', home: { name: '筑嶺女',   scorers: ['高草木 悠 ×2'] }, away: { name: 'FC Stella', scorers: ['伊藤'] }, scoreH: 2, scoreA: 1, status: 'finished' },
-  { id: 10, gender: '女子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20', home: { name: 'Flare',    scorers: [] },               away: { name: '筑嶺女',    scorers: [] },       scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 11, gender: '女子', stage: 'league', group: 'B', date: '6/15', dow: '月', time: '10:00', home: { name: 'FC Stella',scorers: [] },               away: { name: 'Flare',     scorers: [] },       scoreH: null, scoreA: null, status: 'scheduled' },
-  // 女子 決勝トーナメント
-  { id: 12, gender: '女子', stage: 'tournament', round: '決勝', date: '7/12', dow: '月', time: '13:00', home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] }, scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 9,  gender: '女子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00',
+    home: { name: '筑嶺女',    scorers: ['高草木 悠 ×2'] },
+    away: { name: 'FC Stella', scorers: ['伊藤'] },
+    scoreH: 2, scoreA: 1, status: 'finished' },
+  { id: 10, gender: '女子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20',
+    home: { name: 'Flare',     scorers: [] },
+    away: { name: '筑嶺女',    scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 11, gender: '女子', stage: 'league', group: 'B', date: '6/15', dow: '月', time: '10:00',
+    home: { name: 'FC Stella', scorers: [] },
+    away: { name: 'Flare',     scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 12, gender: '女子', stage: 'tournament', round: '決勝', date: '7/12', dow: '月', time: '13:00',
+    home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
 ]
 
-const STATUS_CONFIG = {
-  scheduled: { label: 'Scheduled', cls: 'ms-scheduled' },
-  live:       { label: 'Live',      cls: 'ms-live' },
-  finished:   { label: 'Finished',  cls: 'ms-finished' },
-  cancelled:  { label: 'Cancelled', cls: 'ms-cancelled' },
+function MatchCard({ m }) {
+  const isLive      = m.status === 'live'
+  const isFinished  = m.status === 'finished'
+  const isScheduled = m.status === 'scheduled'
+
+  const homeWin = isFinished && m.scoreH > m.scoreA
+  const awayWin = isFinished && m.scoreA > m.scoreH
+
+  return (
+    <div className={`mc2-card${isLive ? ' mc2-live' : ''}${isFinished ? ' mc2-finished' : ''}`}>
+      {/* Status badge */}
+      <div className="mc2-top">
+        {isLive && (
+          <span className="mc2-badge mc2-badge-live">
+            <span className="mc2-dot" />LIVE
+          </span>
+        )}
+        {isScheduled && <span className="mc2-badge mc2-badge-scheduled">Scheduled</span>}
+        {isFinished   && <span className="mc2-badge mc2-badge-finished">Finished</span>}
+        {m.status === 'cancelled' && <span className="mc2-badge mc2-badge-cancelled">Cancelled</span>}
+        <span className="mc2-group-label">
+          {m.date}({m.dow}) &nbsp;·&nbsp; {m.group ? `${m.group}グループ` : m.round}
+        </span>
+      </div>
+
+      {/* Main body */}
+      <div className="mc2-body">
+        {/* Home team */}
+        <div className={`mc2-team mc2-home${homeWin ? ' mc2-winner' : ''}`}>
+          <div className="mc2-team-name">{m.home.name}</div>
+        </div>
+
+        {/* Center: score / time */}
+        <div className="mc2-center">
+          {isLive && (
+            <div className="mc2-score mc2-score-live num">
+              <span>{m.scoreH ?? 0}</span>
+              <span className="mc2-sep">-</span>
+              <span>{m.scoreA ?? 0}</span>
+            </div>
+          )}
+          {isFinished && (
+            <div className="mc2-score num">
+              <span className={homeWin ? 'mc2-win-num' : ''}>{m.scoreH}</span>
+              <span className="mc2-sep">-</span>
+              <span className={awayWin ? 'mc2-win-num' : ''}>{m.scoreA}</span>
+            </div>
+          )}
+          {isScheduled && (
+            <div className="mc2-kickoff num">{m.time}</div>
+          )}
+          {isLive && <div className="mc2-minute num">{m.minute}</div>}
+        </div>
+
+        {/* Away team */}
+        <div className={`mc2-team mc2-away${awayWin ? ' mc2-winner' : ''}`}>
+          <div className="mc2-team-name">{m.away.name}</div>
+        </div>
+      </div>
+
+      {/* Scorers (finished only) */}
+      {isFinished && (m.home.scorers.length > 0 || m.away.scorers.length > 0) && (
+        <div className="mc2-scorers">
+          <span className="mc2-scorer-home">{m.home.scorers.join(', ') || '—'}</span>
+          <span className="mc2-scorer-sep" />
+          <span className="mc2-scorer-away">{m.away.scorers.join(', ') || '—'}</span>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function Matches() {
@@ -31,8 +128,7 @@ export default function Matches() {
   const [stage, setStage]   = useState('league')
 
   const filtered = allMatches.filter(m => m.gender === gender && m.stage === stage)
-
-  const groups = stage === 'league'
+  const groups   = stage === 'league'
     ? [...new Set(filtered.map(m => m.group))].sort()
     : [...new Set(filtered.map(m => m.round))]
 
@@ -42,81 +138,47 @@ export default function Matches() {
         <h2 className="page-title">試合・結果</h2>
       </div>
 
-      {/* Gender toggle */}
-      <div className="matches-gender-toggle">
-        {['男子', '女子'].map(g => (
-          <button
-            key={g}
-            className={`gender-btn${gender === g ? ' active' : ''}`}
-            onClick={() => setGender(g)}
-          >{g}</button>
-        ))}
+      {/* iOS segmented control — sticky */}
+      <div className="mc2-sticky-bar">
+        <div className="mc2-segment">
+          {['男子', '女子'].map(g => (
+            <button
+              key={g}
+              className={`mc2-seg-btn${gender === g ? ' active' : ''}`}
+              onClick={() => setGender(g)}
+            >{g}</button>
+          ))}
+        </div>
       </div>
 
       {/* Stage tabs */}
-      <div className="matches-stage-tabs">
-        <button
-          className={`stage-tab${stage === 'league' ? ' active' : ''}`}
-          onClick={() => setStage('league')}
-        >予選リーグ</button>
-        <button
-          className={`stage-tab${stage === 'tournament' ? ' active' : ''}`}
-          onClick={() => setStage('tournament')}
-        >決勝トーナメント</button>
+      <div className="mc2-stage-tabs">
+        {[['league', '予選リーグ'], ['tournament', '決勝トーナメント']].map(([key, label]) => (
+          <button
+            key={key}
+            className={`mc2-stage-tab${stage === key ? ' active' : ''}`}
+            onClick={() => setStage(key)}
+          >{label}</button>
+        ))}
       </div>
 
-      {/* Match cards grouped */}
-      <div className="match-sections">
-        {groups.map(g => (
-          <div key={g} className="match-section">
-            <div className="match-section-label">
-              {stage === 'league' ? `${g}グループ` : g}
+      {/* Match sections */}
+      <div className="mc2-sections">
+        {groups.map(g => {
+          const cards = filtered.filter(m => (stage === 'league' ? m.group : m.round) === g)
+          return (
+            <div key={g} className="mc2-section">
+              <div className="mc2-section-head">
+                <span className="mc2-section-title">
+                  {stage === 'league' ? `グループ ${g}` : g}
+                </span>
+              </div>
+              <div className="mc2-card-list">
+                {cards.map(m => <MatchCard key={m.id} m={m} />)}
+              </div>
             </div>
-            <div className="match-cards">
-              {filtered.filter(m => (stage === 'league' ? m.group : m.round) === g).map(m => {
-                const sc = STATUS_CONFIG[m.status]
-                return (
-                  <div key={m.id} className={`match-card${m.status === 'live' ? ' is-live' : ''}`}>
-                    {/* Header */}
-                    <div className="mc-header">
-                      <span className="mc-date num">{m.date}({m.dow}) {m.time}</span>
-                      <span className={`mc-status ${sc.cls}`}>
-                        {m.status === 'live' && <span className="mc-live-dot" />}
-                        {sc.label}
-                      </span>
-                    </div>
-
-                    {/* Teams + Score */}
-                    <div className="mc-body">
-                      <div className="mc-team mc-team-home">
-                        <span className="mc-team-name">{m.home.name}</span>
-                        {m.home.scorers.length > 0 && (
-                          <span className="mc-scorers">{m.home.scorers.join(', ')}</span>
-                        )}
-                      </div>
-
-                      <div className="mc-score-wrap">
-                        {m.status === 'finished'
-                          ? <div className="mc-score num">{m.scoreH}<span className="mc-dash">-</span>{m.scoreA}</div>
-                          : m.status === 'live'
-                          ? <div className="mc-score num is-live-score">{m.scoreH ?? 0}<span className="mc-dash">-</span>{m.scoreA ?? 0}</div>
-                          : <div className="mc-vs">VS</div>
-                        }
-                      </div>
-
-                      <div className="mc-team mc-team-away">
-                        <span className="mc-team-name">{m.away.name}</span>
-                        {m.away.scorers.length > 0 && (
-                          <span className="mc-scorers">{m.away.scorers.join(', ')}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </main>
   )
