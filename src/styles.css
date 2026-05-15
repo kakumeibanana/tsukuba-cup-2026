@@ -41,7 +41,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   position: sticky;
   top: 0;
   z-index: 50;
-  background: linear-gradient(135deg, #160b35 0%, #2d1065 50%, #1a0c42 100%);
+  background: linear-gradient(90deg, #064e3b 0%, #065f46 32%, #4c1d95 70%, #1e0f4a 100%);
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 .header-inner {
@@ -1188,9 +1188,10 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   height: 3px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(139,92,246,0.22) 15%,
-    rgba(167,139,250,0.48) 50%,
-    rgba(139,92,246,0.22) 85%,
+    rgba(16,185,129,0.4) 15%,
+    rgba(52,211,153,0.5) 30%,
+    rgba(139,92,246,0.5) 65%,
+    rgba(109,40,217,0.25) 85%,
     transparent 100%
   );
 }
@@ -1359,7 +1360,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .news-card-date { font-size: 10.5px; color: var(--ink-400); font-weight: 600; font-family: "Manrope", sans-serif; }
 
 /* ── Footer: 3-column on desktop ── */
-.footer-inner { grid-template-columns: 1.5fr 1fr 1fr; }
+@media (min-width: 901px) {
+  .footer-inner { grid-template-columns: 1.5fr 1fr 1fr; }
+}
 
 /* ── Responsive overrides for new components ── */
 @media (max-width: 640px) {
