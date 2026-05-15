@@ -3,11 +3,9 @@ export default function RecentResults() {
     <div className="card">
       <div className="card-head">
         <div className="card-title">
-          <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M14.5 9.5L20 4M20 4h-4M20 4v4" />
-            <path d="M9.5 14.5L4 20M4 20h4M4 20v-4" />
-            <path d="M9.5 9.5L4 4M4 4h4M4 4v4" />
-            <path d="M14.5 14.5L20 20M20 20v-4M20 20h-4" />
+          <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="8" r="5" />
+            <path d="M12 13v8M9 18l3 3 3-3" />
           </svg>
           直近の試合結果
         </div>
@@ -41,7 +39,6 @@ export default function RecentResults() {
             </div>
           </div>
           <div className="score num"><span className="w-side">3</span> <span className="dash">-</span> 1</div>
-          <span className="pill pill-win">WIN</span>
         </div>
 
         <div className="result-card">
@@ -65,7 +62,6 @@ export default function RecentResults() {
             </div>
           </div>
           <div className="score num">2 <span className="dash">-</span> 2</div>
-          <span className="pill pill-draw">DRAW</span>
         </div>
 
         <div className="result-card">
@@ -89,7 +85,6 @@ export default function RecentResults() {
             </div>
           </div>
           <div className="score num"><span className="w-side">5</span> <span className="dash">-</span> 0</div>
-          <span className="pill pill-win">WIN</span>
         </div>
 
       </div>

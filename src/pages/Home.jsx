@@ -1,5 +1,4 @@
 import Hero from '../components/Hero.jsx'
-import TodayMatch from '../components/TodayMatch.jsx'
 import UpcomingSchedule from '../components/UpcomingSchedule.jsx'
 import RecentResults from '../components/RecentResults.jsx'
 import GroupRanking from '../components/GroupRanking.jsx'
@@ -12,7 +11,6 @@ export default function Home() {
       <Hero />
       <div className="body-grid">
         <div className="col">
-          <TodayMatch />
           <UpcomingSchedule />
           <RecentResults />
         </div>
