@@ -1,31 +1,25 @@
 export default function Hero() {
+  const today = new Date()
+  const start = new Date('2026-06-08')
+  const daysLeft = Math.max(0, Math.ceil((start - today) / (1000 * 60 * 60 * 24)))
+
   return (
     <section className="hero">
       <div className="grid-bg"></div>
       <div className="hero-copy">
         <span className="hero-year-bg" aria-hidden="true">2026</span>
-        <div className="hero-status">
-          <span className="dot"></span>
-          開催中 · 5月10日 - 6月2日
-        </div>
         <h1 className="hero-title">TSUKUBA<br />CUP 2026</h1>
         <div className="hero-tag">
           <span>全力で、楽しんで、最高の夏にしよう。</span>
           <span className="script">Enjoy Futsal!</span>
         </div>
-        <div className="hero-stats">
-          <div className="hero-stat">
-            <div className="label">Teams</div>
-            <div className="value num">16<span className="unit">チーム</span></div>
+        <div className="hero-countdown">
+          <div className="hero-countdown-dates">6/8(MON) ～ 7/12(MON)</div>
+          <div className="hero-countdown-main">
+            <span className="hero-countdown-num">{daysLeft}</span>
+            <span className="hero-countdown-label">days to go</span>
           </div>
-          <div className="hero-stat">
-            <div className="label">Matches</div>
-            <div className="value num">32<span className="unit">試合</span></div>
-          </div>
-          <div className="hero-stat">
-            <div className="label">Category</div>
-            <div className="value">男子 / 女子</div>
-          </div>
+          <div className="hero-countdown-sub">開催まであと {daysLeft} 日</div>
         </div>
         <div className="hero-actions">
           <a href="#matches" className="btn btn-primary">
