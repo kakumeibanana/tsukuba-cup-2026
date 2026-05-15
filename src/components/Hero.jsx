@@ -16,10 +16,10 @@ export default function Hero() {
         <div className="hero-countdown">
           <div className="hero-countdown-dates">6/8(MON) ～ 7/12(MON)</div>
           <div className="hero-countdown-main">
+            <span className="hero-countdown-label">あと</span>
             <span className="hero-countdown-num">{daysLeft}</span>
-            <span className="hero-countdown-label">days to go</span>
+            <span className="hero-countdown-label">日</span>
           </div>
-          <div className="hero-countdown-sub">開催まであと {daysLeft} 日</div>
         </div>
         <div className="hero-actions">
           <a href="#matches" className="btn btn-primary">

@@ -159,7 +159,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   font-size: clamp(52px, 6.4vw, 78px);
   line-height: 0.95;
   letter-spacing: -0.02em;
-  margin: 0;
+  margin: 20px 0 0;
   background: linear-gradient(135deg, #ffffff 0%, #e9d5ff 60%, #c084fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
