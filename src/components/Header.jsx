@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import BrandCrest from './BrandCrest.jsx'
-
 export default function Header() {
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
@@ -11,7 +9,7 @@ export default function Header() {
       <header className="header">
         <div className="header-inner">
           <div className="brand">
-            <BrandCrest />
+            <img src="/logo.png" alt="" className="brand-crest" />
             <div className="brand-text">
               <div className="name">TSUKUBA CUP 2026</div>
               <div className="sub">筑波大学附属高校 フットサル大会</div>
