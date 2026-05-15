@@ -3,6 +3,16 @@ export default function TodayMatch() {
     <div className="live-card" id="matches">
       <div className="live-card-bg" />
 
+      <div className="card-head">
+        <div className="card-title">
+          <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 7v5l3 2"/>
+          </svg>
+          今日の試合
+        </div>
+      </div>
+
       <div className="live-card-header">
         <div className="live-league">男子 予選リーグ Aグループ</div>
         <div className="live-card-date num">5月13日(水)</div>
