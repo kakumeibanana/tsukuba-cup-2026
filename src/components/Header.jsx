@@ -17,10 +17,10 @@ export default function Header() {
             </div>
           </div>
           <nav className="nav" aria-label="メインメニュー">
-            <Link to="/matches" className={pathname === '/matches' ? 'active' : ''}>試合・結果</Link>
+            <Link to="/matches"   className={pathname === '/matches'   ? 'active' : ''}>試合・結果</Link>
             <Link to="/standings" className={pathname === '/standings' ? 'active' : ''}>順位・ランキング</Link>
-            <Link to="/teams" className={pathname === '/teams' ? 'active' : ''}>チーム</Link>
-            <Link to="/about" className={pathname === '/about' ? 'active' : ''}>大会について</Link>
+            <Link to="/teams"     className={pathname === '/teams'     ? 'active' : ''}>チーム</Link>
+            <Link to="/about"     className={pathname === '/about'     ? 'active' : ''}>大会について</Link>
           </nav>
           <button className="menu-btn" aria-label="メニューを開く" onClick={() => setOpen(true)}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -28,9 +28,9 @@ export default function Header() {
             </svg>
           </button>
         </div>
+        <div className="header-field-deco" aria-hidden="true" />
       </header>
 
-      {/* Mobile nav drawer */}
       <div className={`mobile-nav${open ? ' open' : ''}`} aria-hidden={!open}>
         <div className="mobile-nav-backdrop" onClick={() => setOpen(false)} />
         <div className="mobile-nav-drawer">
@@ -39,10 +39,10 @@ export default function Header() {
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
-          <Link to="/matches" onClick={() => setOpen(false)}>試合・結果</Link>
+          <Link to="/matches"   onClick={() => setOpen(false)}>試合・結果</Link>
           <Link to="/standings" onClick={() => setOpen(false)}>順位・ランキング</Link>
-          <Link to="/teams" onClick={() => setOpen(false)}>チーム</Link>
-          <Link to="/about" onClick={() => setOpen(false)}>大会について</Link>
+          <Link to="/teams"     onClick={() => setOpen(false)}>チーム</Link>
+          <Link to="/about"     onClick={() => setOpen(false)}>大会について</Link>
         </div>
       </div>
     </>
