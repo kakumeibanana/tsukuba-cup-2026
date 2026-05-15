@@ -41,8 +41,10 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   position: sticky;
   top: 0;
   z-index: 50;
-  background: linear-gradient(90deg, #064e3b 0%, #065f46 32%, #4c1d95 70%, #1e0f4a 100%);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(139,92,246,0.18);
 }
 .header-inner {
   max-width: 1120px;
@@ -1176,22 +1178,21 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
    PREMIUM REDESIGN — Dark Header + Sports Digital Theme
    ================================================================ */
 
-/* ── Dark header text/icon overrides ── */
-.header .brand-text .name   { color: #fff; }
-.header .brand-text .sub    { color: rgba(255,255,255,0.48); }
-.header .nav a              { color: rgba(255,255,255,0.62); }
-.header .nav a:hover        { color: rgba(255,255,255,0.95); }
-.header .nav a.active       { color: #fff; }
+/* ── Frosted header text/icon overrides ── */
+.header .brand-text .name   { color: #1e0f4a; }
+.header .brand-text .sub    { color: rgba(76,29,149,0.55); }
+.header .nav a              { color: rgba(30,15,74,0.6); }
+.header .nav a:hover        { color: #1e0f4a; }
+.header .nav a.active       { color: #4c1d95; }
 .header .nav a.active::after{ background: #a78bfa; }
-.header .menu-btn           { color: rgba(255,255,255,0.8); }
+.header .menu-btn           { color: rgba(30,15,74,0.7); }
 .header-field-deco {
   height: 3px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(16,185,129,0.4) 15%,
-    rgba(52,211,153,0.5) 30%,
-    rgba(139,92,246,0.5) 65%,
-    rgba(109,40,217,0.25) 85%,
+    rgba(167,139,250,0.4) 20%,
+    rgba(139,92,246,0.7) 50%,
+    rgba(109,40,217,0.4) 80%,
     transparent 100%
   );
 }
