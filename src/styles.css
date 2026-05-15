@@ -21,7 +21,7 @@
   --draw-bg: #e5e7eb;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
 body {
   font-family: "Noto Sans JP", "Manrope", system-ui, sans-serif;
   background: var(--lavender-bg);
@@ -512,7 +512,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .sched-item .meta .row { display: inline-flex; align-items: center; gap: 6px; }
 .sched-item .meta svg { width: 12px; height: 12px; color: var(--ink-400); }
 .sched-next {
-  position: absolute; right: -10px; top: 50%;
+  position: absolute; right: 0; top: 50%;
   transform: translateY(-50%);
   width: 36px; height: 36px; border-radius: 999px;
   background: #fff; border: 1px solid var(--line);
