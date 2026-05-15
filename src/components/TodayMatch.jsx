@@ -4,10 +4,7 @@ export default function TodayMatch() {
       <div className="live-card-bg" />
 
       <div className="live-card-header">
-        <div>
-          <div className="live-badge"><span className="dot" />LIVE</div>
-          <div className="live-league">男子 予選リーグ Aグループ</div>
-        </div>
+        <div className="live-league">男子 予選リーグ Aグループ</div>
         <div className="live-card-date num">5月13日(水)</div>
       </div>
 
@@ -53,15 +50,6 @@ export default function TodayMatch() {
         </div>
       </div>
 
-      <a href="#" className="btn-ticket">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 9a1 1 0 011-1h18a1 1 0 011 1v2a2 2 0 000 4v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2a2 2 0 000-4V9z"/>
-        </svg>
-        チケット購入
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M13 6l6 6-6 6"/>
-        </svg>
-      </a>
     </div>
   )
 }
