@@ -570,33 +570,53 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 .sched-next svg { width: 14px; height: 14px; }
 
-/* Today status */
-.today-status {
-  border-radius: 12px;
-  padding: 14px 18px;
-  border-left: 4px solid;
+/* Today status — gradient outline style */
+.ts-wrap {
+  border-radius: 14px;
+  padding: 2px;
 }
-.today-status-inner {
+.ts-grad-open      { background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%); }
+.ts-grad-cancelled { background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); }
+.ts-grad-pending   { background: linear-gradient(135deg, #f59e0b 0%, #84cc16 100%); }
+.ts-grad-no-match  { background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%); }
+
+.ts-body {
+  background: #faf9ff;
+  border-radius: 12px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  position: relative;
 }
-.today-status-emoji { font-size: 24px; line-height: 1; }
-.today-status-title {
+.ts-emoji { font-size: 22px; line-height: 1; flex-shrink: 0; }
+.ts-text { flex: 1; min-width: 0; }
+.ts-title {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--ink-400);
   margin-bottom: 3px;
 }
-.today-status-msg {
+.ts-msg {
   font-size: 14px;
   font-weight: 700;
+  color: var(--ink-900);
 }
-.status-open      { background: #f0fdf4; border-color: #16a34a; color: #14532d; }
-.status-cancelled { background: #fef2f2; border-color: #dc2626; color: #7f1d1d; }
-.status-pending   { background: #fffbeb; border-color: #d97706; color: #78350f; }
-.status-no-match  { background: #f8fafc; border-color: #94a3b8; color: #475569; }
+.ts-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ts-badge-open      { background: #ede9fe; color: #5b21b6; }
+.ts-badge-cancelled { background: #fee2e2; color: #991b1b; }
+.ts-badge-pending   { background: #fef3c7; color: #92400e; }
+.ts-badge-no-match  { background: #f1f5f9; color: #64748b; }
 
 /* Sched list (horizontal rows) */
 .sched-list { display: flex; flex-direction: column; gap: 6px; }
