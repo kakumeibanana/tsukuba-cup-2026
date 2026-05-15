@@ -570,6 +570,34 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 .sched-next svg { width: 14px; height: 14px; }
 
+/* Today status */
+.today-status {
+  border-radius: 12px;
+  padding: 14px 18px;
+  border-left: 4px solid;
+}
+.today-status-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.today-status-emoji { font-size: 24px; line-height: 1; }
+.today-status-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.today-status-msg {
+  font-size: 14px;
+  font-weight: 700;
+}
+.status-open      { background: #f0fdf4; border-color: #16a34a; color: #14532d; }
+.status-cancelled { background: #fef2f2; border-color: #dc2626; color: #7f1d1d; }
+.status-pending   { background: #fffbeb; border-color: #d97706; color: #78350f; }
+.status-no-match  { background: #f8fafc; border-color: #94a3b8; color: #475569; }
+
 /* Sched list (horizontal rows) */
 .sched-list { display: flex; flex-direction: column; gap: 6px; }
 .sched-row {
