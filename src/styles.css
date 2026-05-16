@@ -1161,10 +1161,24 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
 /* ===== Matches page v2 ===== */
 
+/* Matches page: flex column, content scrolls inside .mc2-body-wrap */
+.mc2-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+  padding-bottom: 0;
+}
+.mc2-body-wrap {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+  padding-bottom: 48px;
+}
+
 /* Sticky bar: gender + stage */
 .mc2-sticky-bar {
-  position: sticky;
-  top: 70px;
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -1439,7 +1453,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 
 @media (max-width: 640px) {
-  .mc2-sticky-bar { top: 100px; padding: 10px 0 0; }
+  .mc2-page { height: calc(100vh - 100px); }
+  .mc2-body-wrap { padding-bottom: 32px; }
+  .mc2-sticky-bar { padding: 10px 0 0; }
   .mc2-stage-tab  { padding: 8px 14px; font-size: 12px; }
   .mc2-team-name  { font-size: 13px; }
   .mc2-score      { font-size: 26px; }

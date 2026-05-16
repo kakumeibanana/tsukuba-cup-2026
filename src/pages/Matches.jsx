@@ -123,7 +123,7 @@ export default function Matches() {
     : [...new Set(filtered.map(m => m.round))]
 
   return (
-    <main className="page">
+    <main className="page mc2-page">
       <div className="page-head">
         <h2 className="page-title">試合・結果</h2>
       </div>
@@ -143,22 +143,24 @@ export default function Matches() {
         </div>
       </div>
 
-      <div className="mc2-sections">
-        {sections.map(s => {
-          const cards = filtered.filter(m => (stage === 'league' ? m.group : m.round) === s)
-          return (
-            <div key={s} className="mc2-section">
-              <div className="mc2-section-head">
-                <span className="mc2-section-title">
-                  {stage === 'league' ? `グループ ${s}` : s}
-                </span>
+      <div className="mc2-body-wrap">
+        <div className="mc2-sections">
+          {sections.map(s => {
+            const cards = filtered.filter(m => (stage === 'league' ? m.group : m.round) === s)
+            return (
+              <div key={s} className="mc2-section">
+                <div className="mc2-section-head">
+                  <span className="mc2-section-title">
+                    {stage === 'league' ? `グループ ${s}` : s}
+                  </span>
+                </div>
+                <div className="mc2-card-list">
+                  {cards.map(m => <MatchCard key={m.id} m={m} />)}
+                </div>
               </div>
-              <div className="mc2-card-list">
-                {cards.map(m => <MatchCard key={m.id} m={m} />)}
-              </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
     </main>
   )
