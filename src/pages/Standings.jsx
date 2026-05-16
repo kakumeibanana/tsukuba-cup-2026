@@ -150,6 +150,7 @@ export default function Standings() {
                     ? <span className={`rank-medal ${medals[s.rank - 1]}`}>{s.rank}</span>
                     : s.rank}
                 </div>
+                <div />
                 <div className="scorer-name">
                   {s.name}
                   <span className="team-tag">（{s.team}）</span>
