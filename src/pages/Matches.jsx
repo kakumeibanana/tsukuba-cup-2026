@@ -116,30 +116,11 @@ function MatchCard({ m }) {
 export default function Matches() {
   const [gender, setGender] = useState('男子')
   const [stage, setStage]   = useState('league')
-  const [group, setGroup]   = useState('A')
 
-  // グループタブ（予選リーグかつ複数グループの場合のみ表示）
-  const leagueGroups = [...new Set(
-    allMatches.filter(m => m.gender === gender && m.stage === 'league' && m.group).map(m => m.group)
-  )].sort()
-  const showGroupTabs = stage === 'league' && leagueGroups.length > 1
-
-  // 表示する試合
-  const displayMatches = allMatches.filter(m => {
-    if (m.gender !== gender || m.stage !== stage) return false
-    if (showGroupTabs) return m.group === group
-    return true
-  })
-
-  // トーナメントのラウンド
-  const rounds = [...new Set(
-    allMatches.filter(m => m.gender === gender && m.stage === 'tournament').map(m => m.round)
-  )]
-
-  const handleGenderChange = (g) => {
-    setGender(g)
-    setGroup('A')
-  }
+  const filtered = allMatches.filter(m => m.gender === gender && m.stage === stage)
+  const sections = stage === 'league'
+    ? [...new Set(filtered.map(m => m.group))].sort()
+    : [...new Set(filtered.map(m => m.round))]
 
   return (
     <main className="page">
@@ -147,12 +128,11 @@ export default function Matches() {
         <h2 className="page-title">試合・結果</h2>
       </div>
 
-      {/* Sticky bar */}
       <div className="mc2-sticky-bar">
         <div className="mc2-segment">
           {['男子', '女子'].map(g => (
             <button key={g} className={`mc2-seg-btn${gender === g ? ' active' : ''}`}
-              onClick={() => handleGenderChange(g)}>{g}</button>
+              onClick={() => setGender(g)}>{g}</button>
           ))}
         </div>
         <div className="mc2-stage-tabs">
@@ -161,36 +141,24 @@ export default function Matches() {
               onClick={() => setStage(key)}>{label}</button>
           ))}
         </div>
-        {/* グループタブ（男子予選のみ） */}
-        {showGroupTabs && (
-          <div className="mc2-group-tabs">
-            {leagueGroups.map(g => (
-              <button key={g} className={`mc2-group-tab${group === g ? ' active' : ''}`}
-                onClick={() => setGroup(g)}>グループ {g}</button>
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="mc2-sections">
-        {stage === 'tournament' ? (
-          // トーナメント: ラウンド別セクション
-          rounds.map(round => (
-            <div key={round} className="mc2-section">
+        {sections.map(s => {
+          const cards = filtered.filter(m => (stage === 'league' ? m.group : m.round) === s)
+          return (
+            <div key={s} className="mc2-section">
               <div className="mc2-section-head">
-                <span className="mc2-section-title">{round}</span>
+                <span className="mc2-section-title">
+                  {stage === 'league' ? `グループ ${s}` : s}
+                </span>
               </div>
               <div className="mc2-card-list">
-                {displayMatches.filter(m => m.round === round).map(m => <MatchCard key={m.id} m={m} />)}
+                {cards.map(m => <MatchCard key={m.id} m={m} />)}
               </div>
             </div>
-          ))
-        ) : (
-          // 予選リーグ: フラットなカードリスト
-          <div className="mc2-card-list">
-            {displayMatches.map(m => <MatchCard key={m.id} m={m} />)}
-          </div>
-        )}
+          )
+        })}
       </div>
     </main>
   )
