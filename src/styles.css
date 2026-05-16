@@ -1007,7 +1007,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
 /* ===== Page header (shared across inner pages) ===== */
 .page-head {
-  padding: 28px 0 18px;
+  padding: 16px 0 10px;
 }
 .page-title {
   font-family: "Outfit", "Manrope", sans-serif;
@@ -1224,13 +1224,13 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin-top: 24px;
+  margin-top: 20px;
 }
 .mc2-section-head {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .mc2-section-head::before {
   content: '';
