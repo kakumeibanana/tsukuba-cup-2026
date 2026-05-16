@@ -1,51 +1,54 @@
 import { useState } from 'react'
 
 const allMatches = [
-  // 男子 予選リーグ
-  { id: 1,  gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00',
-    home: { name: 'FC紫炎',  scorers: ['田中 悠真 ×2', '鈴木 大地'] },
+  // 男子 予選リーグ A
+  { id:  1, gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00',
+    home: { name: 'FC紫炎',   scorers: ['田中 悠真 ×2', '鈴木 大地'] },
     away: { name: 'Blue Wave', scorers: ['山本 陸'] },
     scoreH: 3, scoreA: 1, status: 'finished' },
-  { id: 2,  gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20',
-    home: { name: 'Libertà',   scorers: [] },
-    away: { name: 'FC筑附',    scorers: [] },
+  { id:  2, gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20',
+    home: { name: 'Libertà',   scorers: [] }, away: { name: 'FC筑附', scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 3,  gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '12:40',
-    home: { name: '筑嶺男',    scorers: [] },
-    away: { name: 'AVANTI',    scorers: [] },
+  // 男子 予選リーグ B
+  { id:  3, gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '12:40',
+    home: { name: '筑嶺男',   scorers: [] }, away: { name: 'AVANTI',  scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 4,  gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '14:00',
-    home: { name: 'T.A.S.',    scorers: [] },
-    away: { name: 'Nordica',   scorers: [] },
+  { id:  4, gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '14:00',
+    home: { name: 'T.A.S.',   scorers: [] }, away: { name: 'Nordica', scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 5,  gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '10:00',
-    home: { name: 'FC筑附',    scorers: [] },
-    away: { name: 'Phoenix',   scorers: [] },
+  // 男子 予選リーグ C
+  { id:  5, gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '10:00',
+    home: { name: 'FC筑附',   scorers: [] }, away: { name: 'Phoenix', scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 6,  gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '11:20',
-    home: { name: 'FC紫炎',    scorers: [] },
-    away: { name: 'T.A.S.',    scorers: [] },
+  { id:  6, gender: '男子', stage: 'league', group: 'C', date: '6/15', dow: '月', time: '11:20',
+    home: { name: 'FC紫炎',   scorers: [] }, away: { name: 'T.A.S.',  scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  // 男子 予選リーグ D
+  { id: 13, gender: '男子', stage: 'league', group: 'D', date: '6/15', dow: '月', time: '12:40',
+    home: { name: 'Flare',    scorers: [] }, away: { name: '筑嶺男2', scorers: [] },
+    scoreH: null, scoreA: null, status: 'scheduled' },
+  { id: 14, gender: '男子', stage: 'league', group: 'D', date: '6/15', dow: '月', time: '14:00',
+    home: { name: 'Nordica',  scorers: [] }, away: { name: 'AVANTI2', scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
   // 男子 決勝トーナメント
-  { id: 7,  gender: '男子', stage: 'tournament', round: '準決勝', date: '7/6',  dow: '月', time: '10:00',
+  { id:  7, gender: '男子', stage: 'tournament', round: '準決勝', date: '7/6',  dow: '月', time: '10:00',
     home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 8,  gender: '男子', stage: 'tournament', round: '決勝',   date: '7/12', dow: '月', time: '14:00',
+  { id:  8, gender: '男子', stage: 'tournament', round: '決勝',   date: '7/12', dow: '月', time: '14:00',
     home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
-  // 女子 予選リーグ
-  { id: 9,  gender: '女子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00',
+  // 女子 予選リーグ（グループ1つ）
+  { id:  9, gender: '女子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '10:00',
     home: { name: '筑嶺女',    scorers: ['高草木 悠 ×2'] },
     away: { name: 'FC Stella', scorers: ['伊藤'] },
     scoreH: 2, scoreA: 1, status: 'finished' },
   { id: 10, gender: '女子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20',
-    home: { name: 'Flare',     scorers: [] },
-    away: { name: '筑嶺女',    scorers: [] },
+    home: { name: 'Flare',     scorers: [] }, away: { name: '筑嶺女',    scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
-  { id: 11, gender: '女子', stage: 'league', group: 'B', date: '6/15', dow: '月', time: '10:00',
-    home: { name: 'FC Stella', scorers: [] },
-    away: { name: 'Flare',     scorers: [] },
+  { id: 11, gender: '女子', stage: 'league', group: 'A', date: '6/15', dow: '月', time: '10:00',
+    home: { name: 'FC Stella', scorers: [] }, away: { name: 'Flare',     scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
+  // 女子 決勝トーナメント
   { id: 12, gender: '女子', stage: 'tournament', round: '決勝', date: '7/12', dow: '月', time: '13:00',
     home: { name: 'TBD', scorers: [] }, away: { name: 'TBD', scorers: [] },
     scoreH: null, scoreA: null, status: 'scheduled' },
@@ -113,11 +116,30 @@ function MatchCard({ m }) {
 export default function Matches() {
   const [gender, setGender] = useState('男子')
   const [stage, setStage]   = useState('league')
+  const [group, setGroup]   = useState('A')
 
-  const filtered = allMatches.filter(m => m.gender === gender && m.stage === stage)
-  const groups   = stage === 'league'
-    ? [...new Set(filtered.map(m => m.group))].sort()
-    : [...new Set(filtered.map(m => m.round))]
+  // グループタブ（予選リーグかつ複数グループの場合のみ表示）
+  const leagueGroups = [...new Set(
+    allMatches.filter(m => m.gender === gender && m.stage === 'league' && m.group).map(m => m.group)
+  )].sort()
+  const showGroupTabs = stage === 'league' && leagueGroups.length > 1
+
+  // 表示する試合
+  const displayMatches = allMatches.filter(m => {
+    if (m.gender !== gender || m.stage !== stage) return false
+    if (showGroupTabs) return m.group === group
+    return true
+  })
+
+  // トーナメントのラウンド
+  const rounds = [...new Set(
+    allMatches.filter(m => m.gender === gender && m.stage === 'tournament').map(m => m.round)
+  )]
+
+  const handleGenderChange = (g) => {
+    setGender(g)
+    setGroup('A')
+  }
 
   return (
     <main className="page">
@@ -125,45 +147,50 @@ export default function Matches() {
         <h2 className="page-title">試合・結果</h2>
       </div>
 
-      {/* Sticky bar: gender toggle + stage tabs */}
+      {/* Sticky bar */}
       <div className="mc2-sticky-bar">
         <div className="mc2-segment">
           {['男子', '女子'].map(g => (
-            <button
-              key={g}
-              className={`mc2-seg-btn${gender === g ? ' active' : ''}`}
-              onClick={() => setGender(g)}
-            >{g}</button>
+            <button key={g} className={`mc2-seg-btn${gender === g ? ' active' : ''}`}
+              onClick={() => handleGenderChange(g)}>{g}</button>
           ))}
         </div>
         <div className="mc2-stage-tabs">
           {[['league', '予選リーグ'], ['tournament', '決勝トーナメント']].map(([key, label]) => (
-            <button
-              key={key}
-              className={`mc2-stage-tab${stage === key ? ' active' : ''}`}
-              onClick={() => setStage(key)}
-            >{label}</button>
+            <button key={key} className={`mc2-stage-tab${stage === key ? ' active' : ''}`}
+              onClick={() => setStage(key)}>{label}</button>
           ))}
         </div>
+        {/* グループタブ（男子予選のみ） */}
+        {showGroupTabs && (
+          <div className="mc2-group-tabs">
+            {leagueGroups.map(g => (
+              <button key={g} className={`mc2-group-tab${group === g ? ' active' : ''}`}
+                onClick={() => setGroup(g)}>グループ {g}</button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Match sections */}
       <div className="mc2-sections">
-        {groups.map(g => {
-          const cards = filtered.filter(m => (stage === 'league' ? m.group : m.round) === g)
-          return (
-            <div key={g} className="mc2-section">
+        {stage === 'tournament' ? (
+          // トーナメント: ラウンド別セクション
+          rounds.map(round => (
+            <div key={round} className="mc2-section">
               <div className="mc2-section-head">
-                <span className="mc2-section-title">
-                  {stage === 'league' ? `グループ ${g}` : g}
-                </span>
+                <span className="mc2-section-title">{round}</span>
               </div>
               <div className="mc2-card-list">
-                {cards.map(m => <MatchCard key={m.id} m={m} />)}
+                {displayMatches.filter(m => m.round === round).map(m => <MatchCard key={m.id} m={m} />)}
               </div>
             </div>
-          )
-        })}
+          ))
+        ) : (
+          // 予選リーグ: フラットなカードリスト
+          <div className="mc2-card-list">
+            {displayMatches.map(m => <MatchCard key={m.id} m={m} />)}
+          </div>
+        )}
       </div>
     </main>
   )

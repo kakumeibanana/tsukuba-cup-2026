@@ -1219,6 +1219,32 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   border-bottom-color: var(--purple-700);
 }
 
+/* Group tabs (men's league only) */
+.mc2-group-tabs {
+  display: flex;
+  width: 100%;
+  gap: 6px;
+  padding: 8px 0 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.mc2-group-tab {
+  flex-shrink: 0;
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1.5px solid var(--line);
+  background: transparent;
+  color: var(--ink-400);
+  transition: all .15s;
+}
+.mc2-group-tab.active {
+  background: var(--purple-700);
+  border-color: var(--purple-700);
+  color: #fff;
+}
+
 /* Sections */
 .mc2-sections {
   display: flex;
