@@ -1671,6 +1671,47 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .sched-day-events { display: flex; flex-direction: column; gap: 3px; padding-top: 3px; }
 .sched-day-event { font-size: 13px; color: var(--ink-800); }
 
+/* About page – rule / flow lists */
+.about-rule-list { display: flex; flex-direction: column; }
+.about-rule-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.about-rule-row:last-child { border-bottom: 0; }
+.about-rule-label {
+  font-size: 11.5px; font-weight: 700; color: var(--purple-700);
+  padding-top: 2px;
+}
+.about-rule-body { font-size: 13px; color: var(--ink-800); line-height: 1.6; }
+.about-rule-note {
+  font-size: 11.5px; color: var(--ink-400); margin: 10px 0 0; padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.about-bullet-list {
+  margin: 0; padding: 0 0 0 18px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.about-bullet-list li { font-size: 13px; color: var(--ink-800); line-height: 1.55; }
+.about-flow-list { display: flex; flex-direction: column; }
+.about-flow-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.about-flow-row:last-child { border-bottom: 0; }
+.about-flow-time {
+  font-size: 12px; font-weight: 700; color: var(--purple-700);
+  white-space: nowrap; padding-top: 1px;
+}
+.about-flow-desc { font-size: 13px; color: var(--ink-800); }
+
 /* ===== Responsive overrides for new pages ===== */
 @media (max-width: 900px) {
   .menu-btn { display: inline-flex; }
