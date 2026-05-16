@@ -59,7 +59,7 @@ export default function About() {
         <div className="about-grid-bg" />
         <div className="about-hero-content">
           <div className="about-hero-eyebrow">TSUKUBA CUP 2026 SUMMER</div>
-          <h1 className="about-hero-title">筑大附属<br />フットサル大会</h1>
+          <h1 className="about-hero-title">フットサル大会</h1>
           <p className="about-hero-sub">
             サッカークラブ主催。クラス・学年・部活の枠を超えて<br />
             学校全体でフットサルを楽しむことを目標とする。
