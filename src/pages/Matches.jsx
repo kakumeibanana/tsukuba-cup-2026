@@ -55,68 +55,60 @@ function MatchCard({ m }) {
   const isLive      = m.status === 'live'
   const isFinished  = m.status === 'finished'
   const isScheduled = m.status === 'scheduled'
+  const isCancelled = m.status === 'cancelled'
 
   const homeWin = isFinished && m.scoreH > m.scoreA
   const awayWin = isFinished && m.scoreA > m.scoreH
+  const hasScorers = isFinished && (m.home.scorers.length > 0 || m.away.scorers.length > 0)
 
   return (
-    <div className={`mc2-card${isLive ? ' mc2-live' : ''}${isFinished ? ' mc2-finished' : ''}`}>
-      {/* Status badge */}
+    <div className={[
+      'mc2-card',
+      isLive      && 'mc2-live',
+      isFinished  && 'mc2-finished',
+      isCancelled && 'mc2-cancelled',
+    ].filter(Boolean).join(' ')}>
+
+      {/* Top: badge + date/group */}
       <div className="mc2-top">
-        {isLive && (
-          <span className="mc2-badge mc2-badge-live">
-            <span className="mc2-dot" />LIVE
-          </span>
-        )}
+        {isLive      && <span className="mc2-badge mc2-badge-live"><span className="mc2-dot" />LIVE</span>}
         {isScheduled && <span className="mc2-badge mc2-badge-scheduled">Scheduled</span>}
-        {isFinished   && <span className="mc2-badge mc2-badge-finished">Finished</span>}
-        {m.status === 'cancelled' && <span className="mc2-badge mc2-badge-cancelled">Cancelled</span>}
+        {isFinished  && <span className="mc2-badge mc2-badge-finished">Finished</span>}
+        {isCancelled && <span className="mc2-badge mc2-badge-cancelled">Cancelled</span>}
         <span className="mc2-group-label">
-          {m.date}({m.dow}) &nbsp;·&nbsp; {m.group ? `${m.group}グループ` : m.round}
+          {m.date}({m.dow})&nbsp;·&nbsp;{m.group ? `${m.group}グループ` : m.round}
         </span>
       </div>
 
-      {/* Main body */}
+      {/* Body: home | center | away */}
       <div className="mc2-body">
-        {/* Home team */}
         <div className={`mc2-team mc2-home${homeWin ? ' mc2-winner' : ''}`}>
           <div className="mc2-team-name">{m.home.name}</div>
         </div>
 
-        {/* Center: score / time */}
         <div className="mc2-center">
-          {isLive && (
-            <div className="mc2-score mc2-score-live num">
-              <span>{m.scoreH ?? 0}</span>
+          {(isFinished || isLive) && (
+            <div className={`mc2-score num${isLive ? ' mc2-score-live' : ''}`}>
+              <span className={homeWin ? 'mc2-win-num' : ''}>{m.scoreH ?? 0}</span>
               <span className="mc2-sep">-</span>
-              <span>{m.scoreA ?? 0}</span>
+              <span className={awayWin ? 'mc2-win-num' : ''}>{m.scoreA ?? 0}</span>
             </div>
           )}
-          {isFinished && (
-            <div className="mc2-score num">
-              <span className={homeWin ? 'mc2-win-num' : ''}>{m.scoreH}</span>
-              <span className="mc2-sep">-</span>
-              <span className={awayWin ? 'mc2-win-num' : ''}>{m.scoreA}</span>
-            </div>
-          )}
-          {isScheduled && (
-            <div className="mc2-kickoff num">{m.time}</div>
-          )}
-          {isLive && <div className="mc2-minute num">{m.minute}</div>}
+          {isLive      && <div className="mc2-minute num">{m.minute}</div>}
+          {isScheduled && <div className="mc2-kickoff num">{m.time}</div>}
+          {isCancelled && <div className="mc2-cancelled-sep">—</div>}
         </div>
 
-        {/* Away team */}
         <div className={`mc2-team mc2-away${awayWin ? ' mc2-winner' : ''}`}>
           <div className="mc2-team-name">{m.away.name}</div>
         </div>
       </div>
 
-      {/* Scorers (finished only) */}
-      {isFinished && (m.home.scorers.length > 0 || m.away.scorers.length > 0) && (
-        <div className="mc2-scorers">
-          <span className="mc2-scorer-home">{m.home.scorers.join(', ') || '—'}</span>
-          <span className="mc2-scorer-sep" />
-          <span className="mc2-scorer-away">{m.away.scorers.join(', ') || '—'}</span>
+      {/* Scorer bar (finished only) */}
+      {hasScorers && (
+        <div className="mc2-scorer-bar">
+          <span className="mc2-scorer-l">{m.home.scorers.join(', ')}</span>
+          <span className="mc2-scorer-r">{m.away.scorers.join(', ')}</span>
         </div>
       )}
     </div>
