@@ -1161,18 +1161,20 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
 /* ===== Matches page v2 ===== */
 
-/* Sticky segmented control */
+/* Sticky bar: gender + stage */
 .mc2-sticky-bar {
   position: sticky;
   top: 70px;
   z-index: 40;
   display: flex;
-  justify-content: center;
-  padding: 10px 24px 14px;
-  background: rgba(245,243,255,0.88);
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 10px 24px 0;
+  background: rgba(245,243,255,0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  margin: 0 -24px;
+  margin: 0 -24px 0;
 }
 .mc2-segment {
   display: flex;
@@ -1182,6 +1184,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   gap: 2px;
   width: 100%;
   max-width: 260px;
+  margin-bottom: 8px;
 }
 .mc2-seg-btn {
   flex: 1;
@@ -1198,14 +1201,15 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   box-shadow: 0 2px 10px rgba(76,29,149,0.16);
 }
 
-/* Stage tabs */
+/* Stage tabs (inside sticky bar) */
 .mc2-stage-tabs {
   display: flex;
+  width: 100%;
   border-bottom: 1.5px solid var(--line);
-  margin-bottom: 24px;
+  margin-bottom: 0;
 }
 .mc2-stage-tab {
-  padding: 10px 20px;
+  padding: 8px 20px;
   font-size: 13px;
   font-weight: 700;
   color: var(--ink-400);
@@ -1217,6 +1221,8 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   color: var(--purple-700);
   border-bottom-color: var(--purple-700);
 }
+/* space below sticky bar before cards */
+.mc2-sections { margin-top: 20px; }
 
 /* Section heading */
 .mc2-sections { display: flex; flex-direction: column; gap: 28px; }
@@ -1388,7 +1394,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 /* ── Scorer bottom bar (Finished) ── */
 .mc2-scorer-bar {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   background: #F4F5F9;
   border-top: 1px solid rgba(0,0,0,0.05);
   padding: 8px 16px;
@@ -1397,24 +1403,20 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   color: var(--ink-400);
   line-height: 1.4;
 }
-.mc2-scorer-l { flex: 1; text-align: right; }
-.mc2-scorer-r { flex: 1; text-align: left; }
-.mc2-scorer-bar::before {
-  content: '';
-  display: block;
+.mc2-scorer-l { flex: 1; text-align: left; }
+.mc2-scorer-r { flex: 1; text-align: right; }
+.mc2-scorer-div {
   width: 1px;
-  background: rgba(0,0,0,0.08);
-  align-self: stretch;
+  height: 12px;
+  background: rgba(0,0,0,0.1);
   flex-shrink: 0;
-  order: 1;
 }
-.mc2-scorer-r { order: 2; }
 
 @media (max-width: 640px) {
-  .mc2-sticky-bar { top: 100px; }
+  .mc2-sticky-bar { top: 100px; padding: 8px 16px 0; }
+  .mc2-stage-tab  { padding: 8px 14px; font-size: 12px; }
   .mc2-team-name  { font-size: 13px; }
   .mc2-score      { font-size: 26px; }
-  .mc2-score.mc2-score-live { font-size: 30px; }
   .mc2-kickoff    { font-size: 22px; }
 }
 

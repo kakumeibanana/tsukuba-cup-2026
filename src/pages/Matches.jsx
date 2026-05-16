@@ -9,7 +9,7 @@ const allMatches = [
   { id: 2,  gender: '男子', stage: 'league', group: 'A', date: '6/8',  dow: '月', time: '11:20',
     home: { name: 'Libertà',   scorers: [] },
     away: { name: 'FC筑附',    scorers: [] },
-    scoreH: 2, scoreA: 0, minute: "24'", status: 'live' },
+    scoreH: null, scoreA: null, status: 'scheduled' },
   { id: 3,  gender: '男子', stage: 'league', group: 'B', date: '6/8',  dow: '月', time: '12:40',
     home: { name: '筑嶺男',    scorers: [] },
     away: { name: 'AVANTI',    scorers: [] },
@@ -52,7 +52,6 @@ const allMatches = [
 ]
 
 function MatchCard({ m }) {
-  const isLive      = m.status === 'live'
   const isFinished  = m.status === 'finished'
   const isScheduled = m.status === 'scheduled'
   const isCancelled = m.status === 'cancelled'
@@ -64,16 +63,12 @@ function MatchCard({ m }) {
   return (
     <div className={[
       'mc2-card',
-      isLive      && 'mc2-live',
       isFinished  && 'mc2-finished',
       isCancelled && 'mc2-cancelled',
     ].filter(Boolean).join(' ')}>
 
-      {/* Top: badge + date/group */}
+      {/* Top: date/group (+ Cancelled badge only) */}
       <div className="mc2-top">
-        {isLive      && <span className="mc2-badge mc2-badge-live"><span className="mc2-dot" />LIVE</span>}
-        {isScheduled && <span className="mc2-badge mc2-badge-scheduled">Scheduled</span>}
-        {isFinished  && <span className="mc2-badge mc2-badge-finished">Finished</span>}
         {isCancelled && <span className="mc2-badge mc2-badge-cancelled">Cancelled</span>}
         <span className="mc2-group-label">
           {m.date}({m.dow})&nbsp;·&nbsp;{m.group ? `${m.group}グループ` : m.round}
@@ -87,14 +82,13 @@ function MatchCard({ m }) {
         </div>
 
         <div className="mc2-center">
-          {(isFinished || isLive) && (
-            <div className={`mc2-score num${isLive ? ' mc2-score-live' : ''}`}>
-              <span className={homeWin ? 'mc2-win-num' : ''}>{m.scoreH ?? 0}</span>
+          {isFinished && (
+            <div className="mc2-score num">
+              <span className={homeWin ? 'mc2-win-num' : ''}>{m.scoreH}</span>
               <span className="mc2-sep">-</span>
-              <span className={awayWin ? 'mc2-win-num' : ''}>{m.scoreA ?? 0}</span>
+              <span className={awayWin ? 'mc2-win-num' : ''}>{m.scoreA}</span>
             </div>
           )}
-          {isLive      && <div className="mc2-minute num">{m.minute}</div>}
           {isScheduled && <div className="mc2-kickoff num">{m.time}</div>}
           {isCancelled && <div className="mc2-cancelled-sep">—</div>}
         </div>
@@ -108,6 +102,7 @@ function MatchCard({ m }) {
       {hasScorers && (
         <div className="mc2-scorer-bar">
           <span className="mc2-scorer-l">{m.home.scorers.join(', ')}</span>
+          <span className="mc2-scorer-div" />
           <span className="mc2-scorer-r">{m.away.scorers.join(', ')}</span>
         </div>
       )}
@@ -130,7 +125,7 @@ export default function Matches() {
         <h2 className="page-title">試合・結果</h2>
       </div>
 
-      {/* iOS segmented control — sticky */}
+      {/* Sticky bar: gender toggle + stage tabs */}
       <div className="mc2-sticky-bar">
         <div className="mc2-segment">
           {['男子', '女子'].map(g => (
@@ -141,17 +136,15 @@ export default function Matches() {
             >{g}</button>
           ))}
         </div>
-      </div>
-
-      {/* Stage tabs */}
-      <div className="mc2-stage-tabs">
-        {[['league', '予選リーグ'], ['tournament', '決勝トーナメント']].map(([key, label]) => (
-          <button
-            key={key}
-            className={`mc2-stage-tab${stage === key ? ' active' : ''}`}
-            onClick={() => setStage(key)}
-          >{label}</button>
-        ))}
+        <div className="mc2-stage-tabs">
+          {[['league', '予選リーグ'], ['tournament', '決勝トーナメント']].map(([key, label]) => (
+            <button
+              key={key}
+              className={`mc2-stage-tab${stage === key ? ' active' : ''}`}
+              onClick={() => setStage(key)}
+            >{label}</button>
+          ))}
+        </div>
       </div>
 
       {/* Match sections */}
