@@ -1463,6 +1463,11 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 
 /* ===== Standings page ===== */
+.st-seg-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 .standings-groups {
   display: flex;
   flex-direction: column;
@@ -1472,6 +1477,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+.st-table {
+  min-width: 460px;
+}
 .table th.r { text-align: right; }
 .table td.pts {
   font-family: "Manrope", sans-serif;
@@ -1480,6 +1488,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   color: var(--purple-700);
   text-align: right;
 }
+.st-scorer-wrap { margin-top: 24px; }
 
 /* ===== Teams page ===== */
 .teams-grid {
