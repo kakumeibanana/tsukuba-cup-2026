@@ -4,12 +4,16 @@ import AdminLogin from './AdminLogin'
 
 const NAV = [
   {
-    to: '/admin/matches', label: '試合管理',
+    to: '/admin/matches', label: '試合',
     icon: <path d="M8 21h8M12 17V21M17 5V3H7v2M5 5v6a7 7 0 0014 0V5H5z" />,
   },
   {
+    to: '/admin/standings', label: '順位',
+    icon: <><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></>,
+  },
+  {
     to: '/admin/news', label: 'お知らせ',
-    icon: <><path d="M4 5a2 2 0 0 1 2-2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M13 3v5h5M8 13h8M8 17h6"/></>,
+    icon: <><path d="M4 5a2 2 0 0 1 2-2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M13 3v5h5"/></>,
   },
   {
     to: '/admin/teams', label: 'チーム',
@@ -30,7 +34,6 @@ export default function AdminLayout() {
 
   return (
     <div className="adm-layout">
-      {/* サイドバー */}
       <aside className="adm-sidebar">
         <div className="adm-sidebar-brand">
           <img src="/logo.png" alt="" className="adm-sidebar-logo" />
@@ -39,7 +42,6 @@ export default function AdminLayout() {
             <div className="adm-sidebar-sub">管理画面</div>
           </div>
         </div>
-
         <nav className="adm-sidebar-nav">
           {NAV.map(({ to, label, icon }) => (
             <Link key={to} to={to}
@@ -52,11 +54,8 @@ export default function AdminLayout() {
             </Link>
           ))}
         </nav>
-
         <div className="adm-sidebar-foot">
-          <div className="adm-user-info">
-            <div className="adm-user-email">{user.email}</div>
-          </div>
+          <div className="adm-user-email">{user.email}</div>
           <button className="adm-signout-btn" onClick={signOut}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
@@ -66,10 +65,23 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      {/* メインコンテンツ */}
       <main className="adm-main">
         <Outlet />
       </main>
+
+      {/* モバイル底部ナビ */}
+      <nav className="adm-bottom-nav">
+        {NAV.map(({ to, label, icon }) => (
+          <Link key={to} to={to}
+            className={`adm-bottom-nav-btn${pathname.startsWith(to) ? ' active' : ''}`}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {icon}
+            </svg>
+            {label}
+          </Link>
+        ))}
+      </nav>
     </div>
   )
 }

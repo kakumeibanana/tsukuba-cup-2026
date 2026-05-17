@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 
-const CATEGORIES = ['お知らせ', '雨天中止', '日程変更', '告知']
 const BG_PRESETS = [
   { label: '紫', value: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%)' },
   { label: '緑', value: 'linear-gradient(135deg, #14532d 0%, #16a34a 100%)' },
@@ -9,17 +8,21 @@ const BG_PRESETS = [
   { label: '赤', value: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)' },
   { label: 'オレンジ', value: 'linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)' },
 ]
-
 const EMPTY_FORM = { category: 'お知らせ', title: '', body: '', news_date: '', bg_gradient: BG_PRESETS[0].value, published: true }
 
+function todayStr() {
+  const d = new Date()
+  return `${d.getMonth() + 1}/${d.getDate()}`
+}
+
 export default function AdminNews() {
-  const [items, setItems]     = useState([])
-  const [loading, setLoading] = useState(true)
-  const [editing, setEditing] = useState(null)
+  const [items, setItems]       = useState([])
+  const [loading, setLoading]   = useState(true)
+  const [editing, setEditing]   = useState(null)
   const [creating, setCreating] = useState(false)
-  const [form, setForm]       = useState(EMPTY_FORM)
-  const [saving, setSaving]   = useState(false)
-  const [msg, setMsg]         = useState(null)
+  const [form, setForm]         = useState(EMPTY_FORM)
+  const [saving, setSaving]     = useState(false)
+  const [msg, setMsg]           = useState(null)
 
   useEffect(() => { fetchNews() }, [])
 
@@ -36,8 +39,16 @@ export default function AdminNews() {
       news_date: item.news_date, bg_gradient: item.bg_gradient, published: item.published })
     setCreating(false)
   }
-  function openCreate() { setEditing(null); setForm(EMPTY_FORM); setCreating(true) }
-  function closeModal()  { setEditing(null); setCreating(false) }
+  function openCreate(preset) {
+    setEditing(null)
+    setForm(preset ?? EMPTY_FORM)
+    setCreating(true)
+  }
+  function closeModal() { setEditing(null); setCreating(false) }
+
+  function quickCreate(category, title, bg) {
+    openCreate({ ...EMPTY_FORM, category, title, news_date: todayStr(), bg_gradient: bg, published: true })
+  }
 
   const f = key => e => setForm(p => ({ ...p, [key]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
 
@@ -73,10 +84,29 @@ export default function AdminNews() {
     <div className="adm-section">
       <div className="adm-section-head">
         <h2 className="adm-section-title">お知らせ管理</h2>
-        <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ 投稿を追加</button>
+        <button className="adm-btn adm-btn-primary" onClick={() => openCreate()}>＋ 投稿</button>
       </div>
 
       {msg && <div className={`adm-alert ${msg.type === 'ok' ? 'adm-alert-ok' : 'adm-alert-error'}`}>{msg.text}</div>}
+
+      {/* クイック投稿 */}
+      <div className="adm-quick-templates">
+        <div className="adm-quick-label">クイック投稿</div>
+        <div className="adm-quick-btns">
+          <button className="adm-quick-btn adm-quick-rain"
+            onClick={() => quickCreate('雨天中止', '☂ 雨天中止のお知らせ', BG_PRESETS[2].value)}>
+            ☂ 雨天中止
+          </button>
+          <button className="adm-quick-btn adm-quick-sched"
+            onClick={() => quickCreate('日程変更', '📅 日程変更のお知らせ', BG_PRESETS[2].value)}>
+            📅 日程変更
+          </button>
+          <button className="adm-quick-btn adm-quick-info"
+            onClick={() => quickCreate('告知', '📢 ', BG_PRESETS[0].value)}>
+            📢 告知
+          </button>
+        </div>
+      </div>
 
       {loading ? <div className="adm-loading">読み込み中...</div> : (
         <div className="adm-news-list">
@@ -116,7 +146,7 @@ export default function AdminNews() {
                 <div className="adm-field adm-field-sm">
                   <label>カテゴリ</label>
                   <select value={form.category} onChange={f('category')}>
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    {['お知らせ','雨天中止','日程変更','告知'].map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
                 <div className="adm-field adm-field-sm">
