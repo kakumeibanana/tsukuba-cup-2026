@@ -86,7 +86,7 @@ export default function Header() {
                 <circle cx="12" cy="12" r="4" />
                 <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
               </svg>
-              <span>@tsukubacup</span>
+              <span>インスタはこちらから</span>
               <svg style={{marginLeft:'auto',opacity:.45}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 6l6 6-6 6" />
               </svg>
