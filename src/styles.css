@@ -1356,24 +1356,18 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
 /* ===== Matches page v2 ===== */
 
-/* Matches page: flex column, content scrolls inside .mc2-body-wrap */
+/* Matches page: sticky bar, page scrolls normally */
 .mc2-page {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 70px);
-  overflow: hidden;
   padding-bottom: 0;
 }
 .mc2-body-wrap {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  min-height: 0;
-  padding-bottom: 48px;
+  padding-bottom: 64px;
 }
 
 /* Sticky bar: gender + stage */
 .mc2-sticky-bar {
+  position: sticky;
+  top: 64px;
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -1609,6 +1603,16 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   letter-spacing: 0.01em;
   line-height: 1;
 }
+/* Non-time label (e.g. 昼休み) */
+.mc2-time-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-500);
+  background: var(--lavender-bg);
+  border-radius: 99px;
+  padding: 4px 12px;
+  letter-spacing: 0.04em;
+}
 
 /* LIVE match minute */
 .mc2-minute {
@@ -1648,9 +1652,8 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 
 @media (max-width: 640px) {
-  .mc2-page { height: calc(100vh - 100px); }
   .mc2-body-wrap { padding-bottom: 32px; }
-  .mc2-sticky-bar { padding: 10px 0 0; }
+  .mc2-sticky-bar { top: 56px; padding: 10px 0 0; }
   .mc2-stage-tab  { padding: 8px 14px; font-size: 12px; }
   .mc2-team-name  { font-size: 13px; }
   .mc2-score      { font-size: 26px; }

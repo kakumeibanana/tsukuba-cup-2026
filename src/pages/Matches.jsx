@@ -39,7 +39,11 @@ function MatchCard({ m }) {
               <span className={awayWin ? 'mc2-win-num' : ''}>{m.scoreA}</span>
             </div>
           )}
-          {isScheduled && <div className="mc2-kickoff num">{m.time}</div>}
+          {isScheduled && (
+          m.time && m.time.includes(':')
+            ? <div className="mc2-kickoff num">{m.time}</div>
+            : <div className="mc2-time-label">{m.time}</div>
+        )}
           {isCancelled && <div className="mc2-cancelled-sep">—</div>}
         </div>
 
