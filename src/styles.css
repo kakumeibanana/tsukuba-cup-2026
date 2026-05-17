@@ -915,13 +915,96 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 
 /* ===== Animations ===== */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(18px); }
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.hero-copy { animation: fadeInUp 0.55s ease-out both; }
-.hero-media { animation: fadeInUp 0.55s ease-out 0.1s both; }
-.body-grid { animation: fadeInUp 0.5s ease-out 0.2s both; }
+@keyframes fadeSlideLeft {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes heroGrad {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+@keyframes mc2CardIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero breathing gradient */
+.hero {
+  background: linear-gradient(135deg, #0d0620 0%, #2a0e60 20%, #3d1f8a 45%, #4a1d96 65%, #2d1065 85%, #0d0620 100%);
+  background-size: 300% 300%;
+  animation: heroGrad 14s ease infinite;
+}
+
+/* Floating "2026" watermark */
+.hero-year-bg { animation: float 8s ease-in-out infinite; }
+
+/* Hero title: slide-left entrance + shimmer gradient */
+.hero-title {
+  background: linear-gradient(90deg, #ffffff 20%, #e9d5ff 38%, #c084fc 50%, #e9d5ff 62%, #ffffff 80%);
+  background-size: 300% 100%;
+  animation:
+    fadeSlideLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both,
+    shimmer 5s ease-in-out 1s infinite;
+}
+
+/* Staggered hero copy elements */
+.hero-tag       { animation: fadeSlideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both; }
+.hero-countdown { animation: fadeSlideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.48s both; }
+.hero-actions   { animation: fadeSlideUp 0.60s cubic-bezier(0.16, 1, 0.3, 1) 0.64s both; }
+.hero-insta     { animation: fadeSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.80s both; }
+
+/* Scroll-triggered reveal */
+.anim-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity  0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.anim-up.is-visible { opacity: 1; transform: translateY(0); }
+
+/* Stagger delay utilities */
+.anim-d1 { transition-delay: 0.08s; }
+.anim-d2 { transition-delay: 0.16s; }
+.anim-d3 { transition-delay: 0.24s; }
+.anim-d4 { transition-delay: 0.32s; }
+.anim-d5 { transition-delay: 0.40s; }
+
+/* Card hover lift */
+.card { transition: box-shadow 0.25s ease, transform 0.25s ease; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 14px 40px -10px rgba(109,40,217,0.14); }
+
+/* Match card stagger on tab switch */
+.mc2-card { animation: mc2CardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.mc2-card:nth-child(1) { animation-delay: 0.04s; }
+.mc2-card:nth-child(2) { animation-delay: 0.10s; }
+.mc2-card:nth-child(3) { animation-delay: 0.16s; }
+.mc2-card:nth-child(4) { animation-delay: 0.22s; }
+.mc2-card:nth-child(5) { animation-delay: 0.28s; }
+.mc2-card:nth-child(6) { animation-delay: 0.34s; }
+.mc2-card:nth-child(7) { animation-delay: 0.40s; }
+.mc2-card:nth-child(8) { animation-delay: 0.46s; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero { animation: none; }
+  .hero-year-bg, .hero-title, .hero-tag, .hero-countdown, .hero-actions, .hero-insta { animation: none; }
+  .anim-up { opacity: 1; transform: none; transition: none; }
+  .mc2-card { animation: none; }
+}
 
 /* ===== Mobile nav drawer ===== */
 .mobile-nav {

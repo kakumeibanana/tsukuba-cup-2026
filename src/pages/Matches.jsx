@@ -144,7 +144,7 @@ export default function Matches() {
       </div>
 
       <div className="mc2-body-wrap">
-        <div className="mc2-sections">
+        <div className="mc2-sections" key={`${gender}-${stage}`}>
           {sections.map(s => {
             const cards = filtered.filter(m => (stage === 'league' ? m.group : m.round) === s)
             return (

@@ -12,14 +12,14 @@ export default function Home() {
       <Hero />
       <div className="body-grid">
         <div className="col">
-          <TodayStatus />
-          <UpcomingSchedule />
-          <RecentResults />
+          <div className="anim-up"><TodayStatus /></div>
+          <div className="anim-up anim-d1"><UpcomingSchedule /></div>
+          <div className="anim-up anim-d2"><RecentResults /></div>
         </div>
         <div className="col" id="ranking">
-          <GroupRanking />
-          <NewsList />
-          <AboutCard />
+          <div className="anim-up anim-d1"><GroupRanking /></div>
+          <div className="anim-up anim-d2"><NewsList /></div>
+          <div className="anim-up anim-d3"><AboutCard /></div>
         </div>
       </div>
     </main>
