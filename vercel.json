@@ -1,4 +1,4 @@
 {
   "rewrites": [{ "source": "/(.*)", "destination": "/" }],
-  "installCommand": "npm ci"
+  "installCommand": "rm -f package-lock.json && npm install"
 }
