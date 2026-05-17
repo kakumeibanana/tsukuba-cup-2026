@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
-const ALLOWED_DOMAIN = '@sgh-tsukuba.org'
+const ALLOWED_EMAIL = 'sasasout361@sgh-tsukuba.org'
 
 export function AuthProvider({ children }) {
   const [user, setUser]         = useState(null)
@@ -23,8 +23,8 @@ export function AuthProvider({ children }) {
   async function handleSession(session) {
     if (!session) { setUser(null); return }
     const email = session.user.email ?? ''
-    if (!email.endsWith(ALLOWED_DOMAIN)) {
-      setAuthError(`${ALLOWED_DOMAIN} のアカウントのみアクセスできます`)
+    if (email !== ALLOWED_EMAIL) {
+      setAuthError(`アクセス権限がありません`)
       await supabase.auth.signOut()
       setUser(null)
     } else {
