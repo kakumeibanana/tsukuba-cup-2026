@@ -35,7 +35,7 @@ export default function Hero() {
             </svg>
           </a>
         </div>
-        <a href="#" className="hero-insta">
+        <a href="https://www.instagram.com/tsukubacup?igsh=d2s5ZzM2dzkzYjZw" target="_blank" rel="noreferrer" className="hero-insta">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="3" y="3" width="18" height="18" rx="5" />
             <circle cx="12" cy="12" r="4" />

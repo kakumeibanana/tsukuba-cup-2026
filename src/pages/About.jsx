@@ -85,20 +85,23 @@ export default function About() {
               </svg>
               昼休み開催
             </span>
-            <a
-              href="https://www.instagram.com/tsukubacup?igsh=d2s5ZzM2dzkzYjZw"
-              target="_blank"
-              rel="noreferrer"
-              className="about-chip about-chip-link"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
-              </svg>
-              @tsukubacup
-            </a>
           </div>
+          <a
+            href="https://www.instagram.com/tsukubacup?igsh=d2s5ZzM2dzkzYjZw"
+            target="_blank"
+            rel="noreferrer"
+            className="about-insta-btn"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="18" height="18" rx="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+            </svg>
+            <span>公式 Instagram <span className="about-insta-handle">@tsukubacup</span></span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </a>
         </div>
       </div>
 
