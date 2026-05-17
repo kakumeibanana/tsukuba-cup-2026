@@ -941,23 +941,19 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Hero breathing gradient */
+/* Hero breathing gradient — keeps original colors, animates position subtly */
 .hero {
-  background: linear-gradient(135deg, #0d0620 0%, #2a0e60 20%, #3d1f8a 45%, #4a1d96 65%, #2d1065 85%, #0d0620 100%);
-  background-size: 300% 300%;
-  animation: heroGrad 14s ease infinite;
+  background: linear-gradient(135deg, #160b35 0%, #2d1065 25%, #3d1f8a 50%, #4a1d96 75%, #1a0c42 100%);
+  background-size: 250% 250%;
+  animation: heroGrad 16s ease infinite;
 }
 
 /* Floating "2026" watermark */
 .hero-year-bg { animation: float 8s ease-in-out infinite; }
 
-/* Hero title: slide-left entrance + shimmer gradient */
+/* Hero title: slide-left entrance only (keep original gradient) */
 .hero-title {
-  background: linear-gradient(90deg, #ffffff 20%, #e9d5ff 38%, #c084fc 50%, #e9d5ff 62%, #ffffff 80%);
-  background-size: 300% 100%;
-  animation:
-    fadeSlideLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both,
-    shimmer 5s ease-in-out 1s infinite;
+  animation: fadeSlideLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
 /* Staggered hero copy elements */
