@@ -2404,6 +2404,12 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .adm-mc-right  { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 .adm-mc-score  { font-size: 18px; font-weight: 800; color: var(--ink-900); }
 .adm-mc-group  { font-size: 10.5px; color: var(--ink-400); font-weight: 600; }
+.adm-mc-enter-result {
+  font-size: 12px; font-weight: 800; color: var(--purple-700);
+  background: rgba(124,58,237,0.08); border-radius: 8px;
+  padding: 5px 10px; white-space: nowrap;
+}
+.adm-mc-edit-hint { font-size: 11px; font-weight: 600; color: var(--ink-400); }
 
 /* ── モーダルタイトル（試合） ── */
 .adm-modal-match-title {

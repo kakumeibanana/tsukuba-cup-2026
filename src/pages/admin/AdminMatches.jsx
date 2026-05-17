@@ -171,16 +171,21 @@ export default function AdminMatches() {
                       <div className="adm-mc-away">{m.away_name}</div>
                     </div>
                     <div className="adm-mc-right">
-                      {(m.status === 'finished' || m.status === 'live') && m.score_home != null && (
-                        <div className="adm-mc-score num">{m.score_home} – {m.score_away}</div>
+                      {m.status === 'finished' && m.score_home != null ? (
+                        <>
+                          <div className="adm-mc-score num">{m.score_home} – {m.score_away}</div>
+                          <span className="adm-mc-edit-hint">編集 ›</span>
+                        </>
+                      ) : m.status === 'live' ? (
+                        <>
+                          {m.score_home != null && <div className="adm-mc-score num">{m.score_home} – {m.score_away}</div>}
+                          <span className="adm-status-badge" style={{ background: '#fee2e218', color: '#dc2626' }}>🔴 LIVE</span>
+                        </>
+                      ) : m.status === 'cancelled' ? (
+                        <span className="adm-status-badge" style={{ background: '#f3f4f6', color: '#9ca3af' }}>中止</span>
+                      ) : (
+                        <span className="adm-mc-enter-result">結果入力 ›</span>
                       )}
-                      <span className="adm-status-badge"
-                        style={{ background: `${STATUS_COLORS[m.status]}18`, color: STATUS_COLORS[m.status] }}>
-                        {m.status === 'scheduled' ? (m.match_time || '昼休み')
-                          : m.status === 'live' ? '🔴 LIVE'
-                          : m.status === 'finished' ? '終了'
-                          : '中止'}
-                      </span>
                       <span className="adm-mc-group">
                         {m.stage === 'league' ? `G${m.group_name}` : m.round}
                       </span>
