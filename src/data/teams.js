@@ -7,6 +7,13 @@ export const teams = [
     color: '#7c3aed',
     desc: '熱いプレースタイルが持ち味。攻撃的なフットサルで会場を沸かせる。昨年度準優勝。',
     w: 1, d: 0, l: 0, gf: 3, ga: 1,
+    members: [
+      { name: '田中 悠真', role: 'キャプテン' },
+      { name: '鈴木 大地', role: '' },
+      { name: '伊藤 蓮', role: '' },
+      { name: '中村 空', role: '' },
+      { name: '高橋 颯', role: '' },
+    ],
   },
   {
     id: 2,
@@ -16,6 +23,13 @@ export const teams = [
     color: '#1d4ed8',
     desc: '堅守速攻が持ち味。ディフェンスの粘り強さで上位を狙う。',
     w: 0, d: 0, l: 1, gf: 1, ga: 3,
+    members: [
+      { name: '山本 陸', role: 'キャプテン' },
+      { name: '小林 陽翔', role: '' },
+      { name: '加藤 悠', role: '' },
+      { name: '渡辺 拓海', role: '' },
+      { name: '松田 蒼', role: '' },
+    ],
   },
   {
     id: 3,
@@ -25,6 +39,12 @@ export const teams = [
     color: '#059669',
     desc: '自由を意味するチーム名の通り、ダイナミックなプレースタイル。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '佐藤 海斗', role: 'キャプテン' },
+      { name: '木村 葵', role: '' },
+      { name: '清水 航', role: '' },
+      { name: '橋本 律', role: '' },
+    ],
   },
   {
     id: 4,
@@ -34,6 +54,13 @@ export const teams = [
     color: '#0891b2',
     desc: '筑波大附属の名を背負って挑む地元チーム。爆発的な攻撃力が武器。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '石川 翔', role: 'キャプテン' },
+      { name: '山田 大輝', role: '' },
+      { name: '藤田 隼', role: '' },
+      { name: '西村 蓮', role: '' },
+      { name: '岡田 悠人', role: '' },
+    ],
   },
   {
     id: 5,
@@ -43,6 +70,12 @@ export const teams = [
     color: '#b45309',
     desc: 'チームワークと粘り強さが最大の武器。接戦を制する精神力がある。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '前田 康輝', role: 'キャプテン' },
+      { name: '坂本 陸', role: '' },
+      { name: '長谷川 凌', role: '' },
+      { name: '村上 大和', role: '' },
+    ],
   },
   {
     id: 6,
@@ -52,6 +85,13 @@ export const teams = [
     color: '#d97706',
     desc: '前へ進む姿勢が持ち味。チームワークと前向きなメンタリティが最大の武器。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '近藤 光', role: 'キャプテン' },
+      { name: '青木 颯太', role: '' },
+      { name: '森 悠斗', role: '' },
+      { name: '池田 朔', role: '' },
+      { name: '吉田 海', role: '' },
+    ],
   },
   {
     id: 7,
@@ -61,6 +101,12 @@ export const teams = [
     color: '#0f766e',
     desc: 'テクニックと組織力を融合させたスタイル。堅い守備から素早い攻撃に転じる。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '菊池 湊', role: 'キャプテン' },
+      { name: '原田 律', role: '' },
+      { name: '宮崎 蒼', role: '' },
+      { name: '福田 翔', role: '' },
+    ],
   },
   {
     id: 8,
@@ -70,6 +116,13 @@ export const teams = [
     color: '#4f46e5',
     desc: '北欧のイメージ通り、冷静なパス回しと正確なシュートが特徴。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '三浦 颯', role: 'キャプテン' },
+      { name: '林 大輝', role: '' },
+      { name: '藤原 陸', role: '' },
+      { name: '岸本 海斗', role: '' },
+      { name: '杉山 凌', role: '' },
+    ],
   },
   {
     id: 9,
@@ -79,6 +132,12 @@ export const teams = [
     color: '#dc2626',
     desc: '不死鳥の名の通り、劣勢からでも逆転する粘り強さが持ち味。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '中島 蓮', role: 'キャプテン' },
+      { name: '小川 海', role: '' },
+      { name: '太田 光', role: '' },
+      { name: '石田 颯', role: '' },
+    ],
   },
   {
     id: 10,
@@ -88,6 +147,13 @@ export const teams = [
     color: '#ea580c',
     desc: '閃光のような速さで相手を切り裂く。スピードに自信あり。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '上田 翔', role: 'キャプテン' },
+      { name: '古川 大和', role: '' },
+      { name: '川口 蒼', role: '' },
+      { name: '土屋 陸', role: '' },
+      { name: '矢野 颯', role: '' },
+    ],
   },
   {
     id: 11,
@@ -97,6 +163,12 @@ export const teams = [
     color: '#92400e',
     desc: '筑嶺男の第二チーム。若手を中心に勢いで勝負する。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '永田 海斗', role: 'キャプテン' },
+      { name: '桑原 颯', role: '' },
+      { name: '大野 律', role: '' },
+      { name: '鶴田 蓮', role: '' },
+    ],
   },
   {
     id: 12,
@@ -106,6 +178,12 @@ export const teams = [
     color: '#ca8a04',
     desc: 'AVANTIの第二チーム。フレッシュなメンバーで上位進出を狙う。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '田村 湊', role: 'キャプテン' },
+      { name: '安藤 悠', role: '' },
+      { name: '本田 蒼', role: '' },
+      { name: '倉田 翔', role: '' },
+    ],
   },
   {
     id: 13,
@@ -115,6 +193,13 @@ export const teams = [
     color: '#be185d',
     desc: '攻守一体のスタイルで女子部門の頂点を目指す実力派チーム。',
     w: 1, d: 0, l: 0, gf: 2, ga: 1,
+    members: [
+      { name: '高草木 悠', role: 'キャプテン' },
+      { name: '松本 咲', role: '' },
+      { name: '山口 凛', role: '' },
+      { name: '村田 芽衣', role: '' },
+      { name: '金子 莉子', role: '' },
+    ],
   },
   {
     id: 14,
@@ -124,6 +209,12 @@ export const teams = [
     color: '#7c3aed',
     desc: '星の名を冠した女子の強豪。テクニカルなプレーが持ち味。',
     w: 0, d: 0, l: 1, gf: 1, ga: 2,
+    members: [
+      { name: '伊藤 結', role: 'キャプテン' },
+      { name: '中野 美咲', role: '' },
+      { name: '斎藤 陽菜', role: '' },
+      { name: '浜田 奈々', role: '' },
+    ],
   },
   {
     id: 15,
@@ -133,5 +224,12 @@ export const teams = [
     color: '#db2777',
     desc: '女子部門の新興勢力。若い力でベテランチームに挑む。',
     w: 0, d: 0, l: 0, gf: 0, ga: 0,
+    members: [
+      { name: '川島 花', role: 'キャプテン' },
+      { name: '大塚 莉愛', role: '' },
+      { name: '藤井 萌', role: '' },
+      { name: '石井 つぐみ', role: '' },
+      { name: '長田 彩', role: '' },
+    ],
   },
 ]
