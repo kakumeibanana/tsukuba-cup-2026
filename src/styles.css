@@ -806,7 +806,6 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .rank-medal.bronze { background: linear-gradient(135deg, #d97706, #92400e); box-shadow: 0 2px 6px rgba(146,64,14,0.3); }
 .table tr.top-row { background: linear-gradient(90deg, rgba(124,58,237,0.04), transparent 70%); }
 .table td.team-cell {
-  display: flex; align-items: center; gap: 10px;
   font-weight: 700;
 }
 .table td.team-cell .crest { width: 26px; height: 26px; }
