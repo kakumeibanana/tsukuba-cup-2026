@@ -1612,7 +1612,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   font-weight: 600;
   color: rgba(255,255,255,0.85);
   backdrop-filter: blur(8px);
+  text-decoration: none;
 }
+.about-chip-link:hover { background: rgba(255,255,255,0.18); }
 .about-content-grid {
   display: grid;
   grid-template-columns: 1.3fr 1fr;

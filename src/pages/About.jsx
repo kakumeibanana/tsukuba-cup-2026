@@ -85,6 +85,19 @@ export default function About() {
               </svg>
               昼休み開催
             </span>
+            <a
+              href="https://www.instagram.com/tsukubacup?igsh=d2s5ZzM2dzkzYjZw"
+              target="_blank"
+              rel="noreferrer"
+              className="about-chip about-chip-link"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+              </svg>
+              @tsukubacup
+            </a>
           </div>
         </div>
       </div>
