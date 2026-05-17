@@ -141,11 +141,9 @@ export default function TeamDetail() {
         <div className="td-members-grid">
           {team.members.map(m => (
             <div key={m.name} className="td-member">
-              <div className="td-member-avatar" style={{ background: `${team.color}20`, color: team.color }}>
-                {m.name[0]}
-              </div>
               <div className="td-member-info">
                 <div className="td-member-name">{m.name}</div>
+                {m.cls && <span className="td-member-cls">{m.cls}</span>}
                 {m.role && (
                   <span className="td-member-role" style={{ background: `${team.color}18`, color: team.color }}>
                     {m.role}
