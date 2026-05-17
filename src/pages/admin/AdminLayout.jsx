@@ -56,6 +56,12 @@ export default function AdminLayout() {
         </nav>
         <div className="adm-sidebar-foot">
           <div className="adm-user-email">{user.email}</div>
+          <Link to="/" className="adm-signout-btn" style={{ textDecoration: 'none', marginBottom: 6 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            サイトへ戻る
+          </Link>
           <button className="adm-signout-btn" onClick={signOut}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
@@ -81,6 +87,13 @@ export default function AdminLayout() {
             {label}
           </Link>
         ))}
+        <Link to="/" className="adm-bottom-nav-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          サイト
+        </Link>
       </nav>
     </div>
   )
