@@ -1,61 +1,5 @@
-const teams = [
-  {
-    id: 1,
-    name: 'FC紫炎',
-    gender: '男子',
-    color: '#7c3aed',
-    desc: '熱いプレースタイルが持ち味。攻撃的なフットサルで会場を沸かせる。昨年度準優勝。',
-    w: 1, d: 0, l: 0, gf: 3,
-  },
-  {
-    id: 2,
-    name: 'Blue Wave',
-    gender: '男子',
-    color: '#1d4ed8',
-    desc: '堅守速攻が持ち味。ディフェンスの粘り強さで上位を狙う。',
-    w: 0, d: 0, l: 1, gf: 1,
-  },
-  {
-    id: 3,
-    name: 'FC筑附',
-    gender: '男子',
-    color: '#0891b2',
-    desc: '筑波大附属の名を背負って挑む地元チーム。爆発的な攻撃力が武器。',
-    w: 1, d: 0, l: 0, gf: 5,
-  },
-  {
-    id: 4,
-    name: 'Libertà',
-    gender: '男子',
-    color: '#059669',
-    desc: '自由を意味するチーム名の通り、ダイナミックなプレースタイル。',
-    w: 0, d: 0, l: 0, gf: 0,
-  },
-  {
-    id: 5,
-    name: 'AVANTI',
-    gender: '男子',
-    color: '#d97706',
-    desc: 'チームワークと前向きなメンタリティが最大の武器。',
-    w: 0, d: 0, l: 1, gf: 0,
-  },
-  {
-    id: 6,
-    name: '筑嶺女',
-    gender: '女子',
-    color: '#be185d',
-    desc: '攻守一体のスタイルで女子部門の頂点を目指す実力派チーム。',
-    w: 0, d: 1, l: 0, gf: 2,
-  },
-  {
-    id: 7,
-    name: 'FC Stella',
-    gender: '女子',
-    color: '#7c3aed',
-    desc: '星の名を冠した女子の強豪。テクニカルなプレーが持ち味。',
-    w: 0, d: 1, l: 0, gf: 2,
-  },
-]
+import { Link } from 'react-router-dom'
+import { teams } from '../data/teams'
 
 export default function Teams() {
   return (
@@ -68,7 +12,7 @@ export default function Teams() {
         {teams.map(t => {
           const pts = t.w * 3 + t.d
           return (
-            <div key={t.id} className="team-card">
+            <Link key={t.id} to={`/teams/${t.id}`} className="team-card">
               <div className="team-card-accent" style={{ background: t.color }} />
               <div className="team-card-body">
                 <div className={`team-gender ${t.gender === '男子' ? 'team-gender-m' : 'team-gender-w'}`}>
@@ -91,7 +35,7 @@ export default function Teams() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           )
         })}
       </div>

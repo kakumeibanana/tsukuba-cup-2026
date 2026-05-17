@@ -6,6 +6,7 @@ import Home from './pages/Home.jsx'
 import Matches from './pages/Matches.jsx'
 import Standings from './pages/Standings.jsx'
 import Teams from './pages/Teams.jsx'
+import TeamDetail from './pages/TeamDetail.jsx'
 import About from './pages/About.jsx'
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/matches" element={<Matches />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/teams" element={<Teams />} />
+        <Route path="/teams/:id" element={<TeamDetail />} />
         <Route path="/about" element={<About />} />
       </Routes>
       <Footer />

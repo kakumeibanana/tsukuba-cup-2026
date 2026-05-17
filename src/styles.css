@@ -2144,3 +2144,118 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   .news-card-img { height: 64px; }
   .news-card-title { font-size: 11.5px; }
 }
+
+/* ===== Team Detail page ===== */
+.td-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink-400);
+  transition: color .15s;
+  text-decoration: none;
+}
+.td-back:hover { color: var(--purple-700); }
+
+.td-hero {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.td-hero-accent { height: 6px; }
+.td-hero-body { padding: 22px 24px 24px; }
+.td-name {
+  font-family: "Outfit", "Manrope", sans-serif;
+  font-weight: 900;
+  font-size: clamp(28px, 5vw, 40px);
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+  margin: 10px 0 10px;
+  line-height: 1.1;
+}
+.td-desc {
+  font-size: 14px;
+  color: var(--ink-500);
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+.td-group-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px;
+  background: var(--purple-50);
+  border-radius: 999px;
+  font-size: 12px; font-weight: 700;
+  color: var(--purple-700);
+}
+
+.td-stats-card { margin-bottom: 0; }
+.td-stats-row {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+}
+.td-stat {
+  flex: 1;
+  min-width: 56px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 14px 8px;
+  border-right: 1px solid var(--line);
+}
+.td-stat:last-child { border-right: 0; }
+.td-stat-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--ink-400); text-transform: uppercase; margin-bottom: 6px;
+}
+.td-stat-value {
+  font-weight: 800; font-size: 22px;
+  color: var(--ink-900); line-height: 1;
+}
+
+.td-match-list { display: flex; flex-direction: column; gap: 16px; margin-top: 4px; }
+.td-match-section { display: flex; flex-direction: column; }
+.td-match-section-label {
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-400);
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 2px;
+}
+.td-match-row {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.td-match-row:last-child { border-bottom: 0; }
+.td-match-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11.5px; color: var(--ink-400); font-weight: 600;
+}
+.td-match-stage {
+  font-size: 10.5px;
+  background: var(--lavender-bg);
+  padding: 2px 8px; border-radius: 999px;
+  color: var(--ink-500);
+}
+.td-match-body {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.td-match-opp { font-size: 15px; font-weight: 700; color: var(--ink-900); }
+.td-match-right { display: flex; align-items: center; gap: 8px; }
+.td-match-score { font-size: 16px; font-weight: 800; color: var(--ink-800); }
+.td-match-tbd { font-size: 12px; color: var(--ink-400); font-weight: 600; }
+.td-res {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.04em;
+  padding: 2px 8px; border-radius: 999px;
+}
+.td-res-w { background: #dcfce7; color: #15803d; }
+.td-res-d { background: #f1f5f9; color: #475569; }
+.td-res-l { background: #fee2e2; color: #dc2626; }
+
+/* team-card as link */
+.team-card { display: block; text-decoration: none; color: inherit; cursor: pointer; }
+
+@media (max-width: 640px) {
+  .td-hero-body { padding: 18px 18px 20px; }
+  .td-stat { padding: 12px 6px; }
+  .td-stat-value { font-size: 18px; }
+}
