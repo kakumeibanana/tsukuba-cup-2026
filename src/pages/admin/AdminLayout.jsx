@@ -1,9 +1,6 @@
-import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import AdminLogin from './AdminLogin'
-import AdminMatches from './AdminMatches'
-import AdminNews from './AdminNews'
-import AdminTeams from './AdminTeams'
 
 const NAV = [
   {
@@ -71,12 +68,7 @@ export default function AdminLayout() {
 
       {/* メインコンテンツ */}
       <main className="adm-main">
-        <Routes>
-          <Route path="matches" element={<AdminMatches />} />
-          <Route path="news"    element={<AdminNews />} />
-          <Route path="teams"   element={<AdminTeams />} />
-          <Route index element={<Navigate to="matches" replace />} />
-        </Routes>
+        <Outlet />
       </main>
     </div>
   )
