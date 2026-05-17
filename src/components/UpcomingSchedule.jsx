@@ -1,8 +1,27 @@
-const matches = [
-  { date: '6/8',  dow: '月', badge: 'badge-m', label: '男子', match: '予選リーグ Aグループ 第1節', time: '10:00' },
-  { date: '6/8',  dow: '月', badge: 'badge-w', label: '女子', match: '予選リーグ Bグループ 第1節', time: '11:20' },
-  { date: '6/15', dow: '月', badge: 'badge-m', label: '男子', match: '予選リーグ Aグループ 第2節', time: '10:00' },
-  { date: '6/22', dow: '月', badge: 'badge-m', label: '男子', match: '予選リーグ Bグループ 第2節', time: '10:00' },
+import { Link } from 'react-router-dom'
+
+const days = [
+  {
+    date: '6/8', dow: '月',
+    matches: [
+      { badge: 'badge-m', label: 'グループ A', home: 'FC紫炎',    away: 'Blue Wave' },
+      { badge: 'badge-m', label: 'グループ A', home: 'Libertà',   away: 'FC筑附' },
+      { badge: 'badge-m', label: 'グループ B', home: '筑嶺男',    away: 'AVANTI' },
+      { badge: 'badge-m', label: 'グループ B', home: 'T.A.S.',    away: 'Nordica' },
+      { badge: 'badge-w', label: 'グループ A', home: '筑嶺女',    away: 'FC Stella' },
+      { badge: 'badge-w', label: 'グループ A', home: 'Flare',     away: '筑嶺女' },
+    ],
+  },
+  {
+    date: '6/15', dow: '月',
+    matches: [
+      { badge: 'badge-m', label: 'グループ C', home: 'FC筑附',    away: 'Phoenix' },
+      { badge: 'badge-m', label: 'グループ C', home: 'FC紫炎',    away: 'T.A.S.' },
+      { badge: 'badge-m', label: 'グループ D', home: 'Flare',     away: '筑嶺男2' },
+      { badge: 'badge-m', label: 'グループ D', home: 'Nordica',   away: 'AVANTI2' },
+      { badge: 'badge-w', label: 'グループ A', home: 'FC Stella', away: 'Flare' },
+    ],
+  },
 ]
 
 export default function UpcomingSchedule() {
@@ -16,20 +35,33 @@ export default function UpcomingSchedule() {
           </svg>
           直近の予定
         </div>
-        <a href="#" className="link-more">
+        <Link to="/matches" className="link-more">
           日程ページへ
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
-        </a>
+        </Link>
       </div>
-      <div className="sched-list">
-        {matches.map((m, i) => (
-          <div key={i} className="sched-row">
-            <div className="sched-row-date num">{m.date}<span className="dow">({m.dow})</span></div>
-            <span className={`badge ${m.badge}`}>{m.label}</span>
-            <div className="sched-row-match">{m.match}</div>
-            <div className="sched-row-time num">{m.time}</div>
+
+      <div className="usched-list">
+        {days.map(day => (
+          <div key={day.date} className="usched-day">
+            <div className="usched-day-header">
+              <span className="usched-date num">{day.date}（{day.dow}）</span>
+              <span className="usched-time-tag">昼休み</span>
+            </div>
+            <div className="usched-matches">
+              {day.matches.map((m, i) => (
+                <div key={i} className="usched-row">
+                  <span className={`badge ${m.badge}`}>{m.label}</span>
+                  <span className="usched-teams">
+                    <span className="usched-team">{m.home}</span>
+                    <span className="usched-vs">vs</span>
+                    <span className="usched-team">{m.away}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>

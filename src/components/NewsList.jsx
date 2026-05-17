@@ -1,31 +1,31 @@
 const news = [
   {
     id: 1,
-    category: '試合速報',
-    title: 'FC筑附が5-0の大勝！ Bグループ首位に浮上',
-    date: '5/13',
+    category: 'お知らせ',
+    title: '大会実施要項（最新版）を公開しました',
+    date: '5/17',
     bg: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 65%, #5b21b6 100%)',
   },
   {
     id: 2,
     category: 'お知らせ',
-    title: '大会ルール・会場使用ルールを更新しました',
+    title: '参加チームの登録が完了しました',
+    date: '5/15',
+    bg: 'linear-gradient(135deg, #14532d 0%, #15803d 65%, #16a34a 100%)',
+  },
+  {
+    id: 3,
+    category: 'お知らせ',
+    title: '会場・ルールの最新情報を確認してください',
     date: '5/12',
     bg: 'linear-gradient(135deg, #164e63 0%, #0e7490 65%, #0891b2 100%)',
   },
   {
-    id: 3,
-    category: '試合速報',
-    title: 'FC紫炎が3-1でBlue Waveに勝利。首位をキープ',
-    date: '5/12',
-    bg: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 65%, #3b82f6 100%)',
-  },
-  {
     id: 4,
-    category: '大会情報',
-    title: '決勝トーナメントの組み合わせ抽選について',
+    category: 'お知らせ',
+    title: 'TSUKUBA CUP 2026夏 公式サイトをオープンしました',
     date: '5/10',
-    bg: 'linear-gradient(135deg, #14532d 0%, #15803d 65%, #16a34a 100%)',
+    bg: 'linear-gradient(135deg, #7c2d12 0%, #c2410c 65%, #ea580c 100%)',
   },
 ]
 
@@ -40,16 +40,10 @@ export default function NewsList() {
           </svg>
           ニュース
         </div>
-        <a href="#" className="link-more">
-          すべて見る
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-        </a>
       </div>
       <div className="news-grid">
         {news.map(item => (
-          <a key={item.id} href="#" className="news-card">
+          <div key={item.id} className="news-card">
             <div className="news-card-img" style={{ background: item.bg }}>
               <span className="news-card-cat">{item.category}</span>
             </div>
@@ -57,7 +51,7 @@ export default function NewsList() {
               <div className="news-card-title">{item.title}</div>
               <div className="news-card-date">{item.date}</div>
             </div>
-          </a>
+          </div>
         ))}
       </div>
     </div>

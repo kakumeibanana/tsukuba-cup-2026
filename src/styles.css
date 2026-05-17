@@ -651,6 +651,47 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   white-space: nowrap;
 }
 
+/* Upcoming schedule (grouped by date) */
+.usched-list { display: flex; flex-direction: column; gap: 14px; }
+.usched-day {}
+.usched-day-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 6px;
+}
+.usched-date {
+  font-size: 13px; font-weight: 800; color: var(--purple-700);
+}
+.usched-time-tag {
+  font-size: 11px; font-weight: 700; color: var(--ink-400);
+  background: var(--purple-50); border-radius: 6px; padding: 2px 8px;
+}
+.usched-matches { display: flex; flex-direction: column; gap: 4px; }
+.usched-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+}
+.usched-teams {
+  display: flex; align-items: center; gap: 6px;
+  flex: 1; font-size: 13px; font-weight: 600; color: var(--ink-800);
+  min-width: 0;
+}
+.usched-team { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.usched-vs {
+  font-size: 11px; font-weight: 700; color: var(--ink-400);
+  flex-shrink: 0;
+}
+
+/* No results empty state */
+.no-results {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 28px 16px; text-align: center; color: var(--ink-400);
+}
+.no-results svg { width: 36px; height: 36px; stroke: var(--ink-300); }
+.no-results p { margin: 0; font-size: 14px; font-weight: 600; color: var(--ink-700); }
+.no-results p strong { color: var(--purple-700); }
+.no-results span { font-size: 12px; }
+
 /* Card section divider title */
 .card-section-title {
   display: flex;
