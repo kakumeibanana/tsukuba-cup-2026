@@ -2,27 +2,51 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import AdminLogin from './AdminLogin'
 
-const NAV = [
+const ALL_NAV = [
   {
-    to: '/admin/matches', label: '試合',
+    to: '/admin/dashboard', label: 'ホーム', roles: ['admin', 'match_staff', 'pr_staff'],
+    icon: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>,
+  },
+  {
+    to: '/admin/matches', label: '試合', roles: ['admin', 'match_staff'],
     icon: <path d="M8 21h8M12 17V21M17 5V3H7v2M5 5v6a7 7 0 0014 0V5H5z" />,
   },
   {
-    to: '/admin/standings', label: '順位',
+    to: '/admin/standings', label: '順位', roles: ['admin', 'match_staff'],
     icon: <><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></>,
   },
   {
-    to: '/admin/news', label: 'お知らせ',
+    to: '/admin/teams', label: 'チーム', roles: ['admin'],
+    icon: <><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2 20c1-3.5 3.5-5 6-5s5 1.5 6 5M14 20c.5-2.5 2-4 3.5-4s3 1.2 3.5 4"/></>,
+  },
+  {
+    to: '/admin/news', label: 'Posts', roles: ['admin', 'pr_staff'],
     icon: <><path d="M4 5a2 2 0 0 1 2-2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M13 3v5h5"/></>,
   },
   {
-    to: '/admin/teams', label: 'チーム',
-    icon: <><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2 20c1-3.5 3.5-5 6-5s5 1.5 6 5M14 20c.5-2.5 2-4 3.5-4s3 1.2 3.5 4"/></>,
+    to: '/admin/more', label: 'More', roles: ['admin', 'match_staff', 'pr_staff'],
+    icon: <><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></>,
   },
 ]
 
+// モバイル底部ナビ: ホーム・試合・チーム(admin)・Posts・More (最大5)
+const BOTTOM_NAV_ROLES = {
+  admin:       ['dashboard', 'matches', 'teams', 'news', 'more'],
+  match_staff: ['dashboard', 'matches', 'more'],
+  pr_staff:    ['dashboard', 'news', 'more'],
+}
+
+function navIcon(icon) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {icon}
+    </svg>
+  )
+}
+
 export default function AdminLayout() {
-  const { user, loading, signOut } = useAuth()
+  const { user, role, loading, signOut } = useAuth()
   const { pathname } = useLocation()
 
   if (loading) return (
@@ -31,6 +55,11 @@ export default function AdminLayout() {
     </div>
   )
   if (!user) return <AdminLogin />
+
+  const sidebarNav = ALL_NAV.filter(n => n.roles.includes(role ?? 'admin'))
+
+  const bottomKeys = BOTTOM_NAV_ROLES[role ?? 'admin'] ?? BOTTOM_NAV_ROLES.admin
+  const bottomNav  = ALL_NAV.filter(n => bottomKeys.includes(n.to.split('/').pop()))
 
   return (
     <div className="adm-layout">
@@ -43,13 +72,10 @@ export default function AdminLayout() {
           </div>
         </div>
         <nav className="adm-sidebar-nav">
-          {NAV.map(({ to, label, icon }) => (
+          {sidebarNav.map(({ to, label, icon }) => (
             <Link key={to} to={to}
               className={`adm-nav-link${pathname.startsWith(to) ? ' active' : ''}`}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                {icon}
-              </svg>
+              {navIcon(icon)}
               {label}
             </Link>
           ))}
@@ -76,24 +102,14 @@ export default function AdminLayout() {
       </main>
 
       {/* モバイル底部ナビ */}
-      <nav className="adm-bottom-nav">
-        {NAV.map(({ to, label, icon }) => (
+      <nav className="adm-bottom-nav" style={{ gridTemplateColumns: `repeat(${bottomNav.length}, 1fr)` }}>
+        {bottomNav.map(({ to, label, icon }) => (
           <Link key={to} to={to}
             className={`adm-bottom-nav-btn${pathname.startsWith(to) ? ' active' : ''}`}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {icon}
-            </svg>
+            {navIcon(icon)}
             {label}
           </Link>
         ))}
-        <Link to="/" className="adm-bottom-nav-btn">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          サイト
-        </Link>
       </nav>
     </div>
   )

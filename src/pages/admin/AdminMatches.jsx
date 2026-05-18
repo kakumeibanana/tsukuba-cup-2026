@@ -7,9 +7,6 @@ const STATUS_OPTS = [
   { key: 'finished',  label: '終了' },
   { key: 'cancelled', label: '中止' },
 ]
-const STATUS_COLORS = {
-  scheduled: '#6b7280', live: '#dc2626', finished: '#5b21b6', cancelled: '#9ca3af',
-}
 
 function ScoreCounter({ value, onChange }) {
   return (
@@ -31,8 +28,11 @@ export default function AdminMatches() {
   const [scoreH, setScoreH]     = useState(0)
   const [scoreA, setScoreA]     = useState(0)
   const [goals, setGoals]       = useState([])
-  const [addGoal, setAddGoal]   = useState(null)
-  const [goalInput, setGoalInput] = useState('')
+
+  // 得点者選択
+  const [pickerSide, setPickerSide]     = useState(null) // 'home' | 'away' | null
+  const [homeMembers, setHomeMembers]   = useState([])
+  const [awayMembers, setAwayMembers]   = useState([])
 
   const [cform, setCform] = useState({
     gender: '男子', stage: 'league', group_name: 'A', round: '',
@@ -57,23 +57,28 @@ export default function AdminMatches() {
     setStatus(m.status)
     setScoreH(m.score_home ?? 0)
     setScoreA(m.score_away ?? 0)
-    setAddGoal(null)
-    setGoalInput('')
-    const { data } = await supabase.from('goals').select('*').eq('match_id', m.id).order('created_at')
-    setGoals(data ?? [])
+    setPickerSide(null)
+
+    // ゴール・メンバーを並行取得
+    const [{ data: goalsData }, { data: homeTeam }, { data: awayTeam }] = await Promise.all([
+      supabase.from('goals').select('*').eq('match_id', m.id).order('created_at'),
+      supabase.from('teams').select('members(id, name, sort_order)').eq('name', m.home_name).single(),
+      supabase.from('teams').select('members(id, name, sort_order)').eq('name', m.away_name).single(),
+    ])
+    setGoals(goalsData ?? [])
+    setHomeMembers((homeTeam?.members ?? []).sort((a, b) => a.sort_order - b.sort_order))
+    setAwayMembers((awayTeam?.members ?? []).sort((a, b) => a.sort_order - b.sort_order))
   }
 
-  function closeModal() { setEditing(null); setCreating(false) }
+  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null) }
 
-  function addGoalToList() {
-    if (!goalInput.trim()) return
+  function pickGoal(side, memberName) {
     setGoals(prev => [...prev, {
       id: `tmp-${Date.now()}`,
-      team_name: addGoal === 'home' ? editing.home_name : editing.away_name,
-      player_name: goalInput.trim(),
+      team_name: side === 'home' ? editing.home_name : editing.away_name,
+      player_name: memberName,
     }])
-    setGoalInput('')
-    setAddGoal(null)
+    setPickerSide(null)
   }
 
   async function handleSave() {
@@ -133,15 +138,17 @@ export default function AdminMatches() {
     fetchMatches()
   }
 
-  // 日付でグループ化
   const grouped = {}
   matches.forEach(m => {
     if (!grouped[m.match_date]) grouped[m.match_date] = []
     grouped[m.match_date].push(m)
   })
   const dates = Object.keys(grouped).sort()
-
   const cfld = key => e => setCform(p => ({ ...p, [key]: e.target.value }))
+
+  const pickerMembers = pickerSide === 'home' ? homeMembers : awayMembers
+  const pickerTeamName = pickerSide === 'home' ? editing?.home_name : editing?.away_name
+  const pickerColor = pickerSide === 'home' ? '#7c3aed' : '#db2777'
 
   return (
     <div className="adm-section">
@@ -198,7 +205,7 @@ export default function AdminMatches() {
         )
       }
 
-      {/* 編集モーダル */}
+      {/* ===== 編集モーダル ===== */}
       {editing && (
         <div className="adm-modal-backdrop" onClick={closeModal}>
           <div className="adm-modal" onClick={e => e.stopPropagation()}>
@@ -244,9 +251,7 @@ export default function AdminMatches() {
               {/* 得点者 */}
               {(status === 'finished' || status === 'live') && (
                 <div className="adm-goals-section">
-                  <div className="adm-goals-head">
-                    <div className="adm-field-label">得点者</div>
-                  </div>
+                  <div className="adm-field-label">得点者</div>
 
                   {goals.length > 0 && (
                     <div className="adm-goal-list">
@@ -256,39 +261,43 @@ export default function AdminMatches() {
                             style={{ background: g.team_name === editing.home_name ? '#7c3aed' : '#db2777' }} />
                           <div className="adm-goal-player">{g.player_name}</div>
                           <div className="adm-goal-team">{g.team_name}</div>
-                          <button className="adm-goal-del" onClick={() => setGoals(p => p.filter(x => x.id !== g.id))}>✕</button>
+                          <button className="adm-goal-del"
+                            onClick={() => setGoals(p => p.filter(x => x.id !== g.id))}>✕</button>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {addGoal && (
-                    <div className="adm-goal-add-inline">
-                      <div className="adm-goal-add-team-label"
-                        style={{ color: addGoal === 'home' ? '#7c3aed' : '#db2777' }}>
-                        {addGoal === 'home' ? editing.home_name : editing.away_name}
+                  {/* 選手ピッカー */}
+                  {pickerSide ? (
+                    <div className="adm-member-picker">
+                      <div className="adm-member-picker-header">
+                        <span style={{ color: pickerColor, fontWeight: 600, fontSize: 13 }}>{pickerTeamName}</span>
+                        <button className="adm-btn-icon" onClick={() => setPickerSide(null)}>✕</button>
                       </div>
-                      <input
-                        autoFocus
-                        value={goalInput}
-                        onChange={e => setGoalInput(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && addGoalToList()}
-                        placeholder="選手名"
-                        className="adm-goal-input"
-                      />
-                      <button className="adm-goal-confirm-btn" onClick={addGoalToList}>追加</button>
-                      <button className="adm-goal-del" onClick={() => setAddGoal(null)}>✕</button>
+                      {pickerMembers.length === 0
+                        ? <div className="adm-empty" style={{ fontSize: 12, padding: 8 }}>メンバーが登録されていません</div>
+                        : (
+                          <div className="adm-member-picker-list">
+                            {pickerMembers.map(m => (
+                              <button key={m.id} className="adm-member-pick-btn"
+                                style={{ borderColor: pickerColor, color: pickerColor }}
+                                onClick={() => pickGoal(pickerSide, m.name)}>
+                                {m.name}
+                              </button>
+                            ))}
+                          </div>
+                        )
+                      }
                     </div>
-                  )}
-
-                  {!addGoal && (
+                  ) : (
                     <div className="adm-add-goal-row">
                       <button className="adm-add-goal-btn adm-add-goal-home"
-                        onClick={() => { setAddGoal('home'); setGoalInput('') }}>
+                        onClick={() => setPickerSide('home')}>
                         ＋ {editing.home_name}
                       </button>
                       <button className="adm-add-goal-btn adm-add-goal-away"
-                        onClick={() => { setAddGoal('away'); setGoalInput('') }}>
+                        onClick={() => setPickerSide('away')}>
                         ＋ {editing.away_name}
                       </button>
                     </div>
@@ -298,7 +307,8 @@ export default function AdminMatches() {
 
               {/* 削除 */}
               <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
-                <button className="adm-btn-sm adm-btn-danger" onClick={() => { handleDelete(editing.id); closeModal() }}>
+                <button className="adm-btn-sm adm-btn-danger"
+                  onClick={() => { handleDelete(editing.id); closeModal() }}>
                   この試合を削除
                 </button>
               </div>
@@ -313,7 +323,7 @@ export default function AdminMatches() {
         </div>
       )}
 
-      {/* 作成モーダル */}
+      {/* ===== 作成モーダル ===== */}
       {creating && (
         <div className="adm-modal-backdrop" onClick={closeModal}>
           <div className="adm-modal" onClick={e => e.stopPropagation()}>

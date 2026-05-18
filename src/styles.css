@@ -2697,6 +2697,145 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 /* team-card as link */
 .team-card { display: block; text-decoration: none; color: inherit; }
 
+/* ============================================================
+   ADMIN — Dashboard
+   ============================================================ */
+.adm-dash-date { font-size: 13px; color: var(--sub); font-weight: 600; }
+
+.adm-dash-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.adm-dash-card-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--sub); margin-bottom: 10px;
+}
+.adm-dash-card-label-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.adm-dash-card-label-row .adm-dash-card-label { margin-bottom: 0; }
+.adm-dash-link { font-size: 12px; color: var(--purple); font-weight: 600; text-decoration: none; }
+.adm-dash-link:hover { text-decoration: underline; }
+
+/* イベントステータスバー */
+.adm-event-status-bar {
+  font-size: 14px; font-weight: 800; color: #fff;
+  padding: 8px 14px; border-radius: 8px; margin-bottom: 10px;
+  text-align: center; letter-spacing: .03em;
+}
+.adm-event-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.adm-event-pill {
+  flex: 1; min-width: 80px;
+  padding: 8px 6px; border-radius: 8px; border: 1.5px solid;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  background: transparent; transition: all .15s;
+}
+.adm-event-pill:disabled { opacity: .6; }
+
+/* クイックスタッツ */
+.adm-dash-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;
+}
+.adm-dash-stat {
+  background: var(--card-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 10px; text-align: center;
+}
+.adm-dash-stat-num { font-size: 26px; font-weight: 900; color: var(--ink-900); line-height: 1; }
+.adm-dash-stat-label { font-size: 10px; color: var(--sub); margin-top: 4px; font-weight: 600; }
+
+/* 本日の試合リスト */
+.adm-dash-match-list { display: flex; flex-direction: column; gap: 6px; }
+.adm-dash-match-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid var(--line);
+}
+.adm-dash-match-row:last-child { border-bottom: none; padding-bottom: 0; }
+.adm-dash-match-teams { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+.adm-dash-vs { font-size: 11px; color: var(--sub); font-weight: 400; }
+.adm-dash-score { font-size: 14px; font-weight: 800; }
+
+/* 最新投稿 */
+.adm-dash-news-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--line);
+}
+.adm-dash-news-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* ============================================================
+   ADMIN — More tab
+   ============================================================ */
+.adm-more-user-card {
+  background: var(--card-bg); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; margin-bottom: 16px;
+}
+.adm-more-user-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.adm-more-user-email { font-size: 13px; font-weight: 600; color: var(--ink-900); flex: 1; min-width: 0; }
+.adm-role-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+}
+
+.adm-more-block {
+  background: var(--card-bg); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; margin-bottom: 16px;
+}
+.adm-more-block-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+}
+.adm-more-block-title { font-size: 13px; font-weight: 700; color: var(--ink-900); }
+.adm-more-add-form { background: var(--bg); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+
+.adm-organizer-list { display: flex; flex-direction: column; gap: 0; }
+.adm-organizer-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 10px 0; border-bottom: 1px solid var(--line);
+}
+.adm-organizer-row:last-child { border-bottom: none; }
+.adm-organizer-name { font-size: 13px; font-weight: 600; color: var(--ink-900); }
+.adm-organizer-email { font-size: 11px; color: var(--sub); }
+
+.adm-more-roles-table { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.adm-more-role-row { display: flex; align-items: center; gap: 10px; }
+.adm-more-role-desc { font-size: 12px; color: var(--sub); }
+
+.adm-more-link-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card-bg); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 12px;
+  color: var(--ink-900); text-decoration: none; font-size: 14px; font-weight: 600;
+}
+.adm-more-link-row:hover { background: var(--lavender-bg); }
+
+.adm-more-signout-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: #fff0f0; border: 1px solid #fecaca; border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 12px;
+  color: #dc2626; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.adm-more-signout-btn:hover { background: #fee2e2; }
+
+/* ============================================================
+   ADMIN — Member picker (goal entry)
+   ============================================================ */
+.adm-member-picker {
+  background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px;
+  padding: 12px; margin-top: 8px;
+}
+.adm-member-picker-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.adm-member-picker-list {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.adm-member-pick-btn {
+  padding: 7px 14px; border-radius: 8px; border: 1.5px solid;
+  font-size: 13px; font-weight: 600; cursor: pointer; background: transparent;
+  transition: all .12s;
+}
+.adm-member-pick-btn:hover { filter: brightness(.92); }
+
 @media (max-width: 640px) {
   .td-hero-body { padding: 18px 18px 20px; }
   .td-hero-avatar { width: 50px; height: 50px; font-size: 15px; border-radius: 12px; }

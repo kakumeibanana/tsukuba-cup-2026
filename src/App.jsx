@@ -8,10 +8,12 @@ import Teams from './pages/Teams.jsx'
 import TeamDetail from './pages/TeamDetail.jsx'
 import About from './pages/About.jsx'
 import AdminLayout from './pages/admin/AdminLayout.jsx'
+import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AdminMatches from './pages/admin/AdminMatches.jsx'
 import AdminStandings from './pages/admin/AdminStandings.jsx'
 import AdminNews from './pages/admin/AdminNews.jsx'
 import AdminTeams from './pages/admin/AdminTeams.jsx'
+import AdminMore from './pages/admin/AdminMore.jsx'
 
 export default function App() {
   return (
@@ -20,11 +22,13 @@ export default function App() {
         <Routes>
           {/* 管理画面 */}
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="matches" replace />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="matches"   element={<AdminMatches />} />
             <Route path="standings" element={<AdminStandings />} />
             <Route path="news"      element={<AdminNews />} />
             <Route path="teams"     element={<AdminTeams />} />
+            <Route path="more"      element={<AdminMore />} />
           </Route>
 
           {/* 公開ページ */}
