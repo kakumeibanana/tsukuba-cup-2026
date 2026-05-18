@@ -10,34 +10,52 @@ export function AuthProvider({ children }) {
   const [authError, setAuthError] = useState(null)
 
   useEffect(() => {
+    // 初回セッション確認
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       await handleSession(session)
       setLoading(false)
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_e, session) => {
-      await handleSession(session)
+
+    // 以降の認証状態変化を監視（onAuthStateChange は async にしない）
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      handleSession(session).catch(() => {})
     })
     return () => subscription.unsubscribe()
   }, [])
 
   async function handleSession(session) {
-    if (!session) { setUser(null); setRole(null); return }
-    const email = session.user.email ?? ''
-
-    // organizersテーブルで権限チェック（登録されていればログイン許可）
-    const { data: org } = await supabase
-      .from('organizers').select('role').eq('email', email).single()
-
-    if (!org) {
-      setAuthError('アクセス権限がありません。管理者に連絡してください。')
-      await supabase.auth.signOut()
+    if (!session) {
       setUser(null)
       setRole(null)
-    } else {
-      setUser(session.user)
-      setRole(org.role)
-      setAuthError(null)
+      return
     }
+    const email = session.user.email ?? ''
+
+    const { data: org, error } = await supabase
+      .from('organizers')
+      .select('role')
+      .eq('email', email)
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // organizers に未登録 → アクセス拒否
+        setAuthError('アクセス権限がありません。管理者に連絡してください。')
+        await supabase.auth.signOut()
+        setUser(null)
+        setRole(null)
+      } else {
+        // ネットワークエラーなど → ログアウトせず一時エラーとして表示
+        console.error('[AuthContext] organizers query error:', error)
+        setAuthError(`接続エラーが発生しました（${error.message}）。再読み込みしてください。`)
+      }
+      return
+    }
+
+    // 正常
+    setUser(session.user)
+    setRole(org?.role ?? 'match_staff')
+    setAuthError(null)
   }
 
   async function signInWithGoogle() {
