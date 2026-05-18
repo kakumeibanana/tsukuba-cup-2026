@@ -1,61 +1,7 @@
 import { useState } from 'react'
 
-const standings = [
-  // ── 男子 ──
-  {
-    id: 'men-a', gender: '男子', label: 'グループ A',
-    rows: [
-      { rank: 1, name: 'FC紫炎',    g: 1, w: 1, d: 0, l: 0, gf: 3, ga: 1, gd:  2, pts: 3 },
-      { rank: 2, name: 'Libertà',   g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd:  0, pts: 0 },
-      { rank: 2, name: 'FC筑附',    g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd:  0, pts: 0 },
-      { rank: 4, name: 'Blue Wave', g: 1, w: 0, d: 0, l: 1, gf: 1, ga: 3, gd: -2, pts: 0 },
-    ],
-  },
-  {
-    id: 'men-b', gender: '男子', label: 'グループ B',
-    rows: [
-      { rank: 1, name: '筑嶺男',  g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'AVANTI',  g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'T.A.S.', g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'Nordica', g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-    ],
-  },
-  {
-    id: 'men-c', gender: '男子', label: 'グループ C',
-    rows: [
-      { rank: 1, name: 'FC筑附',  g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'Phoenix', g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'FC紫炎',  g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'T.A.S.', g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-    ],
-  },
-  {
-    id: 'men-d', gender: '男子', label: 'グループ D',
-    rows: [
-      { rank: 1, name: 'Flare',    g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: '筑嶺男2',  g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'Nordica',  g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-      { rank: 1, name: 'AVANTI2',  g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 },
-    ],
-  },
-  // ── 女子 ──
-  {
-    id: 'women-a', gender: '女子', label: 'グループ A',
-    rows: [
-      { rank: 1, name: '筑嶺女',    g: 2, w: 2, d: 0, l: 0, gf: 4, ga: 2, gd:  2, pts: 6 },
-      { rank: 2, name: 'FC Stella', g: 2, w: 1, d: 0, l: 1, gf: 4, ga: 4, gd:  0, pts: 3 },
-      { rank: 3, name: 'Flare',     g: 2, w: 0, d: 0, l: 2, gf: 1, ga: 3, gd: -2, pts: 0 },
-    ],
-  },
-]
-
-const scorers = [
-  { rank: 1, name: '田中 悠真', team: 'FC紫炎',    goals: 7 },
-  { rank: 2, name: '佐藤 翔',   team: 'T.A.S.',    goals: 6 },
-  { rank: 3, name: '鈴木 大地', team: 'Libertà',   goals: 4 },
-  { rank: 4, name: '山本 陸',   team: 'Blue Wave',  goals: 3 },
-  { rank: 5, name: '高草木 悠', team: 'AVANTI',     goals: 3 },
-]
+const standings = []
+const scorers = []
 
 const medals = ['gold', 'silver', 'bronze']
 

@@ -1,28 +1,6 @@
 import { Link } from 'react-router-dom'
 
-const days = [
-  {
-    date: '6/8', dow: '月',
-    matches: [
-      { badge: 'badge-m', label: 'グループ A', home: 'FC紫炎',    away: 'Blue Wave' },
-      { badge: 'badge-m', label: 'グループ A', home: 'Libertà',   away: 'FC筑附' },
-      { badge: 'badge-m', label: 'グループ B', home: '筑嶺男',    away: 'AVANTI' },
-      { badge: 'badge-m', label: 'グループ B', home: 'T.A.S.',    away: 'Nordica' },
-      { badge: 'badge-w', label: 'グループ A', home: '筑嶺女',    away: 'FC Stella' },
-      { badge: 'badge-w', label: 'グループ A', home: 'Flare',     away: '筑嶺女' },
-    ],
-  },
-  {
-    date: '6/15', dow: '月',
-    matches: [
-      { badge: 'badge-m', label: 'グループ C', home: 'FC筑附',    away: 'Phoenix' },
-      { badge: 'badge-m', label: 'グループ C', home: 'FC紫炎',    away: 'T.A.S.' },
-      { badge: 'badge-m', label: 'グループ D', home: 'Flare',     away: '筑嶺男2' },
-      { badge: 'badge-m', label: 'グループ D', home: 'Nordica',   away: 'AVANTI2' },
-      { badge: 'badge-w', label: 'グループ A', home: 'FC Stella', away: 'Flare' },
-    ],
-  },
-]
+const days = []
 
 export default function UpcomingSchedule() {
   return (
