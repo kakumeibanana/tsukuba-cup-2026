@@ -63,8 +63,9 @@ export default function RecentResults() {
       ) : (
         <div className="recent-list">
           {results.map(m => {
-            const homeWin = m.score_home > m.score_away
-            const awayWin = m.score_away > m.score_home
+            const isDraw  = m.score_home === m.score_away
+            const homeWin = m.score_home > m.score_away || (isDraw && m.pk_winner === m.home_name)
+            const awayWin = m.score_away > m.score_home || (isDraw && m.pk_winner === m.away_name)
             const homeScorers = goalsMap[m.id]?.[m.home_name] ?? []
             const awayScorers = goalsMap[m.id]?.[m.away_name] ?? []
             const hasScorers  = homeScorers.length > 0 || awayScorers.length > 0
@@ -82,6 +83,7 @@ export default function RecentResults() {
                     <span className={homeWin ? 'recent-win-num' : ''}>{m.score_home}</span>
                     <span className="recent-sep">-</span>
                     <span className={awayWin ? 'recent-win-num' : ''}>{m.score_away}</span>
+                    {m.pk_winner && <span style={{ fontSize: 9, fontWeight: 700, color: '#9ca3af', marginLeft: 3 }}>PK</span>}
                   </span>
                   <span className={`recent-team recent-team-r${awayWin ? ' recent-winner' : ''}`}>{m.away_name}</span>
                 </div>

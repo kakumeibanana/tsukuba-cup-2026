@@ -11,8 +11,9 @@ export default function AdminTeams() {
   const [form, setForm]         = useState(EMPTY_FORM)
   const [members, setMembers]   = useState([])
   const [saving, setSaving]     = useState(false)
-  const [toastMsg, setToastMsg] = useState(null)    // section level
-  const [modalError, setModalError] = useState(null) // inside modal
+  const [toastMsg, setToastMsg] = useState(null)
+  const [modalError, setModalError] = useState(null)
+  const [search, setSearch]     = useState('')
 
   useEffect(() => { fetchTeams() }, [])
 
@@ -113,7 +114,10 @@ export default function AdminTeams() {
     setTimeout(() => setToastMsg(null), 3000)
   }
 
-  const byGender = g => teams.filter(t => t.gender === g)
+  const byGender = g => teams.filter(t =>
+    t.gender === g &&
+    (!search.trim() || t.name.toLowerCase().includes(search.toLowerCase()))
+  )
 
   // ⚠️ formBody は変数（<FormBody/>コンポーネントにするとre-mountしてフォーカスが外れるバグが出る）
   const formBody = (
@@ -181,7 +185,15 @@ export default function AdminTeams() {
     <div className="adm-section">
       <div className="adm-section-head">
         <h2 className="adm-section-title">チーム管理</h2>
-        <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ チームを追加</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="チーム名で検索"
+            style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, width: 140 }}
+          />
+          <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ チームを追加</button>
+        </div>
       </div>
 
       {toastMsg && (

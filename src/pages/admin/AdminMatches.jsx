@@ -25,24 +25,26 @@ const EMPTY_CFORM = {
 }
 
 export default function AdminMatches() {
-  const [matches, setMatches]       = useState([])
-  const [loading, setLoading]       = useState(true)
-  const [editing, setEditing]       = useState(null)
-  const [creating, setCreating]     = useState(false)
-  const [teamOptions, setTeamOptions] = useState([]) // チーム選択肢
+  const [matches, setMatches]         = useState([])
+  const [loading, setLoading]         = useState(true)
+  const [editing, setEditing]         = useState(null)
+  const [creating, setCreating]       = useState(false)
+  const [teamOptions, setTeamOptions] = useState([])
+  const [search, setSearch]           = useState('')
 
-  const [status, setStatus]         = useState('scheduled')
-  const [scoreH, setScoreH]         = useState(0)
-  const [scoreA, setScoreA]         = useState(0)
-  const [goals, setGoals]           = useState([])
-  const [pickerSide, setPickerSide] = useState(null)
+  const [status, setStatus]           = useState('scheduled')
+  const [scoreH, setScoreH]           = useState(0)
+  const [scoreA, setScoreA]           = useState(0)
+  const [pkWinner, setPkWinner]       = useState('')
+  const [goals, setGoals]             = useState([])
+  const [pickerSide, setPickerSide]   = useState(null)
   const [homeMembers, setHomeMembers] = useState([])
   const [awayMembers, setAwayMembers] = useState([])
 
-  const [cform, setCform]   = useState(EMPTY_CFORM)
-  const [saving, setSaving] = useState(false)
-  const [toastMsg, setToastMsg] = useState(null)    // section level success
-  const [modalError, setModalError] = useState(null) // inside modal error
+  const [cform, setCform]       = useState(EMPTY_CFORM)
+  const [saving, setSaving]     = useState(false)
+  const [toastMsg, setToastMsg] = useState(null)
+  const [modalError, setModalError] = useState(null)
 
   useEffect(() => { fetchMatches() }, [])
 
@@ -63,6 +65,7 @@ export default function AdminMatches() {
     setStatus(m.status)
     setScoreH(m.score_home ?? 0)
     setScoreA(m.score_away ?? 0)
+    setPkWinner(m.pk_winner ?? '')
     setPickerSide(null)
     setModalError(null)
 
@@ -88,20 +91,23 @@ export default function AdminMatches() {
 
   function pickGoal(side, memberName) {
     setGoals(prev => [...prev, {
-      id: `tmp-${Date.now()}`,
+      id: `tmp-${Date.now()}-${Math.random()}`,
       team_name: side === 'home' ? editing.home_name : editing.away_name,
       player_name: memberName,
     }])
-    setPickerSide(null)
+    // ピッカーは閉じない — 連続入力できるように
   }
 
   async function handleSave() {
     setSaving(true)
     const hasScore = status === 'finished' || status === 'live'
+    const isDraw   = hasScore && scoreH === scoreA
     const { error } = await supabase.from('matches').update({
       status,
       score_home: hasScore ? scoreH : null,
       score_away: hasScore ? scoreA : null,
+      pk_winner:  (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner)
+                    ? pkWinner : null,
       updated_at: new Date().toISOString(),
     }).eq('id', editing.id)
 
@@ -158,26 +164,44 @@ export default function AdminMatches() {
     setTimeout(() => setToastMsg(null), 3000)
   }
 
+  const displayMatches = search.trim()
+    ? matches.filter(m =>
+        m.home_name.toLowerCase().includes(search.toLowerCase()) ||
+        m.away_name.toLowerCase().includes(search.toLowerCase()) ||
+        (m.match_date ?? '').includes(search)
+      )
+    : matches
+
   const grouped = {}
-  matches.forEach(m => {
+  displayMatches.forEach(m => {
     if (!grouped[m.match_date]) grouped[m.match_date] = []
     grouped[m.match_date].push(m)
   })
   const dates = Object.keys(grouped).sort()
-  const cfld = key => e => setCform(p => ({ ...p, [key]: e.target.value }))
+  const cfld  = key => e => setCform(p => ({ ...p, [key]: e.target.value }))
 
   const pickerMembers  = pickerSide === 'home' ? homeMembers : awayMembers
   const pickerTeamName = pickerSide === 'home' ? editing?.home_name : editing?.away_name
   const pickerColor    = pickerSide === 'home' ? '#7c3aed' : '#db2777'
 
-  // チーム選択肢（性別フィルタ）
   const genderedTeams = teamOptions.filter(t => t.gender === cform.gender)
+
+  // PK入力を表示する条件
+  const showPk = editing?.stage === 'tournament' && status === 'finished' && scoreH === scoreA
 
   return (
     <div className="adm-section">
       <div className="adm-section-head">
         <h2 className="adm-section-title">試合管理</h2>
-        <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ 追加</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="チーム・日付で検索"
+            style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, width: 160 }}
+          />
+          <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ 追加</button>
+        </div>
       </div>
 
       {toastMsg && (
@@ -187,8 +211,9 @@ export default function AdminMatches() {
       )}
 
       {loading ? <div className="adm-loading">読み込み中...</div>
-        : matches.length === 0 ? <div className="adm-empty">試合がありません</div>
-        : (
+        : displayMatches.length === 0 ? (
+          <div className="adm-empty">{search ? '該当する試合がありません' : '試合がありません'}</div>
+        ) : (
           <div className="adm-match-cards">
             {dates.map(date => (
               <div key={date} className="adm-date-group">
@@ -205,7 +230,10 @@ export default function AdminMatches() {
                     <div className="adm-mc-right">
                       {m.status === 'finished' && m.score_home != null ? (
                         <>
-                          <div className="adm-mc-score num">{m.score_home} – {m.score_away}</div>
+                          <div className="adm-mc-score num">
+                            {m.score_home} – {m.score_away}
+                            {m.pk_winner && <span style={{ fontSize: 10, marginLeft: 4, color: '#6b7280' }}>PK</span>}
+                          </div>
                           <span className="adm-mc-edit-hint">編集 ›</span>
                         </>
                       ) : m.status === 'live' ? (
@@ -268,6 +296,33 @@ export default function AdminMatches() {
                   <div className="adm-score-counter">
                     <div className="adm-counter-team">{editing.away_name}</div>
                     <ScoreCounter value={scoreA} onChange={setScoreA} />
+                  </div>
+                </div>
+              )}
+
+              {/* PK入力（決勝T・終了・引き分けのときのみ） */}
+              {showPk && (
+                <div>
+                  <div className="adm-field-label">PK結果（引き分けのため）</div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {[
+                      { value: '',               label: 'PKなし' },
+                      { value: editing.home_name, label: `${editing.home_name} 勝ち` },
+                      { value: editing.away_name, label: `${editing.away_name} 勝ち` },
+                    ].map(opt => (
+                      <button key={opt.value}
+                        onClick={() => setPkWinner(opt.value)}
+                        style={{
+                          padding: '6px 12px', borderRadius: 8, fontSize: 13, border: '1px solid',
+                          borderColor: pkWinner === opt.value ? '#7c3aed' : 'var(--line)',
+                          background:  pkWinner === opt.value ? '#7c3aed18' : 'transparent',
+                          color:       pkWinner === opt.value ? '#7c3aed' : 'var(--ink-600)',
+                          fontWeight:  pkWinner === opt.value ? 600 : 400,
+                          cursor: 'pointer',
+                        }}>
+                        {opt.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
@@ -397,7 +452,6 @@ export default function AdminMatches() {
                 )}
               </div>
 
-              {/* チーム選択 */}
               <div className="adm-form-row">
                 <div className="adm-field">
                   <label>ホーム</label>

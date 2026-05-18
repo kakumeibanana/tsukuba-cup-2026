@@ -10,9 +10,10 @@ function MatchCard({ m, homeScorers, awayScorers }) {
   const isFinished  = m.status === 'finished'
   const isLive      = m.status === 'live'
   const isCancelled = m.status === 'cancelled'
-  const homeWin = isFinished && m.score_home > m.score_away
-  const awayWin = isFinished && m.score_away > m.score_home
-  const hasScorers = (isFinished || isLive) && (homeScorers.length > 0 || awayScorers.length > 0)
+  const isDraw      = isFinished && m.score_home === m.score_away
+  const homeWin     = isFinished && (m.score_home > m.score_away || (isDraw && m.pk_winner === m.home_name))
+  const awayWin     = isFinished && (m.score_away > m.score_home || (isDraw && m.pk_winner === m.away_name))
+  const hasScorers  = (isFinished || isLive) && (homeScorers.length > 0 || awayScorers.length > 0)
 
   return (
     <div className={[
@@ -38,11 +39,18 @@ function MatchCard({ m, homeScorers, awayScorers }) {
 
         <div className="mc2-center">
           {(isFinished || isLive) && m.score_home != null && (
-            <div className="mc2-score num">
-              <span className={homeWin ? 'mc2-win-num' : ''}>{m.score_home}</span>
-              <span className="mc2-sep">-</span>
-              <span className={awayWin ? 'mc2-win-num' : ''}>{m.score_away}</span>
-            </div>
+            <>
+              <div className="mc2-score num">
+                <span className={homeWin ? 'mc2-win-num' : ''}>{m.score_home}</span>
+                <span className="mc2-sep">-</span>
+                <span className={awayWin ? 'mc2-win-num' : ''}>{m.score_away}</span>
+              </div>
+              {isFinished && m.pk_winner && (
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', color: '#6b7280', textAlign: 'center', marginTop: 2 }}>
+                  PK: {m.pk_winner}
+                </div>
+              )}
+            </>
           )}
           {m.status === 'scheduled' && (
             m.match_time?.includes(':')
@@ -69,33 +77,37 @@ function MatchCard({ m, homeScorers, awayScorers }) {
 }
 
 export default function Matches() {
-  const [gender, setGender]   = useState('男子')
-  const [stage, setStage]     = useState('league')
-  const [matches, setMatches] = useState([])
+  const [gender, setGender]     = useState('男子')
+  const [stage, setStage]       = useState('league')
+  const [matches, setMatches]   = useState([])
   const [goalsMap, setGoalsMap] = useState({})
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading]   = useState(true)
+
+  async function load() {
+    setLoading(true)
+    const [{ data: mData }, { data: gData }] = await Promise.all([
+      supabase.from('matches').select('*'),
+      supabase.from('goals').select('match_id, team_name, player_name'),
+    ])
+    setMatches((mData ?? []).sort(sortByMatchDate))
+    const map = {}
+    ;(gData ?? []).forEach(g => {
+      if (!map[g.match_id]) map[g.match_id] = {}
+      if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
+      map[g.match_id][g.team_name].push(g.player_name)
+    })
+    setGoalsMap(map)
+    setLoading(false)
+  }
 
   useEffect(() => {
-    async function load() {
-      setLoading(true)
-      const [{ data: mData }, { data: gData }] = await Promise.all([
-        supabase.from('matches').select('*'),
-        supabase.from('goals').select('match_id, team_name, player_name'),
-      ])
-
-      const sorted = (mData ?? []).sort(sortByMatchDate)
-      setMatches(sorted)
-
-      const map = {}
-      ;(gData ?? []).forEach(g => {
-        if (!map[g.match_id]) map[g.match_id] = {}
-        if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
-        map[g.match_id][g.team_name].push(g.player_name)
-      })
-      setGoalsMap(map)
-      setLoading(false)
-    }
     load()
+    const channel = supabase
+      .channel('matches-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'goals' },   load)
+      .subscribe()
+    return () => supabase.removeChannel(channel)
   }, [])
 
   const filtered = matches.filter(m => m.gender === gender && m.stage === stage)
