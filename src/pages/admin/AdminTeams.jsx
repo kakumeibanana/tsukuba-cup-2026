@@ -11,7 +11,8 @@ export default function AdminTeams() {
   const [form, setForm]         = useState(EMPTY_FORM)
   const [members, setMembers]   = useState([])
   const [saving, setSaving]     = useState(false)
-  const [msg, setMsg]           = useState(null)
+  const [toastMsg, setToastMsg] = useState(null)    // section level
+  const [modalError, setModalError] = useState(null) // inside modal
 
   useEffect(() => { fetchTeams() }, [])
 
@@ -25,6 +26,7 @@ export default function AdminTeams() {
   function openEdit(team) {
     setEditing(team)
     setCreating(false)
+    setModalError(null)
     setForm({ name: team.name, gender: team.gender, group_name: team.group_name ?? '', color: team.color, description: team.description ?? '' })
     setMembers((team.members ?? []).sort((a, b) => a.sort_order - b.sort_order).map(m => ({ ...m })))
   }
@@ -32,40 +34,46 @@ export default function AdminTeams() {
   function openCreate() {
     setEditing(null)
     setCreating(true)
+    setModalError(null)
     setForm(EMPTY_FORM)
     setMembers([])
   }
 
-  function closeModal() { setEditing(null); setCreating(false) }
+  function closeModal() { setEditing(null); setCreating(false); setModalError(null) }
 
   const f = key => e => setForm(p => ({ ...p, [key]: e.target.value }))
 
   function updateMember(idx, key, val) {
     setMembers(p => p.map((m, i) => i === idx ? { ...m, [key]: val } : m))
   }
-  function addMember()       { setMembers(p => [...p, { name: '', role: '', sort_order: p.length }]) }
+  function addMember()       { setMembers(p => [...p, { name: '', cls: '', role: '', sort_order: p.length }]) }
   function removeMember(idx) { setMembers(p => p.filter((_, i) => i !== idx)) }
 
   async function handleCreate() {
-    if (!form.name) { setMsg({ type: 'error', text: 'チーム名は必須です' }); return }
+    if (!form.name) { setModalError('チーム名は必須です'); return }
     setSaving(true)
     const { data: teamData, error: teamErr } = await supabase
       .from('teams')
       .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description })
-      .select()
-      .single()
-    if (teamErr) { setMsg({ type: 'error', text: teamErr.message }); setSaving(false); return }
+      .select().single()
+    if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
 
     const validMembers = members.filter(m => m.name.trim())
     if (validMembers.length > 0) {
       await supabase.from('members').insert(
-        validMembers.map((m, i) => ({ team_id: teamData.id, name: m.name.trim(), role: m.role ?? '', sort_order: i }))
+        validMembers.map((m, i) => ({
+          team_id: teamData.id,
+          name: m.name.trim(),
+          cls: m.cls ?? '',
+          role: m.role ?? '',
+          sort_order: i,
+        }))
       )
     }
     setSaving(false)
-    setMsg({ type: 'ok', text: 'チームを作成しました' })
-    closeModal(); fetchTeams()
-    setTimeout(() => setMsg(null), 3000)
+    closeModal()
+    fetchTeams()
+    showToast({ type: 'ok', text: 'チームを作成しました' })
   }
 
   async function handleSave() {
@@ -73,19 +81,25 @@ export default function AdminTeams() {
     const { error: teamErr } = await supabase.from('teams')
       .update({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, updated_at: new Date().toISOString() })
       .eq('id', editing.id)
-    if (teamErr) { setMsg({ type: 'error', text: teamErr.message }); setSaving(false); return }
+    if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
 
     await supabase.from('members').delete().eq('team_id', editing.id)
     const validMembers = members.filter(m => m.name.trim())
     if (validMembers.length > 0) {
       await supabase.from('members').insert(
-        validMembers.map((m, i) => ({ team_id: editing.id, name: m.name.trim(), role: m.role ?? '', sort_order: i }))
+        validMembers.map((m, i) => ({
+          team_id: editing.id,
+          name: m.name.trim(),
+          cls: m.cls ?? '',
+          role: m.role ?? '',
+          sort_order: i,
+        }))
       )
     }
     setSaving(false)
-    setMsg({ type: 'ok', text: '保存しました' })
-    closeModal(); fetchTeams()
-    setTimeout(() => setMsg(null), 3000)
+    closeModal()
+    fetchTeams()
+    showToast({ type: 'ok', text: '保存しました' })
   }
 
   async function handleDelete(id) {
@@ -94,9 +108,15 @@ export default function AdminTeams() {
     fetchTeams()
   }
 
+  function showToast(msg) {
+    setToastMsg(msg)
+    setTimeout(() => setToastMsg(null), 3000)
+  }
+
   const byGender = g => teams.filter(t => t.gender === g)
 
-  const FormBody = () => (
+  // ⚠️ formBody は変数（<FormBody/>コンポーネントにするとre-mountしてフォーカスが外れるバグが出る）
+  const formBody = (
     <>
       <div className="adm-form-row">
         <div className="adm-field">
@@ -131,10 +151,24 @@ export default function AdminTeams() {
       <div className="adm-members-list">
         {members.map((m, i) => (
           <div key={i} className="adm-member-row">
-            <input className="adm-member-name-input" value={m.name}
-              onChange={e => updateMember(i, 'name', e.target.value)} placeholder="氏名" />
-            <input className="adm-member-role-input" value={m.role}
-              onChange={e => updateMember(i, 'role', e.target.value)} placeholder="役割（例：キャプテン）" />
+            <input
+              className="adm-member-name-input"
+              value={m.name}
+              onChange={e => updateMember(i, 'name', e.target.value)}
+              placeholder="氏名"
+            />
+            <input
+              className="adm-member-cls-input"
+              value={m.cls ?? ''}
+              onChange={e => updateMember(i, 'cls', e.target.value)}
+              placeholder="クラス"
+            />
+            <input
+              className="adm-member-role-input"
+              value={m.role ?? ''}
+              onChange={e => updateMember(i, 'role', e.target.value)}
+              placeholder="役割"
+            />
             <button className="adm-btn-icon" onClick={() => removeMember(i)}>✕</button>
           </div>
         ))}
@@ -150,7 +184,11 @@ export default function AdminTeams() {
         <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ チームを追加</button>
       </div>
 
-      {msg && <div className={`adm-alert ${msg.type === 'ok' ? 'adm-alert-ok' : 'adm-alert-error'}`}>{msg.text}</div>}
+      {toastMsg && (
+        <div className={`adm-alert ${toastMsg.type === 'ok' ? 'adm-alert-ok' : 'adm-alert-error'}`}>
+          {toastMsg.text}
+        </div>
+      )}
 
       {loading ? <div className="adm-loading">読み込み中...</div> : (
         teams.length === 0
@@ -191,7 +229,10 @@ export default function AdminTeams() {
               <h3>チームを作成</h3>
               <button className="adm-modal-close" onClick={closeModal}>✕</button>
             </div>
-            <div className="adm-modal-body"><FormBody /></div>
+            <div className="adm-modal-body">
+              {modalError && <div className="adm-alert adm-alert-error">{modalError}</div>}
+              {formBody}
+            </div>
             <div className="adm-modal-foot">
               <button className="adm-btn" onClick={closeModal}>キャンセル</button>
               <button className="adm-btn adm-btn-primary" onClick={handleCreate} disabled={saving}>
@@ -210,7 +251,10 @@ export default function AdminTeams() {
               <h3>{editing.name} を編集</h3>
               <button className="adm-modal-close" onClick={closeModal}>✕</button>
             </div>
-            <div className="adm-modal-body"><FormBody /></div>
+            <div className="adm-modal-body">
+              {modalError && <div className="adm-alert adm-alert-error">{modalError}</div>}
+              {formBody}
+            </div>
             <div className="adm-modal-foot">
               <button className="adm-btn" onClick={closeModal}>キャンセル</button>
               <button className="adm-btn adm-btn-primary" onClick={handleSave} disabled={saving}>

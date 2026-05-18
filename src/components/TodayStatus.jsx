@@ -1,18 +1,30 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
-const STATUS = {
-  open:      { label: '本日は予定通り開催します',    badge: '開催中',  badgeClass: 'ts-badge-open',      emoji: '⚽', grad: 'ts-grad-open' },
-  cancelled: { label: '本日は雨天のため中止です',    badge: '中止',    badgeClass: 'ts-badge-cancelled',  emoji: '🌧', grad: 'ts-grad-cancelled' },
-  pending:   { label: '本日の開催は現在確認中です',  badge: '確認中',  badgeClass: 'ts-badge-pending',    emoji: '🕐', grad: 'ts-grad-pending' },
-  noMatch:   { label: '本日は試合の予定はありません', badge: '予定なし', badgeClass: 'ts-badge-no-match',  emoji: '📅', grad: 'ts-grad-no-match' },
+const STATUS_MAP = {
+  normal:    { label: '本日は予定通り開催します', badge: '開催中', badgeClass: 'ts-badge-open',      emoji: '⚽', grad: 'ts-grad-open' },
+  postponed: { label: '雨天のため延期します',      badge: '延期',   badgeClass: 'ts-badge-cancelled', emoji: '🌧', grad: 'ts-grad-cancelled' },
+  other:     { label: '',                        badge: 'お知らせ', badgeClass: 'ts-badge-pending',   emoji: '📢', grad: 'ts-grad-pending' },
 }
 
-const current = STATUS.open
-
 export default function TodayStatus() {
-  const navigate  = useNavigate()
-  const tapsRef   = useRef([])
+  const navigate = useNavigate()
+  const tapsRef  = useRef([])
+  const [status, setStatus] = useState('normal')
+  const [note, setNote]     = useState('')
+
+  useEffect(() => {
+    supabase
+      .from('settings')
+      .select('key, value')
+      .in('key', ['event_status', 'event_status_note'])
+      .then(({ data }) => {
+        if (!data) return
+        setStatus(data.find(r => r.key === 'event_status')?.value ?? 'normal')
+        setNote(data.find(r => r.key === 'event_status_note')?.value ?? '')
+      })
+  }, [])
 
   function handleTap() {
     const now = Date.now()
@@ -23,15 +35,18 @@ export default function TodayStatus() {
     }
   }
 
+  const s = STATUS_MAP[status] ?? STATUS_MAP.normal
+  const label = status === 'other' && note ? note : s.label
+
   return (
-    <div className={`ts-wrap ${current.grad}`} onClick={handleTap}>
+    <div className={`ts-wrap ${s.grad}`} onClick={handleTap}>
       <div className="ts-body">
-        <span className="ts-emoji">{current.emoji}</span>
+        <span className="ts-emoji">{s.emoji}</span>
         <div className="ts-text">
           <div className="ts-title">本日の開催状況</div>
-          <div className="ts-msg">{current.label}</div>
+          <div className="ts-msg">{label}</div>
         </div>
-        <span className={`ts-badge ${current.badgeClass}`}>{current.badge}</span>
+        <span className={`ts-badge ${s.badgeClass}`}>{s.badge}</span>
       </div>
     </div>
   )

@@ -4,9 +4,9 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 
 const EVENT_OPTS = [
-  { key: 'normal',    label: '通常開催', color: '#16a34a' },
-  { key: 'rain',      label: '雨天中止', color: '#2563eb' },
-  { key: 'postponed', label: '日程変更', color: '#ea580c' },
+  { key: 'normal',    label: '通常通り',       color: '#16a34a' },
+  { key: 'postponed', label: '雨天のため延期', color: '#2563eb' },
+  { key: 'other',     label: 'その他',          color: '#9333ea' },
 ]
 
 function todayStr() {
@@ -16,7 +16,9 @@ function todayStr() {
 
 export default function AdminDashboard() {
   const { role } = useAuth()
-  const [eventStatus, setEventStatus] = useState('normal')
+  const [eventStatus, setEventStatus]   = useState('normal')
+  const [noteText, setNoteText]         = useState('')
+  const [noteDraft, setNoteDraft]       = useState('')
   const [todayMatches, setTodayMatches] = useState([])
   const [unsubmitted, setUnsubmitted]   = useState(0)
   const [latestNews, setLatestNews]     = useState([])
@@ -29,12 +31,18 @@ export default function AdminDashboard() {
     async function load() {
       setLoading(true)
       const [{ data: sData }, { data: mData }, { data: nData }] = await Promise.all([
-        supabase.from('settings').select('value').eq('key', 'event_status').single(),
+        supabase.from('settings').select('key,value').in('key', ['event_status', 'event_status_note']),
         supabase.from('matches').select('*').order('match_date'),
         supabase.from('news').select('id,title,news_date,category,bg_gradient,published')
           .order('created_at', { ascending: false }).limit(4),
       ])
-      setEventStatus(sData?.value ?? 'normal')
+      if (sData) {
+        const st = sData.find(r => r.key === 'event_status')?.value ?? 'normal'
+        const nt = sData.find(r => r.key === 'event_status_note')?.value ?? ''
+        setEventStatus(st)
+        setNoteText(nt)
+        setNoteDraft(nt)
+      }
       const all = mData ?? []
       setTodayMatches(all.filter(m => m.match_date === today))
       setUnsubmitted(all.filter(m => m.status === 'scheduled').length)
@@ -54,6 +62,15 @@ export default function AdminDashboard() {
     setSavingStatus(false)
   }
 
+  async function handleNoteSave() {
+    setSavingStatus(true)
+    await supabase.from('settings')
+      .update({ value: noteDraft, updated_at: new Date().toISOString() })
+      .eq('key', 'event_status_note')
+    setNoteText(noteDraft)
+    setSavingStatus(false)
+  }
+
   const statusOpt = EVENT_OPTS.find(o => o.key === eventStatus) ?? EVENT_OPTS[0]
 
   return (
@@ -67,7 +84,7 @@ export default function AdminDashboard() {
       <div className="adm-dash-card">
         <div className="adm-dash-card-label">本日の開催状況</div>
         <div className="adm-event-status-bar" style={{ background: statusOpt.color }}>
-          {statusOpt.label}
+          {eventStatus === 'other' && noteText ? noteText : statusOpt.label}
         </div>
         <div className="adm-event-pills">
           {EVENT_OPTS.map(opt => (
@@ -84,6 +101,27 @@ export default function AdminDashboard() {
             </button>
           ))}
         </div>
+
+        {/* その他：メモ入力 */}
+        {eventStatus === 'other' && (
+          <div className="adm-event-note-wrap">
+            <textarea
+              className="adm-event-note-input"
+              rows={2}
+              value={noteDraft}
+              onChange={e => setNoteDraft(e.target.value)}
+              placeholder="表示するメッセージを入力（例：体育館清掃のため延期）"
+            />
+            <button
+              className="adm-btn adm-btn-primary"
+              style={{ alignSelf: 'flex-end', marginTop: 6 }}
+              onClick={handleNoteSave}
+              disabled={savingStatus || noteDraft === noteText}
+            >
+              {savingStatus ? '更新中...' : '更新'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* クイックスタッツ */}
@@ -93,7 +131,7 @@ export default function AdminDashboard() {
           <div className="adm-dash-stat-label">本日の試合</div>
         </div>
         <div className="adm-dash-stat">
-          <div className="adm-dash-stat-num num" style={unsubmitted > 0 ? { color: '#dc2626' } : {}}>
+          <div className="adm-dash-stat-num num" style={unsubmitted > 0 && !loading ? { color: '#dc2626' } : {}}>
             {loading ? '–' : unsubmitted}
           </div>
           <div className="adm-dash-stat-label">未入力の試合</div>
@@ -155,8 +193,12 @@ export default function AdminDashboard() {
                   <div key={n.id} className="adm-dash-news-row">
                     <div style={{ width: 5, minWidth: 5, borderRadius: 3, background: n.bg_gradient, alignSelf: 'stretch' }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.title}</div>
-                      <div style={{ fontSize: 11, color: 'var(--sub)' }}>{n.news_date} · {n.category}{!n.published && ' · 下書き'}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {n.title}
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--sub)' }}>
+                        {n.news_date} · {n.category}{!n.published && ' · 下書き'}
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -2817,6 +2817,28 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .adm-more-signout-btn:hover { background: #fee2e2; }
 
 /* ============================================================
+   ADMIN — Event status note input
+   ============================================================ */
+.adm-event-note-wrap { display: flex; flex-direction: column; margin-top: 10px; gap: 6px; }
+.adm-event-note-input {
+  width: 100%; padding: 10px 12px; border-radius: 8px;
+  border: 1.5px solid var(--line); font-size: 14px;
+  background: var(--bg); color: var(--ink-900);
+  resize: none; font-family: inherit;
+}
+.adm-event-note-input:focus { outline: none; border-color: var(--purple); }
+
+/* ============================================================
+   ADMIN — Member cls input (class field)
+   ============================================================ */
+.adm-member-cls-input {
+  width: 72px; min-width: 72px;
+  padding: 7px 8px; border-radius: 8px; border: 1.5px solid var(--line);
+  font-size: 13px; background: var(--bg); color: var(--ink-900);
+}
+.adm-member-cls-input:focus { outline: none; border-color: var(--purple); }
+
+/* ============================================================
    ADMIN — Member picker (goal entry)
    ============================================================ */
 .adm-member-picker {

@@ -2,21 +2,20 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
-const ALLOWED_EMAIL = 'sasasout361@sgh-tsukuba.org'
 
 export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(null)
-  const [role, setRole]       = useState(null) // admin | match_staff | pr_staff
-  const [loading, setLoading] = useState(true)
+  const [user, setUser]         = useState(null)
+  const [role, setRole]         = useState(null) // admin | match_staff | pr_staff
+  const [loading, setLoading]   = useState(true)
   const [authError, setAuthError] = useState(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      handleSession(session)
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      await handleSession(session)
       setLoading(false)
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      handleSession(session)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_e, session) => {
+      await handleSession(session)
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -24,17 +23,20 @@ export function AuthProvider({ children }) {
   async function handleSession(session) {
     if (!session) { setUser(null); setRole(null); return }
     const email = session.user.email ?? ''
-    if (email !== ALLOWED_EMAIL) {
-      setAuthError('アクセス権限がありません')
+
+    // organizersテーブルで権限チェック（登録されていればログイン許可）
+    const { data: org } = await supabase
+      .from('organizers').select('role').eq('email', email).single()
+
+    if (!org) {
+      setAuthError('アクセス権限がありません。管理者に連絡してください。')
       await supabase.auth.signOut()
       setUser(null)
       setRole(null)
     } else {
       setUser(session.user)
+      setRole(org.role)
       setAuthError(null)
-      const { data } = await supabase
-        .from('organizers').select('role').eq('email', email).single()
-      setRole(data?.role ?? 'admin')
     }
   }
 

@@ -18,30 +18,31 @@ function ScoreCounter({ value, onChange }) {
   )
 }
 
+const EMPTY_CFORM = {
+  gender: '男子', stage: 'league', group_name: 'A', round: '',
+  match_date: '', match_dow: '月', match_time: '昼休み',
+  home_name: '', away_name: '',
+}
+
 export default function AdminMatches() {
-  const [matches, setMatches]   = useState([])
-  const [loading, setLoading]   = useState(true)
-  const [editing, setEditing]   = useState(null)
-  const [creating, setCreating] = useState(false)
+  const [matches, setMatches]       = useState([])
+  const [loading, setLoading]       = useState(true)
+  const [editing, setEditing]       = useState(null)
+  const [creating, setCreating]     = useState(false)
+  const [teamOptions, setTeamOptions] = useState([]) // チーム選択肢
 
-  const [status, setStatus]     = useState('scheduled')
-  const [scoreH, setScoreH]     = useState(0)
-  const [scoreA, setScoreA]     = useState(0)
-  const [goals, setGoals]       = useState([])
+  const [status, setStatus]         = useState('scheduled')
+  const [scoreH, setScoreH]         = useState(0)
+  const [scoreA, setScoreA]         = useState(0)
+  const [goals, setGoals]           = useState([])
+  const [pickerSide, setPickerSide] = useState(null)
+  const [homeMembers, setHomeMembers] = useState([])
+  const [awayMembers, setAwayMembers] = useState([])
 
-  // 得点者選択
-  const [pickerSide, setPickerSide]     = useState(null) // 'home' | 'away' | null
-  const [homeMembers, setHomeMembers]   = useState([])
-  const [awayMembers, setAwayMembers]   = useState([])
-
-  const [cform, setCform] = useState({
-    gender: '男子', stage: 'league', group_name: 'A', round: '',
-    match_date: '', match_dow: '月', match_time: '昼休み',
-    home_name: '', away_name: '',
-  })
-
+  const [cform, setCform]   = useState(EMPTY_CFORM)
   const [saving, setSaving] = useState(false)
-  const [msg, setMsg]       = useState(null)
+  const [toastMsg, setToastMsg] = useState(null)    // section level success
+  const [modalError, setModalError] = useState(null) // inside modal error
 
   useEffect(() => { fetchMatches() }, [])
 
@@ -52,14 +53,19 @@ export default function AdminMatches() {
     setLoading(false)
   }
 
+  async function fetchTeams() {
+    const { data } = await supabase.from('teams').select('id, name, gender, group_name').order('gender').order('group_name')
+    setTeamOptions(data ?? [])
+  }
+
   async function openEdit(m) {
     setEditing(m)
     setStatus(m.status)
     setScoreH(m.score_home ?? 0)
     setScoreA(m.score_away ?? 0)
     setPickerSide(null)
+    setModalError(null)
 
-    // ゴール・メンバーを並行取得
     const [{ data: goalsData }, { data: homeTeam }, { data: awayTeam }] = await Promise.all([
       supabase.from('goals').select('*').eq('match_id', m.id).order('created_at'),
       supabase.from('teams').select('members(id, name, sort_order)').eq('name', m.home_name).single(),
@@ -70,7 +76,15 @@ export default function AdminMatches() {
     setAwayMembers((awayTeam?.members ?? []).sort((a, b) => a.sort_order - b.sort_order))
   }
 
-  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null) }
+  async function openCreate() {
+    setModalError(null)
+    setCform(EMPTY_CFORM)
+    setCreating(true)
+    setEditing(null)
+    await fetchTeams()
+  }
+
+  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setModalError(null) }
 
   function pickGoal(side, memberName) {
     setGoals(prev => [...prev, {
@@ -91,7 +105,7 @@ export default function AdminMatches() {
       updated_at: new Date().toISOString(),
     }).eq('id', editing.id)
 
-    if (error) { setSaving(false); setMsg({ type: 'error', text: error.message }); return }
+    if (error) { setSaving(false); setModalError(error.message); return }
 
     await supabase.from('goals').delete().eq('match_id', editing.id)
     if (goals.length > 0) {
@@ -101,15 +115,17 @@ export default function AdminMatches() {
     }
 
     setSaving(false)
-    setMsg({ type: 'ok', text: '保存しました' })
     closeModal()
     fetchMatches()
-    setTimeout(() => setMsg(null), 3000)
+    showToast({ type: 'ok', text: '保存しました' })
   }
 
   async function handleCreate() {
     if (!cform.home_name || !cform.away_name || !cform.match_date) {
-      setMsg({ type: 'error', text: '日付・ホーム・アウェイは必須です' }); return
+      setModalError('日付・ホーム・アウェイは必須です'); return
+    }
+    if (cform.home_name === cform.away_name) {
+      setModalError('ホームとアウェイに同じチームは選べません'); return
     }
     setSaving(true)
     const { error } = await supabase.from('matches').insert({
@@ -125,17 +141,21 @@ export default function AdminMatches() {
       status: 'scheduled',
     })
     setSaving(false)
-    if (error) { setMsg({ type: 'error', text: error.message }); return }
-    setMsg({ type: 'ok', text: '試合を作成しました' })
+    if (error) { setModalError(error.message); return }
     closeModal()
     fetchMatches()
-    setTimeout(() => setMsg(null), 3000)
+    showToast({ type: 'ok', text: '試合を作成しました' })
   }
 
   async function handleDelete(id) {
     if (!confirm('この試合を削除しますか？')) return
     await supabase.from('matches').delete().eq('id', id)
     fetchMatches()
+  }
+
+  function showToast(msg) {
+    setToastMsg(msg)
+    setTimeout(() => setToastMsg(null), 3000)
   }
 
   const grouped = {}
@@ -146,20 +166,25 @@ export default function AdminMatches() {
   const dates = Object.keys(grouped).sort()
   const cfld = key => e => setCform(p => ({ ...p, [key]: e.target.value }))
 
-  const pickerMembers = pickerSide === 'home' ? homeMembers : awayMembers
+  const pickerMembers  = pickerSide === 'home' ? homeMembers : awayMembers
   const pickerTeamName = pickerSide === 'home' ? editing?.home_name : editing?.away_name
-  const pickerColor = pickerSide === 'home' ? '#7c3aed' : '#db2777'
+  const pickerColor    = pickerSide === 'home' ? '#7c3aed' : '#db2777'
+
+  // チーム選択肢（性別フィルタ）
+  const genderedTeams = teamOptions.filter(t => t.gender === cform.gender)
 
   return (
     <div className="adm-section">
       <div className="adm-section-head">
         <h2 className="adm-section-title">試合管理</h2>
-        <button className="adm-btn adm-btn-primary" onClick={() => { setCreating(true); setEditing(null) }}>
-          ＋ 追加
-        </button>
+        <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ 追加</button>
       </div>
 
-      {msg && <div className={`adm-alert ${msg.type === 'ok' ? 'adm-alert-ok' : 'adm-alert-error'}`}>{msg.text}</div>}
+      {toastMsg && (
+        <div className={`adm-alert ${toastMsg.type === 'ok' ? 'adm-alert-ok' : 'adm-alert-error'}`}>
+          {toastMsg.text}
+        </div>
+      )}
 
       {loading ? <div className="adm-loading">読み込み中...</div>
         : matches.length === 0 ? <div className="adm-empty">試合がありません</div>
@@ -218,8 +243,8 @@ export default function AdminMatches() {
               <button className="adm-modal-close" onClick={closeModal}>✕</button>
             </div>
             <div className="adm-modal-body">
+              {modalError && <div className="adm-alert adm-alert-error">{modalError}</div>}
 
-              {/* 状態 */}
               <div>
                 <div className="adm-field-label">試合状態</div>
                 <div className="adm-status-pills">
@@ -233,7 +258,6 @@ export default function AdminMatches() {
                 </div>
               </div>
 
-              {/* スコア */}
               {(status === 'finished' || status === 'live') && (
                 <div className="adm-score-area">
                   <div className="adm-score-counter">
@@ -248,11 +272,9 @@ export default function AdminMatches() {
                 </div>
               )}
 
-              {/* 得点者 */}
               {(status === 'finished' || status === 'live') && (
                 <div className="adm-goals-section">
                   <div className="adm-field-label">得点者</div>
-
                   {goals.length > 0 && (
                     <div className="adm-goal-list">
                       {goals.map(g => (
@@ -267,8 +289,6 @@ export default function AdminMatches() {
                       ))}
                     </div>
                   )}
-
-                  {/* 選手ピッカー */}
                   {pickerSide ? (
                     <div className="adm-member-picker">
                       <div className="adm-member-picker-header">
@@ -276,7 +296,9 @@ export default function AdminMatches() {
                         <button className="adm-btn-icon" onClick={() => setPickerSide(null)}>✕</button>
                       </div>
                       {pickerMembers.length === 0
-                        ? <div className="adm-empty" style={{ fontSize: 12, padding: 8 }}>メンバーが登録されていません</div>
+                        ? <div className="adm-empty" style={{ fontSize: 12, padding: 8 }}>
+                            メンバーが登録されていません
+                          </div>
                         : (
                           <div className="adm-member-picker-list">
                             {pickerMembers.map(m => (
@@ -305,7 +327,6 @@ export default function AdminMatches() {
                 </div>
               )}
 
-              {/* 削除 */}
               <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
                 <button className="adm-btn-sm adm-btn-danger"
                   onClick={() => { handleDelete(editing.id); closeModal() }}>
@@ -332,6 +353,8 @@ export default function AdminMatches() {
               <button className="adm-modal-close" onClick={closeModal}>✕</button>
             </div>
             <div className="adm-modal-body">
+              {modalError && <div className="adm-alert adm-alert-error">{modalError}</div>}
+
               <div className="adm-form-row">
                 <div className="adm-field">
                   <label>日付</label>
@@ -350,6 +373,7 @@ export default function AdminMatches() {
                   </select>
                 </div>
               </div>
+
               <div className="adm-form-row">
                 <div className="adm-field adm-field-sm">
                   <label>ステージ</label>
@@ -372,14 +396,34 @@ export default function AdminMatches() {
                   </div>
                 )}
               </div>
+
+              {/* チーム選択 */}
               <div className="adm-form-row">
                 <div className="adm-field">
                   <label>ホーム</label>
-                  <input value={cform.home_name} onChange={cfld('home_name')} placeholder="チーム名" />
+                  {genderedTeams.length > 0 ? (
+                    <select value={cform.home_name} onChange={cfld('home_name')}>
+                      <option value="">— 選択 —</option>
+                      {genderedTeams.map(t => (
+                        <option key={t.id} value={t.name}>{t.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input value={cform.home_name} onChange={cfld('home_name')} placeholder="チーム名" />
+                  )}
                 </div>
                 <div className="adm-field">
                   <label>アウェイ</label>
-                  <input value={cform.away_name} onChange={cfld('away_name')} placeholder="チーム名" />
+                  {genderedTeams.length > 0 ? (
+                    <select value={cform.away_name} onChange={cfld('away_name')}>
+                      <option value="">— 選択 —</option>
+                      {genderedTeams.filter(t => t.name !== cform.home_name).map(t => (
+                        <option key={t.id} value={t.name}>{t.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input value={cform.away_name} onChange={cfld('away_name')} placeholder="チーム名" />
+                  )}
                 </div>
               </div>
             </div>

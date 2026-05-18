@@ -9,6 +9,7 @@ const BG_PRESETS = [
   { label: 'オレンジ', value: 'linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)' },
 ]
 const EMPTY_FORM = { category: 'お知らせ', title: '', body: '', news_date: '', bg_gradient: BG_PRESETS[0].value, published: true }
+const CATEGORIES = ['お知らせ', '延期', '日程変更', '告知']
 
 function todayStr() {
   const d = new Date()
@@ -94,8 +95,8 @@ export default function AdminNews() {
         <div className="adm-quick-label">クイック投稿</div>
         <div className="adm-quick-btns">
           <button className="adm-quick-btn adm-quick-rain"
-            onClick={() => quickCreate('雨天中止', '☂ 雨天中止のお知らせ', BG_PRESETS[2].value)}>
-            ☂ 雨天中止
+            onClick={() => quickCreate('延期', '🌧 雨天のため延期のお知らせ', BG_PRESETS[2].value)}>
+            🌧 延期
           </button>
           <button className="adm-quick-btn adm-quick-sched"
             onClick={() => quickCreate('日程変更', '📅 日程変更のお知らせ', BG_PRESETS[2].value)}>
@@ -146,7 +147,7 @@ export default function AdminNews() {
                 <div className="adm-field adm-field-sm">
                   <label>カテゴリ</label>
                   <select value={form.category} onChange={f('category')}>
-                    {['お知らせ','雨天中止','日程変更','告知'].map(c => <option key={c}>{c}</option>)}
+                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
                 <div className="adm-field adm-field-sm">
