@@ -1,8 +1,47 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
-const days = []
+function sortByMatchDate(a, b) {
+  const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
+  return parse(a.match_date) - parse(b.match_date)
+}
 
 export default function UpcomingSchedule() {
+  const [days, setDays]       = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('matches')
+      .select('id, match_date, match_dow, match_time, home_name, away_name, gender, stage, group_name, round')
+      .eq('status', 'scheduled')
+      .then(({ data }) => {
+        const sorted = (data ?? []).sort(sortByMatchDate)
+
+        // 日付でグループ化（最初の3日分まで）
+        const grouped = {}
+        sorted.forEach(m => {
+          if (!grouped[m.match_date]) grouped[m.match_date] = []
+          grouped[m.match_date].push(m)
+        })
+        const dates = Object.keys(grouped).sort((a, b) => sortByMatchDate({ match_date: a }, { match_date: b }))
+        const limited = dates.slice(0, 4).map(date => ({
+          date,
+          dow: grouped[date][0].match_dow,
+          matches: grouped[date].map(m => ({
+            label: m.stage === 'league' ? `G${m.group_name}` : (m.round ?? 'トーナメント'),
+            badge: m.gender === '女子' ? 'badge-green' : 'badge-purple',
+            home: m.home_name,
+            away: m.away_name,
+            time: m.match_time,
+          })),
+        }))
+        setDays(limited)
+        setLoading(false)
+      })
+  }, [])
+
   return (
     <div className="card">
       <div className="card-head">
@@ -22,26 +61,32 @@ export default function UpcomingSchedule() {
       </div>
 
       <div className="usched-list">
-        {days.map(day => (
-          <div key={day.date} className="usched-day">
-            <div className="usched-day-header">
-              <span className="usched-date num">{day.date}（{day.dow}）</span>
-              <span className="usched-time-tag">昼休み</span>
+        {loading ? (
+          <div style={{ padding: '16px 0', color: 'var(--sub)', fontSize: 13 }}>読み込み中...</div>
+        ) : days.length === 0 ? (
+          <div style={{ padding: '16px 0', color: 'var(--sub)', fontSize: 13 }}>予定されている試合はありません</div>
+        ) : (
+          days.map(day => (
+            <div key={day.date} className="usched-day">
+              <div className="usched-day-header">
+                <span className="usched-date num">{day.date}（{day.dow}）</span>
+                <span className="usched-time-tag">{day.matches[0]?.time ?? '昼休み'}</span>
+              </div>
+              <div className="usched-matches">
+                {day.matches.map((m, i) => (
+                  <div key={i} className="usched-row">
+                    <span className={`badge ${m.badge}`}>{m.label}</span>
+                    <span className="usched-teams">
+                      <span className="usched-team">{m.home}</span>
+                      <span className="usched-vs">vs</span>
+                      <span className="usched-team">{m.away}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="usched-matches">
-              {day.matches.map((m, i) => (
-                <div key={i} className="usched-row">
-                  <span className={`badge ${m.badge}`}>{m.label}</span>
-                  <span className="usched-teams">
-                    <span className="usched-team">{m.home}</span>
-                    <span className="usched-vs">vs</span>
-                    <span className="usched-team">{m.away}</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   )

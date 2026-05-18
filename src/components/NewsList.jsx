@@ -1,35 +1,23 @@
-const news = [
-  {
-    id: 1,
-    category: 'お知らせ',
-    title: '大会実施要項（最新版）を公開しました',
-    date: '5/17',
-    bg: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 65%, #5b21b6 100%)',
-  },
-  {
-    id: 2,
-    category: 'お知らせ',
-    title: '参加チームの登録が完了しました',
-    date: '5/15',
-    bg: 'linear-gradient(135deg, #14532d 0%, #15803d 65%, #16a34a 100%)',
-  },
-  {
-    id: 3,
-    category: 'お知らせ',
-    title: '会場・ルールの最新情報を確認してください',
-    date: '5/12',
-    bg: 'linear-gradient(135deg, #164e63 0%, #0e7490 65%, #0891b2 100%)',
-  },
-  {
-    id: 4,
-    category: 'お知らせ',
-    title: 'TSUKUBA CUP 2026夏 公式サイトをオープンしました',
-    date: '5/10',
-    bg: 'linear-gradient(135deg, #7c2d12 0%, #c2410c 65%, #ea580c 100%)',
-  },
-]
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 
 export default function NewsList() {
+  const [news, setNews]       = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('news')
+      .select('id, category, title, news_date, bg_gradient')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .limit(4)
+      .then(({ data }) => {
+        setNews(data ?? [])
+        setLoading(false)
+      })
+  }, [])
+
   return (
     <div className="card">
       <div className="card-head">
@@ -41,19 +29,25 @@ export default function NewsList() {
           ニュース
         </div>
       </div>
-      <div className="news-grid">
-        {news.map(item => (
-          <div key={item.id} className="news-card">
-            <div className="news-card-img" style={{ background: item.bg }}>
-              <span className="news-card-cat">{item.category}</span>
+      {loading ? (
+        <div style={{ padding: '16px 0', color: 'var(--sub)', fontSize: 13 }}>読み込み中...</div>
+      ) : news.length === 0 ? (
+        <div style={{ padding: '16px 0', color: 'var(--sub)', fontSize: 13 }}>お知らせはありません</div>
+      ) : (
+        <div className="news-grid">
+          {news.map(item => (
+            <div key={item.id} className="news-card">
+              <div className="news-card-img" style={{ background: item.bg_gradient }}>
+                <span className="news-card-cat">{item.category}</span>
+              </div>
+              <div className="news-card-body">
+                <div className="news-card-title">{item.title}</div>
+                <div className="news-card-date">{item.news_date}</div>
+              </div>
             </div>
-            <div className="news-card-body">
-              <div className="news-card-title">{item.title}</div>
-              <div className="news-card-date">{item.date}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
