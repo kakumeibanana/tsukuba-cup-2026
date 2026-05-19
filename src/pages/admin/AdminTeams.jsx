@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 
-const CLUBS = ['サッカー部', 'フットサル部', '女子蹴球部']
 const EMPTY_FORM = { name: '', gender: '男子', group_name: 'A', color: '#7c3aed', description: '' }
 
 export default function AdminTeams() {
@@ -85,13 +84,19 @@ export default function AdminTeams() {
             onChange={e => updateMember(i, 'cls', e.target.value)}
             placeholder="クラス"
           />
-          <select
-            value={m.club ?? ''}
-            onChange={e => updateMember(i, 'club', e.target.value)}
-            style={{ fontSize: 12, border: '1px solid var(--line)', borderRadius: 6, padding: '4px 6px', color: 'var(--ink-700)', background: 'var(--bg)' }}>
-            <option value="">—</option>
-            {CLUBS.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          <button
+            type="button"
+            onClick={() => updateMember(i, 'club', m.club ? '' : '部活')}
+            title="部活メンバー"
+            style={{
+              padding: '3px 7px', borderRadius: 6, border: '1.5px solid',
+              borderColor: m.club ? '#16a34a' : 'var(--line)',
+              background:  m.club ? '#dcfce7' : 'transparent',
+              fontSize: 14, cursor: 'pointer', flexShrink: 0,
+              opacity: m.club ? 1 : 0.35,
+            }}>
+            ⚽
+          </button>
           <button className="adm-btn-icon" onClick={() => removeMember(i)}>✕</button>
         </div>
       ))}
