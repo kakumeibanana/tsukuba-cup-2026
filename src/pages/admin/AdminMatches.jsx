@@ -38,6 +38,7 @@ export default function AdminMatches() {
   const [pkWinner, setPkWinner]       = useState('')
   const [goals, setGoals]             = useState([])
   const [pickerSide, setPickerSide]   = useState(null)
+  const [guestName, setGuestName]     = useState('')
   const [homeMembers, setHomeMembers] = useState([])
   const [awayMembers, setAwayMembers] = useState([])
 
@@ -87,7 +88,7 @@ export default function AdminMatches() {
     await fetchTeams()
   }
 
-  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setModalError(null) }
+  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setGuestName(''); setModalError(null) }
 
   function pickGoal(side, memberName) {
     setGoals(prev => [...prev, {
@@ -355,15 +356,40 @@ export default function AdminMatches() {
                             メンバーが登録されていません
                           </div>
                         : (
-                          <div className="adm-member-picker-list">
-                            {pickerMembers.map(m => (
-                              <button key={m.id} className="adm-member-pick-btn"
-                                style={{ borderColor: pickerColor, color: pickerColor }}
-                                onClick={() => pickGoal(pickerSide, m.name)}>
-                                {m.name}
-                              </button>
-                            ))}
-                          </div>
+                          <>
+                            <div className="adm-member-picker-list">
+                              {pickerMembers.map(m => (
+                                <button key={m.id} className="adm-member-pick-btn"
+                                  style={{ borderColor: pickerColor, color: pickerColor }}
+                                  onClick={() => pickGoal(pickerSide, m.name)}>
+                                  {m.name}
+                                </button>
+                              ))}
+                            </div>
+                            <div style={{ borderTop: '1px solid var(--line)', marginTop: 8, paddingTop: 8 }}>
+                              <div style={{ fontSize: 11, color: 'var(--sub)', marginBottom: 5, fontWeight: 600 }}>助っ人</div>
+                              <div style={{ display: 'flex', gap: 6 }}>
+                                <input
+                                  value={guestName}
+                                  onChange={e => setGuestName(e.target.value)}
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter' && guestName.trim()) {
+                                      pickGoal(pickerSide, guestName.trim())
+                                      setGuestName('')
+                                    }
+                                  }}
+                                  placeholder="氏名を入力"
+                                  style={{ flex: 1, padding: '5px 8px', border: '1px solid var(--line)', borderRadius: 6, fontSize: 13 }}
+                                />
+                                <button
+                                  onClick={() => { if (guestName.trim()) { pickGoal(pickerSide, guestName.trim()); setGuestName('') } }}
+                                  className="adm-btn-sm"
+                                  style={{ whiteSpace: 'nowrap', background: '#f3f4f6', color: 'var(--ink-700)' }}>
+                                  追加
+                                </button>
+                              </div>
+                            </div>
+                          </>
                         )
                       }
                     </div>

@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
+const CLUB_STYLE = {
+  'サッカー部':   { bg: '#eff6ff', color: '#2563eb' },
+  'フットサル部': { bg: '#f5f3ff', color: '#7c3aed' },
+  '女子蹴球部':   { bg: '#fdf2f8', color: '#db2777' },
+}
+
 function sortByDate(a, b) {
   const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
   return parse(a.match_date) - parse(b.match_date)
@@ -203,19 +209,33 @@ export default function TeamDetail() {
         <div className="td-members-grid">
           {sortedMembers.length === 0 ? (
             <div style={{ color: 'var(--sub)', fontSize: 13, padding: '8px 0' }}>メンバー未登録</div>
-          ) : sortedMembers.map(m => (
-            <div key={m.id ?? m.name} className="td-member">
-              <div className="td-member-info">
-                <div className="td-member-name">{m.name}</div>
-                {m.cls  && <span className="td-member-cls">{m.cls}</span>}
-                {m.role && (
-                  <span className="td-member-role" style={{ background: `${team.color}18`, color: team.color }}>
-                    {m.role}
-                  </span>
-                )}
+          ) : sortedMembers.map(m => {
+            const clubStyle = CLUB_STYLE[m.club]
+            return (
+              <div key={m.id ?? m.name} className="td-member">
+                <div className="td-member-info">
+                  <div className="td-member-name" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {m.is_captain && (
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        width: 18, height: 18, borderRadius: '50%',
+                        background: '#f59e0b', color: '#fff',
+                        fontSize: 9, fontWeight: 800, flexShrink: 0,
+                      }}>C</span>
+                    )}
+                    {m.name}
+                  </div>
+                  {m.cls && <span className="td-member-cls">{m.cls}</span>}
+                  {clubStyle && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 600, padding: '1px 5px', borderRadius: 3,
+                      background: clubStyle.bg, color: clubStyle.color,
+                    }}>{m.club}</span>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

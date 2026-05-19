@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 
+const CLUBS = ['サッカー部', 'フットサル部', '女子蹴球部']
 const EMPTY_FORM = { name: '', gender: '男子', group_name: 'A', color: '#7c3aed', description: '' }
 
 export default function AdminTeams() {
@@ -47,76 +48,55 @@ export default function AdminTeams() {
   function updateMember(idx, key, val) {
     setMembers(p => p.map((m, i) => i === idx ? { ...m, [key]: val } : m))
   }
-  function addMember()       { setMembers(p => [...p, { name: '', cls: '', role: '', sort_order: p.length }]) }
+  function addMember() {
+    setMembers(p => [...p, { name: '', cls: '', club: '', is_captain: false, sort_order: p.length }])
+  }
   function removeMember(idx) { setMembers(p => p.filter((_, i) => i !== idx)) }
-
-  async function handleCreate() {
-    if (!form.name) { setModalError('チーム名は必須です'); return }
-    setSaving(true)
-    const { data: teamData, error: teamErr } = await supabase
-      .from('teams')
-      .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description })
-      .select().single()
-    if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
-
-    const validMembers = members.filter(m => m.name.trim())
-    if (validMembers.length > 0) {
-      await supabase.from('members').insert(
-        validMembers.map((m, i) => ({
-          team_id: teamData.id,
-          name: m.name.trim(),
-          cls: m.cls ?? '',
-          role: m.role ?? '',
-          sort_order: i,
-        }))
-      )
-    }
-    setSaving(false)
-    closeModal()
-    fetchTeams()
-    showToast({ type: 'ok', text: 'チームを作成しました' })
+  function setCaptain(idx) {
+    setMembers(p => p.map((m, i) => ({ ...m, is_captain: i === idx ? !m.is_captain : false })))
   }
 
-  async function handleSave() {
-    setSaving(true)
-    const { error: teamErr } = await supabase.from('teams')
-      .update({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, updated_at: new Date().toISOString() })
-      .eq('id', editing.id)
-    if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
-
-    await supabase.from('members').delete().eq('team_id', editing.id)
-    const validMembers = members.filter(m => m.name.trim())
-    if (validMembers.length > 0) {
-      await supabase.from('members').insert(
-        validMembers.map((m, i) => ({
-          team_id: editing.id,
-          name: m.name.trim(),
-          cls: m.cls ?? '',
-          role: m.role ?? '',
-          sort_order: i,
-        }))
-      )
-    }
-    setSaving(false)
-    closeModal()
-    fetchTeams()
-    showToast({ type: 'ok', text: '保存しました' })
-  }
-
-  async function handleDelete(id) {
-    if (!confirm('このチームを削除しますか？')) return
-    await supabase.from('teams').delete().eq('id', id)
-    fetchTeams()
-  }
-
-  function showToast(msg) {
-    setToastMsg(msg)
-    setTimeout(() => setToastMsg(null), 3000)
-  }
-
-  const byGender = g => teams.filter(t =>
-    t.gender === g &&
-    (!search.trim() || t.name.toLowerCase().includes(search.toLowerCase()))
+  const memberRows = (
+    <div className="adm-members-list">
+      {members.map((m, i) => (
+        <div key={i} className="adm-member-row">
+          <button
+            type="button"
+            onClick={() => setCaptain(i)}
+            title="キャプテン"
+            style={{
+              width: 26, height: 26, borderRadius: '50%', border: '1.5px solid',
+              borderColor: m.is_captain ? '#f59e0b' : 'var(--line)',
+              background:  m.is_captain ? '#f59e0b' : 'transparent',
+              color:       m.is_captain ? '#fff' : 'var(--sub)',
+              fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0, padding: 0,
+            }}>
+            C
+          </button>
+          <input
+            className="adm-member-name-input"
+            value={m.name}
+            onChange={e => updateMember(i, 'name', e.target.value)}
+            placeholder="氏名"
+          />
+          <input
+            className="adm-member-cls-input"
+            value={m.cls ?? ''}
+            onChange={e => updateMember(i, 'cls', e.target.value)}
+            placeholder="クラス"
+          />
+          <select
+            value={m.club ?? ''}
+            onChange={e => updateMember(i, 'club', e.target.value)}
+            style={{ fontSize: 12, border: '1px solid var(--line)', borderRadius: 6, padding: '4px 6px', color: 'var(--ink-700)', background: 'var(--bg)' }}>
+            <option value="">—</option>
+            {CLUBS.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <button className="adm-btn-icon" onClick={() => removeMember(i)}>✕</button>
+        </div>
+      ))}
+      {members.length === 0 && <div className="adm-empty" style={{ padding: '8px 0', fontSize: 13 }}>メンバーなし</div>}
+    </div>
   )
 
   // ⚠️ formBody は変数（<FormBody/>コンポーネントにするとre-mountしてフォーカスが外れるバグが出る）
@@ -149,36 +129,85 @@ export default function AdminTeams() {
         <textarea rows={3} value={form.description} onChange={f('description')} placeholder="チームの紹介を入力..." />
       </div>
       <div className="adm-members-head">
-        <label>メンバー</label>
+        <div>
+          <label>メンバー</label>
+          <span style={{ fontSize: 11, color: 'var(--sub)', marginLeft: 8 }}>C=キャプテン</span>
+        </div>
         <button className="adm-btn-sm" onClick={addMember}>＋ 追加</button>
       </div>
-      <div className="adm-members-list">
-        {members.map((m, i) => (
-          <div key={i} className="adm-member-row">
-            <input
-              className="adm-member-name-input"
-              value={m.name}
-              onChange={e => updateMember(i, 'name', e.target.value)}
-              placeholder="氏名"
-            />
-            <input
-              className="adm-member-cls-input"
-              value={m.cls ?? ''}
-              onChange={e => updateMember(i, 'cls', e.target.value)}
-              placeholder="クラス"
-            />
-            <input
-              className="adm-member-role-input"
-              value={m.role ?? ''}
-              onChange={e => updateMember(i, 'role', e.target.value)}
-              placeholder="役割"
-            />
-            <button className="adm-btn-icon" onClick={() => removeMember(i)}>✕</button>
-          </div>
-        ))}
-        {members.length === 0 && <div className="adm-empty" style={{ padding: '8px 0', fontSize: 13 }}>メンバーなし</div>}
-      </div>
+      {memberRows}
     </>
+  )
+
+  async function handleCreate() {
+    if (!form.name) { setModalError('チーム名は必須です'); return }
+    setSaving(true)
+    const { data: teamData, error: teamErr } = await supabase
+      .from('teams')
+      .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description })
+      .select().single()
+    if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
+
+    const validMembers = members.filter(m => m.name.trim())
+    if (validMembers.length > 0) {
+      await supabase.from('members').insert(
+        validMembers.map((m, i) => ({
+          team_id: teamData.id,
+          name: m.name.trim(),
+          cls: m.cls ?? '',
+          club: m.club ?? '',
+          is_captain: m.is_captain ?? false,
+          sort_order: i,
+        }))
+      )
+    }
+    setSaving(false)
+    closeModal()
+    fetchTeams()
+    showToast({ type: 'ok', text: 'チームを作成しました' })
+  }
+
+  async function handleSave() {
+    setSaving(true)
+    const { error: teamErr } = await supabase.from('teams')
+      .update({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, updated_at: new Date().toISOString() })
+      .eq('id', editing.id)
+    if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
+
+    await supabase.from('members').delete().eq('team_id', editing.id)
+    const validMembers = members.filter(m => m.name.trim())
+    if (validMembers.length > 0) {
+      await supabase.from('members').insert(
+        validMembers.map((m, i) => ({
+          team_id: editing.id,
+          name: m.name.trim(),
+          cls: m.cls ?? '',
+          club: m.club ?? '',
+          is_captain: m.is_captain ?? false,
+          sort_order: i,
+        }))
+      )
+    }
+    setSaving(false)
+    closeModal()
+    fetchTeams()
+    showToast({ type: 'ok', text: '保存しました' })
+  }
+
+  async function handleDelete(id) {
+    if (!confirm('このチームを削除しますか？')) return
+    await supabase.from('teams').delete().eq('id', id)
+    fetchTeams()
+  }
+
+  function showToast(msg) {
+    setToastMsg(msg)
+    setTimeout(() => setToastMsg(null), 3000)
+  }
+
+  const byGender = g => teams.filter(t =>
+    t.gender === g &&
+    (!search.trim() || t.name.toLowerCase().includes(search.toLowerCase()))
   )
 
   return (
