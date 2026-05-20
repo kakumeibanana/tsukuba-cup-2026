@@ -136,7 +136,6 @@ export default function Apply() {
       </div>
 
       <form className="apply-form card" onSubmit={handleSubmit}>
-        {error && <div ref={errorRef} className="adm-alert adm-alert-error">{error}</div>}
 
         {/* 男女の部 */}
         <div className="apply-field">
@@ -289,6 +288,7 @@ export default function Apply() {
         </div>
 
         <div className="apply-submit-wrap">
+          {error && <div ref={errorRef} className="adm-alert adm-alert-error">{error}</div>}
           <button type="submit"
             className={`apply-submit-btn${isFormReady ? '' : ' not-ready'}`}
             disabled={sending}>
