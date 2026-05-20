@@ -77,8 +77,18 @@ export default function Apply() {
       leader_name: leaderName,
       description: description.trim(),
     })
+    if (err) {
+      setSending(false)
+      setError('送信に失敗しました。もう一度お試しください。')
+      return
+    }
+
+    // 管理者にメール通知（失敗してもフォームは完了扱いにする）
+    supabase.functions.invoke('notify-application', {
+      body: { teamName: teamName.trim(), gender },
+    }).catch(() => {})
+
     setSending(false)
-    if (err) { setError('送信に失敗しました。もう一度お試しください。'); return }
     setDone(true)
   }
 
