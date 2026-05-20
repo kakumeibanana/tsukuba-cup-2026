@@ -3144,9 +3144,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .apply-member-card-head {
   display: flex; align-items: center; justify-content: space-between;
 }
-.apply-member-num {
+.apply-member-badge {
   font-size: 12px; font-weight: 800; color: var(--purple);
-  letter-spacing: .04em; text-transform: uppercase;
+  white-space: nowrap;
 }
 .apply-member-del {
   font-size: 12px; font-weight: 700; color: #dc2626;
@@ -3157,6 +3157,15 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .apply-member-class-row { display: flex; gap: 10px; }
 .apply-member-class-row .apply-field { flex: 1; }
 .apply-select { appearance: none; cursor: pointer; }
+
+.apply-soccer-check {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--ink-700);
+  cursor: pointer; padding: 6px 0;
+}
+.apply-soccer-check input[type="checkbox"] {
+  width: 17px; height: 17px; accent-color: var(--purple); cursor: pointer;
+}
 
 .apply-checks { display: flex; flex-direction: column; gap: 10px; }
 .apply-check-row {
