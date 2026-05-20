@@ -3032,11 +3032,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .apply-member-row   { display: flex; align-items: center; gap: 8px; }
 .apply-member-num   { font-size: 12px; font-weight: 700; color: var(--sub); width: 18px; flex-shrink: 0; }
 .apply-member-input { flex: 1; }
-.apply-member-del   {
-  width: 28px; height: 28px; border-radius: 7px; border: 1px solid #fecaca;
-  background: #fff; color: #dc2626; cursor: pointer; font-size: 12px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
+.apply-member-del   { flex-shrink: 0; }
 .apply-add-member-btn {
   margin-top: 8px; padding: 9px; border-radius: 10px;
   border: 1.5px dashed var(--line); background: transparent;
@@ -3049,9 +3045,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .apply-submit-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   padding: 16px 24px; border-radius: 14px; font-size: 17px; font-weight: 800;
-  background: var(--purple); color: #fff; border: none; cursor: pointer;
+  background: var(--purple-600); color: #fff; border: none; cursor: pointer;
   box-shadow: 0 4px 18px rgba(109,40,217,.35);
-  transition: opacity .15s, transform .1s;
+  transition: background .2s, opacity .15s, transform .1s;
   width: 100%;
 }
 .apply-submit-btn:hover:not(.not-ready):not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
