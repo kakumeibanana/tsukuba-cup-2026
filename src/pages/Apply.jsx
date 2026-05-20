@@ -184,11 +184,13 @@ export default function Apply() {
                   </div>
                 )}
 
-                <label className="apply-soccer-check">
-                  <input type="checkbox" checked={m.isSoccer}
-                    onChange={e => updateMember(i, 'isSoccer', e.target.checked)} />
-                  <span>サッカークラブ員</span>
-                </label>
+                {!m.isTeacher && (
+                  <label className="apply-soccer-check">
+                    <input type="checkbox" checked={m.isSoccer}
+                      onChange={e => updateMember(i, 'isSoccer', e.target.checked)} />
+                    <span>サッカークラブ員</span>
+                  </label>
+                )}
               </div>
             ))}
           </div>
