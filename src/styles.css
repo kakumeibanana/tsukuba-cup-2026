@@ -3165,9 +3165,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   white-space: nowrap;
 }
 .apply-member-del {
-  font-size: 12px; font-weight: 700; color: #dc2626;
-  background: #fff; border: 1px solid #fecaca;
-  border-radius: 7px; padding: 4px 10px; cursor: pointer;
+  font-size: 13px; font-weight: 700; color: #dc2626;
+  background: #fff; border: 1.5px solid #fecaca;
+  border-radius: 8px; padding: 7px 14px; cursor: pointer;
   white-space: nowrap;
 }
 .apply-label-sm { font-size: 12px; font-weight: 700; color: var(--ink-500); }
