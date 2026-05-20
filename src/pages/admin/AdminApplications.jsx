@@ -103,12 +103,25 @@ export default function AdminApplications() {
                 <div className="appli-detail-label">連絡先</div>
                 <div className="appli-detail-value">{selected.rep_contact}</div>
               </div>
+              {selected.leader_name && (
+                <div className="appli-detail-section">
+                  <div className="appli-detail-label">リーダー</div>
+                  <div className="appli-detail-value">⭐ {selected.leader_name}</div>
+                </div>
+              )}
               <div className="appli-detail-section">
                 <div className="appli-detail-label">メンバー（{selected.members?.length}人）</div>
                 <div className="appli-member-grid">
-                  {(selected.members ?? []).map((m, i) => (
-                    <div key={i} className="appli-member-chip">{i + 1}. {m}</div>
-                  ))}
+                  {(selected.members ?? []).map((m, i) => {
+                    const name = typeof m === 'string' ? m : m.name
+                    const cls  = typeof m === 'string' ? '' : `${m.year}${m.cls}`
+                    return (
+                      <div key={i} className="appli-member-chip">
+                        {i + 1}. {name}
+                        {cls && <span style={{ fontSize: 11, opacity: .7, marginLeft: 4 }}>{cls}</span>}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
               {selected.description && (
