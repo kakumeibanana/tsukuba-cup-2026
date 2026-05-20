@@ -3164,6 +3164,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   font-size: 12px; font-weight: 700; color: #dc2626;
   background: #fff; border: 1px solid #fecaca;
   border-radius: 7px; padding: 4px 10px; cursor: pointer;
+  white-space: nowrap;
 }
 .apply-label-sm { font-size: 12px; font-weight: 700; color: var(--ink-500); }
 .apply-member-class-row { display: flex; gap: 10px; }

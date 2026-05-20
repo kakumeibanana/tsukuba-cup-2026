@@ -146,7 +146,7 @@ export default function Apply() {
               <div key={i} className="apply-member-card">
                 <div className="apply-member-card-head">
                   <span className="apply-member-badge">メンバー{i + 1}</span>
-                  {members.length > MIN_MEMBERS && (
+                  {i >= MIN_MEMBERS && (
                     <button type="button" className="apply-member-del"
                       onClick={() => removeMember(i)}>✕ 削除</button>
                   )}
