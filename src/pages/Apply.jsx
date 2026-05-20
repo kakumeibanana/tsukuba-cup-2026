@@ -90,8 +90,10 @@ export default function Apply() {
     }
 
     // 管理者にメール通知（失敗してもフォームは完了扱いにする）
-    supabase.functions.invoke('notify-application', {
-      body: { teamName: teamName.trim(), gender },
+    fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-application`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ teamName: teamName.trim(), gender }),
     }).catch(() => {})
 
     setSending(false)

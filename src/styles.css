@@ -3080,7 +3080,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .apply-done-sub   { font-size: 14px; color: var(--sub); line-height: 1.7; margin: 0; }
 .apply-done-btn   {
   margin-top: 8px; padding: 12px 28px; border-radius: 12px;
-  background: var(--purple); color: #fff; font-weight: 700; font-size: 14px;
+  background: var(--purple-600); color: #fff; font-weight: 700; font-size: 14px;
   text-decoration: none; display: inline-block;
 }
 
