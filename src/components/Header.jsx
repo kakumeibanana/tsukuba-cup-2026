@@ -16,6 +16,7 @@ export default function Header() {
             </div>
           </Link>
           <nav className="nav" aria-label="メインメニュー">
+            <Link to="/"          className={pathname === '/'          ? 'active' : ''}>ホーム</Link>
             <Link to="/matches"   className={pathname === '/matches'   ? 'active' : ''}>試合・結果</Link>
             <Link to="/standings" className={pathname === '/standings' ? 'active' : ''}>順位・ランキング</Link>
             <Link to="/teams"     className={pathname === '/teams'     ? 'active' : ''}>チーム</Link>
