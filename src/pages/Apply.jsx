@@ -14,8 +14,6 @@ const emptyMember = () => ({ name: '', year: '2年', cls: '1組', isSoccer: fals
 export default function Apply() {
   const [gender, setGender]         = useState('男子')
   const [teamName, setTeamName]     = useState('')
-  const [repName, setRepName]       = useState('')
-  const [repClass, setRepClass]     = useState('')
   const [members, setMembers]       = useState(Array.from({ length: MIN_MEMBERS }, emptyMember))
   const [leaderIdx, setLeaderIdx]   = useState(0)
   const [description, setDescription] = useState('')
@@ -45,8 +43,6 @@ export default function Apply() {
     setError(null)
 
     if (!teamName.trim())  { setError('チーム名を入力してください'); return }
-    if (!repName.trim())   { setError('代表者名を入力してください'); return }
-    if (!repClass.trim())  { setError('代表者のクラス・学年を入力してください'); return }
     if (filledMembers.length < MIN_MEMBERS) {
       setError(`メンバーは${MIN_MEMBERS}人以上入力してください`); return
     }
@@ -66,8 +62,6 @@ export default function Apply() {
     const { error: err } = await supabase.from('applications').insert({
       team_name:   teamName.trim(),
       gender,
-      rep_name:    repName.trim(),
-      rep_class:   repClass.trim(),
       members,
       leader_name: leaderName,
       description: description.trim(),
@@ -135,22 +129,6 @@ export default function Apply() {
           <input className="apply-input" value={teamName}
             onChange={e => setTeamName(e.target.value)}
             placeholder="例：2年3組チーム" maxLength={30} />
-        </div>
-
-        {/* 代表者 */}
-        <div className="apply-field-row">
-          <div className="apply-field">
-            <label className="apply-label">代表者名 <span className="apply-required">必須</span></label>
-            <input className="apply-input" value={repName}
-              onChange={e => setRepName(e.target.value)}
-              placeholder="例：山田太郎" maxLength={20} />
-          </div>
-          <div className="apply-field">
-            <label className="apply-label">代表者のクラス <span className="apply-required">必須</span></label>
-            <input className="apply-input" value={repClass}
-              onChange={e => setRepClass(e.target.value)}
-              placeholder="例：2年3組" maxLength={20} />
-          </div>
         </div>
 
         {/* メンバー */}
