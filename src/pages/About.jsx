@@ -3,7 +3,7 @@ const info = [
   { label: '主催',     value: 'サッカークラブ' },
   { label: '運営',     value: '「TSUKUBA CUP 2026夏」実行委員会' },
   { label: '責任者',   value: '末吉優希・河井駿一郎・高草木杏奈' },
-  { label: '開催期間', value: '6月8日〜7月12日', sub: '昼休み開催' },
+  { label: '開催期間', value: '6月8日〜', sub: '昼休み開催' },
   { label: '会場',     value: 'コート面（バスケコート側）' },
   { label: '形式',     value: '予選リーグ → 決勝トーナメント' },
 ]
@@ -78,7 +78,7 @@ export default function About() {
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
-              6/8 〜 7/12
+              6/8〜
             </span>
             <span className="about-chip">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
