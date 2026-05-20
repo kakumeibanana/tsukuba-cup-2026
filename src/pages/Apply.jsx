@@ -38,6 +38,17 @@ export default function Apply() {
   const filledMembers = members.filter(m => m.name.trim())
   const soccerCount   = members.filter(m => m.isSoccer).length
 
+  const isFormReady = Boolean(
+    teamName.trim() &&
+    members.every(m => m.name.trim()) &&
+    filledMembers.length >= MIN_MEMBERS &&
+    soccerCount <= MAX_SOCCER &&
+    members[leaderIdx]?.name?.trim() &&
+    description.trim() &&
+    checks.eligibility &&
+    checks.noDouble
+  )
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
@@ -262,7 +273,9 @@ export default function Apply() {
         </div>
 
         <div className="apply-submit-wrap">
-          <button type="submit" className="apply-submit-btn" disabled={sending}>
+          <button type="submit"
+            className={`apply-submit-btn${isFormReady ? '' : ' not-ready'}`}
+            disabled={sending}>
             {sending
               ? <><span className="apply-submit-spinner" />送信中...</>
               : '申し込みを送信する →'}

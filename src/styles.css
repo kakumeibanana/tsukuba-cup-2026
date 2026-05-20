@@ -3054,9 +3054,13 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   transition: opacity .15s, transform .1s;
   width: 100%;
 }
-.apply-submit-btn:hover   { opacity: 0.88; transform: translateY(-1px); }
-.apply-submit-btn:active  { transform: translateY(0); }
+.apply-submit-btn:hover:not(.not-ready):not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.apply-submit-btn:active:not(.not-ready) { transform: translateY(0); }
 .apply-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.apply-submit-btn.not-ready {
+  background: #d1d5db; color: #9ca3af;
+  box-shadow: none; cursor: pointer;
+}
 .apply-submit-spinner {
   display: inline-block; width: 16px; height: 16px;
   border: 2.5px solid rgba(255,255,255,.4); border-top-color: #fff;
