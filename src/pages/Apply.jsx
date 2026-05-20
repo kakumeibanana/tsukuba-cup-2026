@@ -76,14 +76,38 @@ export default function Apply() {
     }
 
     setSending(true)
-    const { error: err } = await supabase.from('applications').insert({
-      team_name:   teamName.trim(),
-      gender,
-      members,
-      leader_name: leaderName,
-      description: description.trim(),
-    })
-    if (err) {
+
+    // チームを作成
+    const { data: teamData, error: teamErr } = await supabase
+      .from('teams')
+      .insert({
+        name:        teamName.trim(),
+        gender,
+        description: description.trim(),
+        color:       '#7c3aed',
+        group_name:  'A',
+      })
+      .select()
+      .single()
+
+    if (teamErr) {
+      setSending(false)
+      showError('送信に失敗しました。もう一度お試しください。')
+      return
+    }
+
+    // メンバーを登録
+    const membersToInsert = members.map((m, i) => ({
+      team_id:    teamData.id,
+      name:       m.name.trim(),
+      cls:        m.isTeacher ? '先生' : `${m.year}${m.cls}`,
+      club:       m.isSoccer ? '⚽' : '',
+      is_captain: m.name.trim() === leaderName,
+      sort_order: i,
+    }))
+    const { error: membErr } = await supabase.from('members').insert(membersToInsert)
+
+    if (membErr) {
       setSending(false)
       showError('送信に失敗しました。もう一度お試しください。')
       return

@@ -15,7 +15,6 @@ import AdminStandings from './pages/admin/AdminStandings.jsx'
 import AdminNews from './pages/admin/AdminNews.jsx'
 import AdminTeams from './pages/admin/AdminTeams.jsx'
 import AdminMore from './pages/admin/AdminMore.jsx'
-import AdminApplications from './pages/admin/AdminApplications.jsx'
 
 export default function App() {
   return (
@@ -31,7 +30,6 @@ export default function App() {
             <Route path="news"      element={<AdminNews />} />
             <Route path="teams"     element={<AdminTeams />} />
             <Route path="more"         element={<AdminMore />} />
-            <Route path="applications" element={<AdminApplications />} />
           </Route>
 
           {/* 公開ページ */}

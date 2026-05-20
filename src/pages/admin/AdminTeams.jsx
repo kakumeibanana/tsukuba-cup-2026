@@ -136,7 +136,7 @@ export default function AdminTeams() {
       <div className="adm-members-head">
         <div>
           <label>メンバー</label>
-          <span style={{ fontSize: 11, color: 'var(--sub)', marginLeft: 8 }}>C=キャプテン</span>
+          <span style={{ fontSize: 11, color: 'var(--sub)', marginLeft: 8 }}>C=リーダー</span>
         </div>
         <button className="adm-btn-sm" onClick={addMember}>＋ 追加</button>
       </div>
