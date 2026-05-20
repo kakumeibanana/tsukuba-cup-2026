@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 
 const DEADLINE    = '6/1（月）'
@@ -21,6 +21,7 @@ export default function Apply() {
   const [sending, setSending]       = useState(false)
   const [done, setDone]             = useState(false)
   const [error, setError]           = useState(null)
+  const errorRef = useRef(null)
 
   function updateMember(i, field, val) {
     setMembers(prev => prev.map((m, idx) => idx === i ? { ...m, [field]: val } : m))
@@ -49,24 +50,29 @@ export default function Apply() {
     checks.noDouble
   )
 
+  function showError(msg) {
+    setError(msg)
+    setTimeout(() => errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
 
-    if (!teamName.trim())  { setError('チーム名を入力してください'); return }
+    if (!teamName.trim())  { showError('チーム名を入力してください'); return }
     if (filledMembers.length < MIN_MEMBERS) {
-      setError(`メンバーは${MIN_MEMBERS}人以上入力してください`); return
+      showError(`メンバーは${MIN_MEMBERS}人以上入力してください`); return
     }
     const allFilled = members.every(m => m.name.trim())
-    if (!allFilled) { setError('全メンバーの名前を入力してください'); return }
+    if (!allFilled) { showError('全メンバーの名前を入力してください'); return }
     if (soccerCount > MAX_SOCCER) {
-      setError(`サッカークラブ員は${MAX_SOCCER}人以内にしてください`); return
+      showError(`サッカークラブ員は${MAX_SOCCER}人以内にしてください`); return
     }
     const leaderName = members[leaderIdx]?.name?.trim() || ''
-    if (!leaderName) { setError('リーダーのメンバー名を入力してください'); return }
-    if (!description.trim()) { setError('チーム紹介を入力してください'); return }
+    if (!leaderName) { showError('リーダーのメンバー名を入力してください'); return }
+    if (!description.trim()) { showError('チーム紹介を入力してください'); return }
     if (!checks.eligibility || !checks.noDouble) {
-      setError('規定の確認チェックを入れてください'); return
+      showError('規定の確認チェックを入れてください'); return
     }
 
     setSending(true)
@@ -79,7 +85,7 @@ export default function Apply() {
     })
     if (err) {
       setSending(false)
-      setError('送信に失敗しました。もう一度お試しください。')
+      showError('送信に失敗しました。もう一度お試しください。')
       return
     }
 
@@ -130,7 +136,7 @@ export default function Apply() {
       </div>
 
       <form className="apply-form card" onSubmit={handleSubmit}>
-        {error && <div className="adm-alert adm-alert-error">{error}</div>}
+        {error && <div ref={errorRef} className="adm-alert adm-alert-error">{error}</div>}
 
         {/* 男女の部 */}
         <div className="apply-field">
