@@ -2990,10 +2990,11 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   font-size: 13px; font-weight: 700;
   padding: 10px 16px; border-radius: 10px;
   margin-bottom: 16px;
+  max-width: 640px; margin-left: auto; margin-right: auto;
 }
 .apply-form {
   display: flex; flex-direction: column; gap: 20px;
-  max-width: 640px;
+  max-width: 640px; margin: 0 auto;
 }
 .apply-field { display: flex; flex-direction: column; gap: 6px; }
 .apply-field-row { display: flex; gap: 12px; }
@@ -3125,6 +3126,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .apply-rules-card {
   background: #f0f9ff; border: 1.5px solid #bae6fd;
   border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+  max-width: 640px; margin-left: auto; margin-right: auto;
 }
 .apply-rules-title {
   font-size: 12px; font-weight: 800; letter-spacing: .06em;
