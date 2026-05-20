@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
 const DEADLINE    = '6/1（月）'
@@ -22,6 +22,10 @@ export default function Apply() {
   const [done, setDone]             = useState(false)
   const [error, setError]           = useState(null)
   const errorRef = useRef(null)
+
+  useEffect(() => {
+    if (done) window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [done])
 
   function updateMember(i, field, val) {
     setMembers(prev => prev.map((m, idx) => idx === i ? { ...m, [field]: val } : m))
