@@ -21,6 +21,7 @@ export default function Header() {
             <Link to="/standings" className={pathname === '/standings' ? 'active' : ''}>順位・ランキング</Link>
             <Link to="/teams"     className={pathname === '/teams'     ? 'active' : ''}>チーム</Link>
             <Link to="/about"     className={pathname === '/about'     ? 'active' : ''}>大会について</Link>
+            <Link to="/apply"     className={`header-apply-btn${pathname === '/apply' ? ' active' : ''}`}>参加申し込み</Link>
           </nav>
           <button className="menu-btn" aria-label="メニューを開く" onClick={() => setOpen(true)}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -59,6 +60,7 @@ export default function Header() {
               { to: '/standings', label: '順位・ランキング', icon: <><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></> },
               { to: '/teams',     label: 'チーム',          icon: <><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2 20c1-3.5 3.5-5 6-5s5 1.5 6 5M14 20c.5-2.5 2-4 3.5-4s3 1.2 3.5 4"/></> },
               { to: '/about',     label: '大会について',    icon: <><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.01" strokeLinecap="round"/></> },
+              { to: '/apply',     label: '参加申し込み',    icon: <><path d="M12 5v14M5 12h14"/></> },
             ].map(({ to, label, icon }) => (
               <Link
                 key={to}

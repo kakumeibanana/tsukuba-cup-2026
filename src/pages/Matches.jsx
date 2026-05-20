@@ -72,6 +72,19 @@ function MatchCard({ m, homeScorers, awayScorers }) {
           <span className="mc2-scorer-r">{awayScorers.join(', ')}</span>
         </div>
       )}
+
+      {isFinished && m.score_home != null && (
+        <div className="mc2-share-bar">
+          <a className="mc2-line-share-btn"
+            href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent('https://tsukuba-cup-2026.vercel.app/matches')}&text=${encodeURIComponent(`【TSUKUBA CUP 2026夏】\n${m.home_name} ${m.score_home} - ${m.score_away} ${m.away_name}\n結果はこちら👇`)}`}
+            target="_blank" rel="noreferrer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.03 2 11c0 2.7 1.26 5.12 3.26 6.79L4.5 22l4.38-2.3A10.7 10.7 0 0012 20c5.52 0 10-4.03 10-9S17.52 2 12 2z"/>
+            </svg>
+            LINEでシェア
+          </a>
+        </div>
+      )}
     </div>
   )
 }

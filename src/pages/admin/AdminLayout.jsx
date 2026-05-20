@@ -24,6 +24,10 @@ const ALL_NAV = [
     icon: <><path d="M4 5a2 2 0 0 1 2-2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M13 3v5h5"/></>,
   },
   {
+    to: '/admin/applications', label: '申込', roles: ['admin'],
+    icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></>,
+  },
+  {
     to: '/admin/more', label: 'More', roles: ['admin', 'match_staff', 'pr_staff'],
     icon: <><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></>,
   },
@@ -31,7 +35,7 @@ const ALL_NAV = [
 
 // モバイル底部ナビ: ホーム・試合・チーム(admin)・Posts・More (最大5)
 const BOTTOM_NAV_ROLES = {
-  admin:       ['dashboard', 'matches', 'teams', 'news', 'more'],
+  admin:       ['dashboard', 'matches', 'applications', 'news', 'more'],
   match_staff: ['dashboard', 'matches', 'more'],
   pr_staff:    ['dashboard', 'news', 'more'],
 }

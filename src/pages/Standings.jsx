@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings } from '../lib/standings'
+import TournamentBracket from '../components/TournamentBracket'
 
 const medals = ['gold', 'silver', 'bronze']
 
 export default function Standings() {
   const [gender, setGender]   = useState('男子')
+  const [tab, setTab]         = useState('league')
   const [matches, setMatches] = useState([])
   const [scorers, setScorers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -46,10 +48,28 @@ export default function Standings() {
               onClick={() => setGender(g)}>{g}</button>
           ))}
         </div>
+        <div className="mc2-stage-tabs" style={{ marginTop: 10 }}>
+          {[['league', '予選リーグ'], ['tournament', 'トーナメント表']].map(([key, label]) => (
+            <button key={key} className={`mc2-stage-tab${tab === key ? ' active' : ''}`}
+              onClick={() => setTab(key)}>{label}</button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>読み込み中...</div>
+      ) : tab === 'tournament' ? (
+        <div className="card" style={{ marginTop: 8 }}>
+          <div className="card-head">
+            <div className="card-title">
+              <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 21h8M12 17V21M17 5V3H7v2M5 5v6a7 7 0 0014 0V5H5z"/>
+              </svg>
+              決勝トーナメント — {gender}
+            </div>
+          </div>
+          <TournamentBracket matches={matches.filter(m => m.gender === gender)} />
+        </div>
       ) : (
         <>
           <div className="standings-groups">
@@ -147,3 +167,4 @@ export default function Standings() {
     </main>
   )
 }
+
