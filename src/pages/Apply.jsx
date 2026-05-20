@@ -8,7 +8,8 @@ const MAX_SOCCER  = 5
 const YEARS   = ['1年', '2年', '3年']
 const CLASSES = ['1組', '2組', '3組', '4組', '5組', '6組']
 
-const emptyMember = () => ({ name: '', year: '2年', cls: '1組', isSoccer: false })
+const emptyMember = () => ({ name: '', year: '2年', cls: '1組', isSoccer: false, isTeacher: false })
+
 
 export default function Apply() {
   const [gender, setGender]         = useState('男子')
@@ -180,22 +181,30 @@ export default function Apply() {
                     placeholder="フルネームで入力" maxLength={20} />
                 </div>
 
-                <div className="apply-member-class-row">
-                  <div className="apply-field">
-                    <label className="apply-label-sm">学年 <span className="apply-required">必須</span></label>
-                    <select className="apply-input apply-select"
-                      value={m.year} onChange={e => updateMember(i, 'year', e.target.value)}>
-                      {YEARS.map(y => <option key={y}>{y}</option>)}
-                    </select>
+                <label className="apply-soccer-check" style={{ marginTop: 4 }}>
+                  <input type="checkbox" checked={m.isTeacher}
+                    onChange={e => updateMember(i, 'isTeacher', e.target.checked)} />
+                  <span>教職員（先生）</span>
+                </label>
+
+                {!m.isTeacher && (
+                  <div className="apply-member-class-row">
+                    <div className="apply-field">
+                      <label className="apply-label-sm">学年 <span className="apply-required">必須</span></label>
+                      <select className="apply-input apply-select"
+                        value={m.year} onChange={e => updateMember(i, 'year', e.target.value)}>
+                        {YEARS.map(y => <option key={y}>{y}</option>)}
+                      </select>
+                    </div>
+                    <div className="apply-field">
+                      <label className="apply-label-sm">クラス <span className="apply-required">必須</span></label>
+                      <select className="apply-input apply-select"
+                        value={m.cls} onChange={e => updateMember(i, 'cls', e.target.value)}>
+                        {CLASSES.map(c => <option key={c}>{c}</option>)}
+                      </select>
+                    </div>
                   </div>
-                  <div className="apply-field">
-                    <label className="apply-label-sm">クラス <span className="apply-required">必須</span></label>
-                    <select className="apply-input apply-select"
-                      value={m.cls} onChange={e => updateMember(i, 'cls', e.target.value)}>
-                      {CLASSES.map(c => <option key={c}>{c}</option>)}
-                    </select>
-                  </div>
-                </div>
+                )}
 
                 <label className="apply-soccer-check">
                   <input type="checkbox" checked={m.isSoccer}
@@ -235,7 +244,9 @@ export default function Apply() {
             {members.map((m, i) => (
               <option key={i} value={i}>
                 {m.name.trim()
-                  ? `${m.name}（${m.year}${m.cls}）`
+                  ? m.isTeacher
+                    ? `${m.name}（先生）`
+                    : `${m.name}（${m.year}${m.cls}）`
                   : `メンバー${i + 1}（未入力）`}
               </option>
             ))}
@@ -270,9 +281,14 @@ export default function Apply() {
           </label>
         </div>
 
-        <button type="submit" className="apply-submit-btn" disabled={sending}>
-          {sending ? '送信中...' : '申し込みを送信する'}
-        </button>
+        <div className="apply-submit-wrap">
+          <button type="submit" className="apply-submit-btn" disabled={sending}>
+            {sending
+              ? <><span className="apply-submit-spinner" />送信中...</>
+              : '申し込みを送信する →'}
+          </button>
+          <p className="apply-submit-note">送信後、運営から確認の連絡が届きます</p>
+        </div>
       </form>
     </main>
   )

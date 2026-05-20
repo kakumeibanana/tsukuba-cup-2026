@@ -3045,13 +3045,25 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 .apply-add-member-btn:hover { background: rgba(124,58,237,.05); border-color: var(--purple); }
 
+.apply-submit-wrap { margin-top: 8px; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
 .apply-submit-btn {
-  padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 16px 24px; border-radius: 14px; font-size: 17px; font-weight: 800;
   background: var(--purple); color: #fff; border: none; cursor: pointer;
-  transition: opacity .15s;
+  box-shadow: 0 4px 18px rgba(109,40,217,.35);
+  transition: opacity .15s, transform .1s;
+  width: 100%;
 }
-.apply-submit-btn:hover   { opacity: 0.88; }
-.apply-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.apply-submit-btn:hover   { opacity: 0.88; transform: translateY(-1px); }
+.apply-submit-btn:active  { transform: translateY(0); }
+.apply-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.apply-submit-spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2.5px solid rgba(255,255,255,.4); border-top-color: #fff;
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.apply-submit-note { font-size: 12px; color: var(--sub); text-align: center; margin: 0; }
 .apply-note { font-size: 12px; color: var(--sub); text-align: center; margin: 0; }
 
 .apply-done {
