@@ -69,12 +69,6 @@ export default function Teams() {
                               <div className="team-stat-value" style={{ fontSize: 12 }}>{t.color_name}</div>
                             </div>
                           )}
-                          {leader && (
-                            <div className="team-stat-item">
-                              <div className="team-stat-label">リーダー</div>
-                              <div className="team-stat-value" style={{ fontSize: 12 }}>{leader.name}</div>
-                            </div>
-                          )}
                         </div>
                       </div>
                     </Link>

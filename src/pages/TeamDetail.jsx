@@ -141,6 +141,8 @@ export default function TeamDetail() {
   const finished = matches.filter(m => m.status === 'finished')
   const upcoming = matches.filter(m => m.status !== 'finished')
   const sortedMembers = [...(team.members ?? [])].sort((a, b) => a.sort_order - b.sort_order)
+  const leader   = sortedMembers.find(m => m.is_captain)
+  const soccerCount = sortedMembers.filter(m => m.club).length
 
   return (
     <main className="page">
@@ -169,12 +171,41 @@ export default function TeamDetail() {
             </div>
           </div>
           {team.description && <p className="td-desc">{team.description}</p>}
-          {team.group_name && (
-            <span className="td-group-tag" style={{ color: team.color, background: `${team.color}18` }}>
-              予選グループ {team.group_name}
-            </span>
-          )}
         </div>
+      </div>
+
+      <div className="card anim-up" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 24px', padding: '16px 20px' }}>
+        {team.color_name && (
+          <div className="td-info-item">
+            <div className="td-info-label">チームカラー</div>
+            <div className="td-info-value">
+              <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: team.color, marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} />
+              {team.color_name}
+            </div>
+          </div>
+        )}
+        {team.group_name && (
+          <div className="td-info-item">
+            <div className="td-info-label">グループ</div>
+            <div className="td-info-value">予選グループ {team.group_name}</div>
+          </div>
+        )}
+        <div className="td-info-item">
+          <div className="td-info-label">人数</div>
+          <div className="td-info-value">{sortedMembers.length}人</div>
+        </div>
+        {soccerCount > 0 && (
+          <div className="td-info-item">
+            <div className="td-info-label">サッカー部員</div>
+            <div className="td-info-value">{soccerCount}人</div>
+          </div>
+        )}
+        {leader && (
+          <div className="td-info-item">
+            <div className="td-info-label">リーダー</div>
+            <div className="td-info-value">{leader.name}</div>
+          </div>
+        )}
       </div>
 
       <div className="card td-stats-card anim-up">

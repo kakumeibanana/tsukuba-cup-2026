@@ -2636,6 +2636,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   text-transform: uppercase; color: var(--ink-400);
   margin-bottom: 14px;
 }
+.td-info-item { display: flex; flex-direction: column; gap: 2px; min-width: 80px; }
+.td-info-label { font-size: 11px; color: var(--sub); font-weight: 600; }
+.td-info-value { font-size: 14px; font-weight: 700; color: var(--ink-900); display: flex; align-items: center; }
 
 /* Stats */
 .td-stats-card { margin-bottom: 0; }
