@@ -189,7 +189,7 @@ export default function TeamDetail() {
       </div>
 
       {/* Members */}
-      <div className="card anim-up">
+      <div className="card">
         <div className="td-section-label">
           メンバー
           <span className="td-section-count">{sortedMembers.length}人</span>
@@ -221,7 +221,7 @@ export default function TeamDetail() {
       </div>
 
       {/* Stats */}
-      <div className="card td-stats-card anim-up anim-d1">
+      <div className="card td-stats-card">
         <div className="td-section-label">成績（予選）</div>
         <div className="td-stats-row">
           {[
@@ -244,7 +244,7 @@ export default function TeamDetail() {
 
       {/* Group standings */}
       {groupRows.length > 0 && (
-        <div className="card anim-up anim-d2">
+        <div className="card">
           <div className="td-section-label">グループ {team.group_name} 順位表</div>
           <div className="table-wrap">
             <table className="table st-table">
@@ -287,7 +287,7 @@ export default function TeamDetail() {
 
       {/* Team scorers */}
       {teamScorers.length > 0 && (
-        <div className="card anim-up anim-d3">
+        <div className="card">
           <div className="td-section-label">チーム内得点ランキング</div>
           <div className="scorer-list">
             {teamScorers.map((s, i) => (
@@ -302,7 +302,7 @@ export default function TeamDetail() {
       )}
 
       {/* Matches */}
-      <div className="card anim-up anim-d4">
+      <div className="card">
         <div className="td-section-label">試合</div>
         {teamMatches.length === 0 ? (
           <div className="no-results" style={{ paddingTop: 20 }}>
