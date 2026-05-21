@@ -29,7 +29,7 @@ export default function AboutCard() {
           大会実施要項
           <span className="chev"><ChevRight /></span>
         </Link>
-        <Link className="about-link" to="/about">
+        <Link className="about-link" to="/about#rules">
           <svg className="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="9" />
             <path d="M12 8v5M12 16v.01" strokeLinecap="round" />
@@ -37,7 +37,7 @@ export default function AboutCard() {
           ルール・注意事項
           <span className="chev"><ChevRight /></span>
         </Link>
-        <Link className="about-link" to="/about">
+        <Link className="about-link" to="/about#info">
           <svg className="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 22s8-7.5 8-13a8 8 0 1 0-16 0c0 5.5 8 13 8 13z" />
             <circle cx="12" cy="9" r="3" />

@@ -115,7 +115,7 @@ export default function About() {
       </div>
 
       {/* 大会情報 + 日程 */}
-      <div className="about-content-grid">
+      <div className="about-content-grid" id="info">
         <div className="card">
           <div className="card-head">
             <div className="card-title">
@@ -184,7 +184,7 @@ export default function About() {
       </div>
 
       {/* ルール + 参加資格 */}
-      <div className="about-content-grid" style={{ marginTop: 16 }}>
+      <div className="about-content-grid" id="rules" style={{ marginTop: 16 }}>
         <div className="card">
           <div className="card-head">
             <div className="card-title">
