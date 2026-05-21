@@ -21,7 +21,7 @@ export default function Header() {
             <Link to="/standings" className={pathname === '/standings' ? 'active' : ''}>順位・ランキング</Link>
             <Link to="/teams"     className={pathname === '/teams'     ? 'active' : ''}>チーム</Link>
             <Link to="/about"     className={pathname === '/about'     ? 'active' : ''}>大会について</Link>
-            <Link to="/apply"     className={`header-apply-btn${pathname === '/apply' ? ' active' : ''}`}>参加申し込み</Link>
+            <Link to="/apply"     className={pathname === '/apply' ? 'active' : ''}>申し込み</Link>
           </nav>
           <button className="menu-btn" aria-label="メニューを開く" onClick={() => setOpen(true)}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
