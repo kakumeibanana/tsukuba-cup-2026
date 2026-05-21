@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 
-const EMPTY_FORM = { name: '', gender: '男子', group_name: 'A', color: '#7c3aed', description: '' }
+const EMPTY_FORM = { name: '', gender: '男子', group_name: 'A', color: '#7c3aed', description: '', color_name: '', leader_email: '' }
 
 export default function AdminTeams() {
   const [teams, setTeams]       = useState([])
@@ -28,7 +28,7 @@ export default function AdminTeams() {
     setEditing(team)
     setCreating(false)
     setModalError(null)
-    setForm({ name: team.name, gender: team.gender, group_name: team.group_name ?? '', color: team.color, description: team.description ?? '' })
+    setForm({ name: team.name, gender: team.gender, group_name: team.group_name ?? '', color: team.color, description: team.description ?? '', color_name: team.color_name ?? '', leader_email: team.leader_email ?? '' })
     setMembers((team.members ?? []).sort((a, b) => a.sort_order - b.sort_order).map(m => ({ ...m })))
   }
 
@@ -129,6 +129,16 @@ export default function AdminTeams() {
           <input type="color" value={form.color} onChange={f('color')} className="adm-color-input" />
         </div>
       </div>
+      <div className="adm-form-row">
+        <div className="adm-field">
+          <label>チームカラー</label>
+          <input value={form.color_name} onChange={f('color_name')} placeholder="例：赤、白" />
+        </div>
+        <div className="adm-field">
+          <label>リーダーのメアド</label>
+          <input value={form.leader_email} onChange={f('leader_email')} placeholder="ab12345@sgh-tsukuba.org" />
+        </div>
+      </div>
       <div className="adm-field">
         <label>紹介文</label>
         <textarea rows={3} value={form.description} onChange={f('description')} placeholder="チームの紹介を入力..." />
@@ -149,7 +159,7 @@ export default function AdminTeams() {
     setSaving(true)
     const { data: teamData, error: teamErr } = await supabase
       .from('teams')
-      .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description })
+      .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email })
       .select().single()
     if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
 
@@ -175,7 +185,7 @@ export default function AdminTeams() {
   async function handleSave() {
     setSaving(true)
     const { error: teamErr } = await supabase.from('teams')
-      .update({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, updated_at: new Date().toISOString() })
+      .update({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email, updated_at: new Date().toISOString() })
       .eq('id', editing.id)
     if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
 

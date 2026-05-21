@@ -14,6 +14,8 @@ const emptyMember = () => ({ name: '', year: '2年', cls: '1組', isSoccer: fals
 export default function Apply() {
   const [gender, setGender]         = useState('男子')
   const [teamName, setTeamName]     = useState('')
+  const [colorName, setColorName]   = useState('')
+  const [leaderEmail, setLeaderEmail] = useState('')
   const [members, setMembers]       = useState(Array.from({ length: MIN_MEMBERS }, emptyMember))
   const [leaderIdx, setLeaderIdx]   = useState(0)
   const [description, setDescription] = useState('')
@@ -45,6 +47,8 @@ export default function Apply() {
 
   const isFormReady = Boolean(
     teamName.trim() &&
+    colorName.trim() &&
+    leaderEmail.trim().endsWith('@sgh-tsukuba.org') &&
     members.every(m => m.name.trim()) &&
     filledMembers.length >= MIN_MEMBERS &&
     soccerCount <= MAX_SOCCER &&
@@ -64,6 +68,10 @@ export default function Apply() {
     setError(null)
 
     if (!teamName.trim())  { showError('チーム名を入力してください'); return }
+    if (!colorName.trim()) { showError('チームカラーを入力してください'); return }
+    if (!leaderEmail.trim().endsWith('@sgh-tsukuba.org')) {
+      showError('リーダーのメアドは @sgh-tsukuba.org で終わるアドレスを入力してください'); return
+    }
     if (filledMembers.length < MIN_MEMBERS) {
       showError(`メンバーは${MIN_MEMBERS}人以上入力してください`); return
     }
@@ -85,11 +93,13 @@ export default function Apply() {
     const { data: teamData, error: teamErr } = await supabase
       .from('teams')
       .insert({
-        name:        teamName.trim(),
+        name:         teamName.trim(),
         gender,
-        description: description.trim(),
-        color:       '#7c3aed',
-        group_name:  'A',
+        description:  description.trim(),
+        color_name:   colorName.trim(),
+        leader_email: leaderEmail.trim().toLowerCase(),
+        color:        '#7c3aed',
+        group_name:   'A',
       })
       .select()
       .single()
@@ -179,12 +189,34 @@ export default function Apply() {
           </div>
         </div>
 
-        {/* チーム名 */}
+        {/* チーム名・カラー */}
+        <div className="apply-field-row">
+          <div className="apply-field">
+            <label className="apply-label">チーム名 <span className="apply-required">必須</span></label>
+            <input className="apply-input" value={teamName}
+              onChange={e => setTeamName(e.target.value)}
+              placeholder="例：2年3組チーム" maxLength={30} />
+          </div>
+          <div className="apply-field">
+            <label className="apply-label">チームカラー <span className="apply-required">必須</span></label>
+            <input className="apply-input" value={colorName}
+              onChange={e => setColorName(e.target.value)}
+              placeholder="例：赤、白、黒" maxLength={20} />
+          </div>
+        </div>
+
+        {/* リーダーのメアド */}
         <div className="apply-field">
-          <label className="apply-label">チーム名 <span className="apply-required">必須</span></label>
-          <input className="apply-input" value={teamName}
-            onChange={e => setTeamName(e.target.value)}
-            placeholder="例：2年3組チーム" maxLength={30} />
+          <label className="apply-label">
+            リーダーのメアド <span className="apply-required">必須</span>
+            <span className="apply-label-hint">　@sgh-tsukuba.org</span>
+          </label>
+          <input className="apply-input" value={leaderEmail} type="email"
+            onChange={e => setLeaderEmail(e.target.value)}
+            placeholder="例：ab12345@sgh-tsukuba.org" />
+          {leaderEmail && !leaderEmail.trim().endsWith('@sgh-tsukuba.org') && (
+            <span style={{ fontSize: 12, color: '#dc2626' }}>@sgh-tsukuba.org で終わるアドレスを入力してください</span>
+          )}
         </div>
 
         {/* メンバー */}
