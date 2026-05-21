@@ -1662,7 +1662,9 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 /* ===== Standings page ===== */
 .st-seg-wrap {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
 }
 .standings-groups {

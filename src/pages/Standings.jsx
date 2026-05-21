@@ -48,7 +48,7 @@ export default function Standings() {
               onClick={() => setGender(g)}>{g}</button>
           ))}
         </div>
-        <div className="mc2-stage-tabs" style={{ marginTop: 10 }}>
+        <div className="mc2-stage-tabs">
           {[['league', '予選リーグ'], ['tournament', 'トーナメント表']].map(([key, label]) => (
             <button key={key} className={`mc2-stage-tab${tab === key ? ' active' : ''}`}
               onClick={() => setTab(key)}>{label}</button>
