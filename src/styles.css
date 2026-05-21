@@ -836,7 +836,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .scorer-list { display: flex; flex-direction: column; }
 .scorer-row {
   display: grid;
-  grid-template-columns: 30px 30px 1fr auto;
+  grid-template-columns: 30px 1fr auto;
   align-items: center;
   gap: 12px;
   padding: 11px 0;
@@ -1181,7 +1181,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   .table td.team-cell { gap: 7px; }
 
   /* Scorer */
-  .scorer-row { grid-template-columns: 26px 26px 1fr auto; gap: 8px; }
+  .scorer-row { grid-template-columns: 26px 1fr auto; gap: 8px; }
   .scorer-name { font-size: 12.5px; }
 
   /* Footer */
