@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-
+import { calcGroupStandings } from '../lib/standings'
 
 function sortByDate(a, b) {
   const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
@@ -59,7 +59,7 @@ function MatchRow({ m, teamName, goalsMap }) {
           {isFinished && myScore != null ? (
             <>
               <span className="td-match-score num">{myScore} – {oppScore}</span>
-              {pk && <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', color: '#6b7280', background: '#f3f4f6', borderRadius: 3, padding: '1px 4px', marginLeft: 2 }}>PK</span>}
+              {pk && <span style={{ fontSize: 10, fontWeight: 700, color: '#6b7280', background: '#f3f4f6', borderRadius: 3, padding: '1px 4px', marginLeft: 2 }}>PK</span>}
               {result && <span className={`td-res ${result.cls}`}>{result.label}</span>}
             </>
           ) : (
@@ -76,11 +76,12 @@ function MatchRow({ m, teamName, goalsMap }) {
 
 export default function TeamDetail() {
   const { id } = useParams()
-  const [team, setTeam]         = useState(null)
-  const [matches, setMatches]   = useState([])
-  const [goalsMap, setGoalsMap] = useState({})
-  const [loading, setLoading]   = useState(true)
-  const [notFound, setNotFound] = useState(false)
+  const [team, setTeam]           = useState(null)
+  const [allMatches, setAllMatches] = useState([])
+  const [goalsMap, setGoalsMap]   = useState({})
+  const [rawGoals, setRawGoals]   = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [notFound, setNotFound]   = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -94,10 +95,6 @@ export default function TeamDetail() {
         supabase.from('goals').select('match_id, team_name, player_name'),
       ])
 
-      const teamMatches = (mData ?? [])
-        .filter(m => m.home_name === teamData.name || m.away_name === teamData.name)
-        .sort(sortByDate)
-
       const map = {}
       ;(gData ?? []).forEach(g => {
         if (!map[g.match_id]) map[g.match_id] = {}
@@ -106,43 +103,48 @@ export default function TeamDetail() {
       })
 
       setTeam(teamData)
-      setMatches(teamMatches)
+      setAllMatches(mData ?? [])
       setGoalsMap(map)
+      setRawGoals(gData ?? [])
       setLoading(false)
     }
     load()
   }, [id])
 
-  if (loading) {
-    return (
-      <main className="page">
-        <div style={{ padding: 60, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>読み込み中...</div>
-      </main>
-    )
-  }
+  if (loading) return (
+    <main className="page">
+      <div style={{ padding: 60, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>読み込み中...</div>
+    </main>
+  )
 
-  if (notFound || !team) {
-    return (
-      <main className="page">
-        <div className="page-head">
-          <Link to="/teams" className="td-back">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            チーム一覧に戻る
-          </Link>
-        </div>
-        <p style={{ color: 'var(--ink-400)', marginTop: 40, textAlign: 'center' }}>チームが見つかりません</p>
-      </main>
-    )
-  }
+  if (notFound || !team) return (
+    <main className="page">
+      <div className="page-head">
+        <Link to="/teams" className="td-back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          チーム一覧に戻る
+        </Link>
+      </div>
+      <p style={{ color: 'var(--ink-400)', marginTop: 40, textAlign: 'center' }}>チームが見つかりません</p>
+    </main>
+  )
 
-  const stats    = calcStats(matches, team.name)
-  const finished = matches.filter(m => m.status === 'finished')
-  const upcoming = matches.filter(m => m.status !== 'finished')
   const sortedMembers = [...(team.members ?? [])].sort((a, b) => a.sort_order - b.sort_order)
-  const leader   = sortedMembers.find(m => m.is_captain)
-  const soccerCount = sortedMembers.filter(m => m.club).length
+  const teamMatches   = allMatches.filter(m => m.home_name === team.name || m.away_name === team.name).sort(sortByDate)
+  const stats         = calcStats(teamMatches, team.name)
+  const finished      = teamMatches.filter(m => m.status === 'finished')
+  const upcoming      = teamMatches.filter(m => m.status !== 'finished')
+  const groupRows     = team.group_name ? calcGroupStandings(allMatches, team.gender, team.group_name) : []
+
+  const scorerCounts = {}
+  rawGoals.filter(g => g.team_name === team.name).forEach(g => {
+    scorerCounts[g.player_name] = (scorerCounts[g.player_name] ?? 0) + 1
+  })
+  const teamScorers = Object.entries(scorerCounts)
+    .map(([name, goals]) => ({ name, goals }))
+    .sort((a, b) => b.goals - a.goals)
 
   return (
     <main className="page">
@@ -156,6 +158,7 @@ export default function TeamDetail() {
         </Link>
       </div>
 
+      {/* Hero */}
       <div className="td-hero">
         <div className="td-hero-stripe" style={{ background: team.color }} />
         <div className="td-hero-body">
@@ -166,49 +169,59 @@ export default function TeamDetail() {
               </div>
               <h1 className="td-name">{team.name}</h1>
             </div>
-            <div className="td-hero-avatar" style={{ background: team.color }}>
-              {team.name.slice(0, 2)}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+              {team.group_name && (
+                <span className="td-group-badge">G {team.group_name}</span>
+              )}
+              <div className="td-hero-avatar" style={{ background: team.color }}>
+                {team.name.slice(0, 2)}
+              </div>
             </div>
           </div>
           {team.description && <p className="td-desc">{team.description}</p>}
-        </div>
-      </div>
-
-      <div className="card" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 24px', padding: '16px 20px' }}>
-        {team.color_name && (
-          <div className="td-info-item">
-            <div className="td-info-label">チームカラー</div>
-            <div className="td-info-value">
-              <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: team.color, marginRight: 6, verticalAlign: 'middle', flexShrink: 0 }} />
+          {team.color_name && (
+            <div className="td-hero-color">
+              <span className="td-hero-color-dot" style={{ background: team.color }} />
               {team.color_name}
             </div>
-          </div>
-        )}
-        {team.group_name && (
-          <div className="td-info-item">
-            <div className="td-info-label">グループ</div>
-            <div className="td-info-value">予選グループ {team.group_name}</div>
-          </div>
-        )}
-        <div className="td-info-item">
-          <div className="td-info-label">人数</div>
-          <div className="td-info-value">{sortedMembers.length}人</div>
+          )}
         </div>
-        {soccerCount > 0 && (
-          <div className="td-info-item">
-            <div className="td-info-label">サッカー部員</div>
-            <div className="td-info-value">{soccerCount}人</div>
-          </div>
-        )}
-        {leader && (
-          <div className="td-info-item">
-            <div className="td-info-label">リーダー</div>
-            <div className="td-info-value">{leader.name}</div>
+      </div>
+
+      {/* Members */}
+      <div className="card anim-up">
+        <div className="td-section-label">
+          メンバー
+          <span className="td-section-count">{sortedMembers.length}人</span>
+        </div>
+        {sortedMembers.length === 0 ? (
+          <div style={{ color: 'var(--sub)', fontSize: 13 }}>メンバー未登録</div>
+        ) : (
+          <div className="td-member-grid">
+            {sortedMembers.map(m => (
+              <div key={m.id ?? m.name} className={`td-mc${m.is_captain ? ' td-mc-leader' : ''}`}>
+                <div className="td-mc-av" style={{
+                  background: m.is_captain ? '#f59e0b' : `${team.color}22`,
+                  color: m.is_captain ? '#fff' : team.color,
+                }}>
+                  {m.is_captain
+                    ? <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm2 3a1 1 0 0 0 0 2h10a1 1 0 0 0 0-2H7z"/></svg>
+                    : m.name.slice(0, 1)}
+                </div>
+                <div className="td-mc-name">{m.name}</div>
+                <div className="td-mc-sub">
+                  <span>{m.cls}</span>
+                  {m.club && <span className="td-mc-soccer">⚽</span>}
+                </div>
+                {m.is_captain && <div className="td-mc-leader-label">リーダー</div>}
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      <div className="card td-stats-card anim-up">
+      {/* Stats */}
+      <div className="card td-stats-card anim-up anim-d1">
         <div className="td-section-label">成績（予選）</div>
         <div className="td-stats-row">
           {[
@@ -221,8 +234,7 @@ export default function TeamDetail() {
           ].map(s => (
             <div key={s.label} className="td-stat">
               <div className="td-stat-label">{s.label}</div>
-              <div className="td-stat-value num"
-                style={{ color: s.color || 'var(--ink-900)', fontSize: s.large ? 30 : 22 }}>
+              <div className="td-stat-value num" style={{ color: s.color || 'var(--ink-900)', fontSize: s.large ? 30 : 22 }}>
                 {s.value}
               </div>
             </div>
@@ -230,37 +242,69 @@ export default function TeamDetail() {
         </div>
       </div>
 
-      <div className="card anim-up anim-d1">
-        <div className="td-section-label">メンバー</div>
-        <div className="td-members-grid">
-          {sortedMembers.length === 0 ? (
-            <div style={{ color: 'var(--sub)', fontSize: 13, padding: '8px 0' }}>メンバー未登録</div>
-          ) : sortedMembers.map(m => (
-            <div key={m.id ?? m.name} className="td-member">
-              <div className="td-member-info">
-                <div className="td-member-name" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  {m.is_captain && (
-                    <span style={{
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                      width: 18, height: 18, borderRadius: '50%',
-                      background: '#f59e0b', color: '#fff',
-                      fontSize: 9, fontWeight: 800, flexShrink: 0,
-                    }}>C</span>
-                  )}
-                  {m.name}
-                  {m.club && <span style={{ fontSize: 13, lineHeight: 1 }}>⚽</span>}
-                </div>
-                {m.cls && <span className="td-member-cls">{m.cls}</span>}
-              </div>
-            </div>
-          ))}
+      {/* Group standings */}
+      {groupRows.length > 0 && (
+        <div className="card anim-up anim-d2">
+          <div className="td-section-label">グループ {team.group_name} 順位表</div>
+          <div className="table-wrap">
+            <table className="table st-table">
+              <thead>
+                <tr>
+                  <th style={{ width: 28 }}></th>
+                  <th>チーム</th>
+                  <th className="r">試</th>
+                  <th className="r">勝</th>
+                  <th className="r">分</th>
+                  <th className="r">負</th>
+                  <th className="r">得</th>
+                  <th className="r">失</th>
+                  <th className="r">±</th>
+                  <th className="r">勝点</th>
+                </tr>
+              </thead>
+              <tbody>
+                {groupRows.map((row, i) => (
+                  <tr key={row.name} className={`${i === 0 ? 'top-row' : ''}${row.name === team.name ? ' td-my-row' : ''}`}>
+                    <td className="rank">{i + 1}</td>
+                    <td className="team-cell" style={row.name === team.name ? { fontWeight: 800 } : {}}>
+                      {row.name}
+                    </td>
+                    <td className="right">{row.g}</td>
+                    <td className="right">{row.w}</td>
+                    <td className="right">{row.d}</td>
+                    <td className="right">{row.l}</td>
+                    <td className="right">{row.gf}</td>
+                    <td className="right">{row.ga}</td>
+                    <td className="right">{row.gd > 0 ? `+${row.gd}` : row.gd}</td>
+                    <td className="pts">{row.pts}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="card anim-up anim-d2">
+      {/* Team scorers */}
+      {teamScorers.length > 0 && (
+        <div className="card anim-up anim-d3">
+          <div className="td-section-label">チーム内得点ランキング</div>
+          <div className="scorer-list">
+            {teamScorers.map((s, i) => (
+              <div key={s.name} className="scorer-row">
+                <div className="scorer-rank">{i + 1}</div>
+                <div className="scorer-name">{s.name}</div>
+                <div className="scorer-goals num">{s.goals} 得点</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Matches */}
+      <div className="card anim-up anim-d4">
         <div className="td-section-label">試合</div>
-
-        {matches.length === 0 ? (
+        {teamMatches.length === 0 ? (
           <div className="no-results" style={{ paddingTop: 20 }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>
