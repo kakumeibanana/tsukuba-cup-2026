@@ -197,23 +197,26 @@ export default function TeamDetail() {
         {sortedMembers.length === 0 ? (
           <div style={{ color: 'var(--sub)', fontSize: 13 }}>メンバー未登録</div>
         ) : (
-          <div className="td-member-grid">
-            {sortedMembers.map(m => (
-              <div key={m.id ?? m.name} className={`td-mc${m.is_captain ? ' td-mc-leader' : ''}`}>
-                <div className="td-mc-av" style={{
-                  background: m.is_captain ? '#f59e0b' : `${team.color}22`,
+          <div className="td-roster">
+            {sortedMembers.map((m, i) => (
+              <div key={m.id ?? m.name} className={`td-roster-row${m.is_captain ? ' td-roster-leader' : ''}`}>
+                <div className="td-roster-num">{i + 1}</div>
+                <div className="td-roster-av" style={{
+                  background: m.is_captain ? '#f59e0b' : `${team.color}18`,
                   color: m.is_captain ? '#fff' : team.color,
                 }}>
                   {m.is_captain
-                    ? <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm2 3a1 1 0 0 0 0 2h10a1 1 0 0 0 0-2H7z"/></svg>
+                    ? <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm2 3a1 1 0 0 0 0 2h10a1 1 0 0 0 0-2H7z"/></svg>
                     : m.name.slice(0, 1)}
                 </div>
-                <div className="td-mc-name">{m.name}</div>
-                <div className="td-mc-sub">
-                  <span>{m.cls}</span>
-                  {m.club && <span className="td-mc-soccer">⚽</span>}
+                <div className="td-roster-info">
+                  <div className="td-roster-name">{m.name}</div>
+                  <div className="td-roster-cls">{m.cls}</div>
                 </div>
-                {m.is_captain && <div className="td-mc-leader-label">リーダー</div>}
+                <div className="td-roster-badges">
+                  {m.is_captain && <span className="td-badge-leader">リーダー</span>}
+                  {m.club && <span className="td-badge-soccer">⚽ 部活</span>}
+                </div>
               </div>
             ))}
           </div>
