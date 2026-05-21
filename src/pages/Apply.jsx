@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
-const DEADLINE    = '6/1（月）'
+const DEADLINE    = '6/5（金）'
 const MAX_MEMBERS = 10
 const MIN_MEMBERS = 7
 const MAX_SOCCER  = 5
