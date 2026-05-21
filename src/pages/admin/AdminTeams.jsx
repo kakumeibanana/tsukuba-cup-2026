@@ -211,8 +211,10 @@ export default function AdminTeams() {
 
   async function handleDelete(id) {
     if (!confirm('このチームを削除しますか？')) return
-    await supabase.from('teams').delete().eq('id', id)
+    const { error } = await supabase.from('teams').delete().eq('id', id)
+    if (error) { showToast({ type: 'err', text: `削除失敗: ${error.message}` }); return }
     fetchTeams()
+    showToast({ type: 'ok', text: 'チームを削除しました' })
   }
 
   function showToast(msg) {

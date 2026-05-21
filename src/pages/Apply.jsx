@@ -132,7 +132,10 @@ export default function Apply() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ teamName: teamName.trim(), gender }),
-    }).catch(() => {})
+    })
+    .then(r => r.json())
+    .then(data => console.log('[notify]', data))
+    .catch(e => console.error('[notify]', e))
 
     setSending(false)
     setDone(true)
