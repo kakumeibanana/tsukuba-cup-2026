@@ -174,7 +174,7 @@ export default function TeamDetail() {
         </div>
       </div>
 
-      <div className="card anim-up" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 24px', padding: '16px 20px' }}>
+      <div className="card" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 24px', padding: '16px 20px' }}>
         {team.color_name && (
           <div className="td-info-item">
             <div className="td-info-label">チームカラー</div>
