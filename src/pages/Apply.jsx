@@ -201,7 +201,7 @@ export default function Apply() {
             <label className="apply-label">チームカラー <span className="apply-required">必須</span></label>
             <input className="apply-input" value={colorName}
               onChange={e => setColorName(e.target.value)}
-              placeholder="例：赤、白、黒" maxLength={20} />
+              placeholder="例：エメラルドグリーン" maxLength={20} />
           </div>
         </div>
 
@@ -213,7 +213,7 @@ export default function Apply() {
           </label>
           <input className="apply-input" value={leaderEmail} type="email"
             onChange={e => setLeaderEmail(e.target.value)}
-            placeholder="例：ab12345@sgh-tsukuba.org" />
+            placeholder="例：xxxxxxxx@sgh-tsukuba.org" />
           {leaderEmail && !leaderEmail.trim().endsWith('@sgh-tsukuba.org') && (
             <span style={{ fontSize: 12, color: '#dc2626' }}>@sgh-tsukuba.org で終わるアドレスを入力してください</span>
           )}
@@ -358,7 +358,7 @@ export default function Apply() {
               ? <><span className="apply-submit-spinner" />送信中...</>
               : '申し込みを送信する →'}
           </button>
-          <p className="apply-submit-note">送信後、運営から確認の連絡が届きます</p>
+          <p className="apply-submit-note">送信後、運営からリーダーのGmailに連絡が届きます。必ず確認してください。</p>
         </div>
       </form>
     </main>
