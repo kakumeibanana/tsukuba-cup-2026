@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import TournamentBracket from '../components/TournamentBracket'
 
 function sortByMatchDate(a, b) {
   const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
@@ -152,6 +153,13 @@ export default function Matches() {
       <div className="mc2-body-wrap">
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>読み込み中...</div>
+        ) : stage === 'tournament' ? (
+          <div style={{ padding: '12px 4px 0' }}>
+            <TournamentBracket
+              matches={filtered}
+              goalsMap={goalsMap}
+            />
+          </div>
         ) : sections.length === 0 ? (
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>
             試合がまだ登録されていません
@@ -159,15 +167,11 @@ export default function Matches() {
         ) : (
           <div className="mc2-sections" key={`${gender}-${stage}`}>
             {sections.map(s => {
-              const cards = filtered.filter(m =>
-                stage === 'league' ? m.group_name === s : m.round === s
-              )
+              const cards = filtered.filter(m => m.group_name === s)
               return (
                 <div key={s} className="mc2-section">
                   <div className="mc2-section-head">
-                    <span className="mc2-section-title">
-                      {stage === 'league' ? `グループ ${s}` : s}
-                    </span>
+                    <span className="mc2-section-title">グループ {s}</span>
                   </div>
                   <div className="mc2-card-list">
                     {cards.map(m => (
