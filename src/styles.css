@@ -21,6 +21,37 @@
   --draw-bg: #e5e7eb;
 }
 * { box-sizing: border-box; }
+
+/* ── 横スクロールバー共通 ── */
+.bk-scroll-wrap::-webkit-scrollbar,
+.table-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+.bk-scroll-wrap::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
+}
+.bk-scroll-wrap::-webkit-scrollbar-thumb {
+  background: rgba(139,92,246,0.55);
+  border-radius: 99px;
+}
+.bk-scroll-wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(139,92,246,0.8);
+}
+.table-wrap::-webkit-scrollbar-track {
+  background: var(--line);
+  border-radius: 99px;
+}
+.table-wrap::-webkit-scrollbar-thumb {
+  background: rgba(139,92,246,0.4);
+  border-radius: 99px;
+}
+.table-wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(139,92,246,0.65);
+}
+/* Firefox */
+.bk-scroll-wrap { scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.55) rgba(255,255,255,0.06); }
+.table-wrap      { scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.4) var(--line); }
 html, body { margin: 0; padding: 0; overflow-x: hidden; }
 body {
   font-family: "Noto Sans JP", "Manrope", system-ui, sans-serif;
@@ -1690,7 +1721,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   gap: 16px;
 }
 .table-wrap {
-  overflow-x: auto;
+  overflow-x: scroll;
   -webkit-overflow-scrolling: touch;
 }
 .st-table {
@@ -3281,7 +3312,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 
 /* ── Dark bracket container ── */
 .bk-scroll-wrap {
-  overflow-x: auto;
+  overflow-x: scroll;
   -webkit-overflow-scrolling: touch;
   padding: 20px 20px 24px;
   background: linear-gradient(145deg, #080318 0%, #100636 50%, #080220 100%);
