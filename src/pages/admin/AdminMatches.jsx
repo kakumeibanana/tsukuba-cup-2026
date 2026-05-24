@@ -36,6 +36,7 @@ export default function AdminMatches() {
   const [scoreH, setScoreH]           = useState(0)
   const [scoreA, setScoreA]           = useState(0)
   const [pkWinner, setPkWinner]       = useState('')
+  const [mom, setMom]                 = useState('')
   const [goals, setGoals]             = useState([])
   const [pickerSide, setPickerSide]   = useState(null)
   const [guestName, setGuestName]     = useState('')
@@ -67,6 +68,7 @@ export default function AdminMatches() {
     setScoreH(m.score_home ?? 0)
     setScoreA(m.score_away ?? 0)
     setPkWinner(m.pk_winner ?? '')
+    setMom(m.mom ?? '')
     setPickerSide(null)
     setModalError(null)
 
@@ -88,7 +90,7 @@ export default function AdminMatches() {
     await fetchTeams()
   }
 
-  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setGuestName(''); setModalError(null) }
+  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setGuestName(''); setMom(''); setModalError(null) }
 
   function pickGoal(side, memberName) {
     setGoals(prev => [...prev, {
@@ -109,6 +111,7 @@ export default function AdminMatches() {
       score_away: hasScore ? scoreA : null,
       pk_winner:  (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner)
                     ? pkWinner : null,
+      mom:        status === 'finished' && mom.trim() ? mom.trim() : null,
       updated_at: new Date().toISOString(),
     }).eq('id', editing.id)
 
@@ -405,6 +408,18 @@ export default function AdminMatches() {
                       </button>
                     </div>
                   )}
+                </div>
+              )}
+
+              {status === 'finished' && (
+                <div>
+                  <div className="adm-field-label">MOM（Man of the Match）</div>
+                  <input
+                    value={mom}
+                    onChange={e => setMom(e.target.value)}
+                    placeholder="例: 田中 太郎"
+                    style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13 }}
+                  />
                 </div>
               )}
 

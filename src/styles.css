@@ -857,6 +857,22 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   white-space: nowrap;
 }
 
+.mc2-mom {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px 8px;
+  font-size: 12px;
+  color: var(--ink-700);
+}
+.mc2-mom-icon { font-size: 13px; }
+.mc2-mom-label {
+  font-weight: 700;
+  color: var(--ink-500);
+  letter-spacing: 0.04em;
+}
+.mc2-mom-name { font-weight: 600; }
+
 /* About card */
 .about-card { background: var(--lavender-bg); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
 .about-head { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; margin-bottom: 10px; }

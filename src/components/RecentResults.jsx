@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import MatchCard from './MatchCard'
 
 function sortByMatchDateDesc(a, b) {
   const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
@@ -8,9 +9,9 @@ function sortByMatchDateDesc(a, b) {
 }
 
 export default function RecentResults() {
-  const [results, setResults] = useState([])
+  const [results, setResults]   = useState([])
   const [goalsMap, setGoalsMap] = useState({})
-  const [loading, setLoading]  = useState(true)
+  const [loading, setLoading]   = useState(true)
 
   useEffect(() => {
     async function load() {
@@ -18,8 +19,7 @@ export default function RecentResults() {
         supabase.from('matches').select('*').eq('status', 'finished'),
         supabase.from('goals').select('match_id, team_name, player_name'),
       ])
-      const sorted = (mData ?? []).sort(sortByMatchDateDesc).slice(0, 8)
-      setResults(sorted)
+      setResults((mData ?? []).sort(sortByMatchDateDesc).slice(0, 6))
 
       const map = {}
       ;(gData ?? []).forEach(g => {
@@ -61,41 +61,15 @@ export default function RecentResults() {
           <p>試合結果はここに表示されます</p>
         </div>
       ) : (
-        <div className="recent-list">
-          {results.map(m => {
-            const isDraw  = m.score_home === m.score_away
-            const homeWin = m.score_home > m.score_away || (isDraw && m.pk_winner === m.home_name)
-            const awayWin = m.score_away > m.score_home || (isDraw && m.pk_winner === m.away_name)
-            const homeScorers = goalsMap[m.id]?.[m.home_name] ?? []
-            const awayScorers = goalsMap[m.id]?.[m.away_name] ?? []
-            const hasScorers  = homeScorers.length > 0 || awayScorers.length > 0
-            return (
-              <div key={m.id} className="recent-row">
-                <div className="recent-meta">
-                  <span className="recent-date num">{m.match_date}（{m.match_dow}）</span>
-                  <span className="recent-group">
-                    {m.stage === 'league' ? `G${m.group_name}` : m.round} · {m.gender}
-                  </span>
-                </div>
-                <div className="recent-match">
-                  <span className={`recent-team${homeWin ? ' recent-winner' : ''}`}>{m.home_name}</span>
-                  <span className="recent-score num">
-                    <span className={homeWin ? 'recent-win-num' : ''}>{m.score_home}</span>
-                    <span className="recent-sep">-</span>
-                    <span className={awayWin ? 'recent-win-num' : ''}>{m.score_away}</span>
-                    {m.pk_winner && <span style={{ fontSize: 9, fontWeight: 700, color: '#9ca3af', marginLeft: 3 }}>PK</span>}
-                  </span>
-                  <span className={`recent-team recent-team-r${awayWin ? ' recent-winner' : ''}`}>{m.away_name}</span>
-                </div>
-                {hasScorers && (
-                  <div className="recent-scorers">
-                    <span>{homeScorers.join(', ')}</span>
-                    <span>{awayScorers.join(', ')}</span>
-                  </div>
-                )}
-              </div>
-            )
-          })}
+        <div className="mc2-card-list" style={{ marginTop: 8 }}>
+          {results.map(m => (
+            <MatchCard
+              key={m.id}
+              m={m}
+              homeScorers={goalsMap[m.id]?.[m.home_name] ?? []}
+              awayScorers={goalsMap[m.id]?.[m.away_name] ?? []}
+            />
+          ))}
         </div>
       )}
     </div>
