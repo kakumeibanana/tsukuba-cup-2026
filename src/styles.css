@@ -854,6 +854,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .scorer-goals {
   font-family: "Manrope", sans-serif;
   font-weight: 700; font-size: 13px; color: var(--ink-800);
+  white-space: nowrap;
 }
 
 /* About card */

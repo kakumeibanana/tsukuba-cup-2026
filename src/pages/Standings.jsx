@@ -143,21 +143,26 @@ export default function Standings() {
                 <div style={{ padding: '16px', color: 'var(--sub)', fontSize: 13 }}>得点記録がありません</div>
               ) : (
                 <div className="scorer-list">
-                  {scorers.map((s, i) => (
-                    <div key={s.name} className="scorer-row">
-                      <div className="scorer-rank">
-                        {medals[i]
-                          ? <span className={`rank-medal ${medals[i]}`}>{i + 1}</span>
-                          : i + 1}
+                  {scorers.map((s, i) => {
+                    const rank = i === 0 ? 1 : scorers[i - 1].goals === s.goals
+                      ? scorers.findIndex((x, j) => j < i && x.goals === s.goals) + 1
+                      : i + 1
+                    return (
+                      <div key={s.name} className="scorer-row">
+                        <div className="scorer-rank">
+                          {medals[rank - 1]
+                            ? <span className={`rank-medal ${medals[rank - 1]}`}>{rank}</span>
+                            : rank}
+                        </div>
+                        <div />
+                        <div className="scorer-name">
+                          {s.name}
+                          <span className="team-tag">（{s.team}）</span>
+                        </div>
+                        <div className="scorer-goals num">{s.goals} 得点</div>
                       </div>
-                      <div />
-                      <div className="scorer-name">
-                        {s.name}
-                        <span className="team-tag">（{s.team}）</span>
-                      </div>
-                      <div className="scorer-goals num">{s.goals} 得点</div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
