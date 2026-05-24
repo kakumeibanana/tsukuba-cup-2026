@@ -1,14 +1,33 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
+function NewsModal({ item, onClose }) {
+  return (
+    <div className="news-modal-bg" onClick={onClose}>
+      <div className="news-modal" onClick={e => e.stopPropagation()}>
+        <div className="news-modal-img" style={{ background: item.bg_gradient }}>
+          <span className="news-card-cat">{item.category}</span>
+          <button className="news-modal-x" onClick={onClose}>✕</button>
+        </div>
+        <div className="news-modal-body">
+          <div className="news-modal-date">{item.news_date}</div>
+          <div className="news-modal-title">{item.title}</div>
+          {item.body && <p className="news-modal-text">{item.body}</p>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function NewsList() {
   const [news, setNews]       = useState([])
   const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState(null)
 
   useEffect(() => {
     supabase
       .from('news')
-      .select('id, category, title, news_date, bg_gradient')
+      .select('id, category, title, body, news_date, bg_gradient')
       .eq('published', true)
       .order('created_at', { ascending: false })
       .limit(4)
@@ -36,7 +55,7 @@ export default function NewsList() {
       ) : (
         <div className="news-grid">
           {news.map(item => (
-            <div key={item.id} className="news-card">
+            <div key={item.id} className="news-card" onClick={() => setSelected(item)} style={{ cursor: 'pointer' }}>
               <div className="news-card-img" style={{ background: item.bg_gradient }}>
                 <span className="news-card-cat">{item.category}</span>
               </div>
@@ -48,6 +67,7 @@ export default function NewsList() {
           ))}
         </div>
       )}
+      {selected && <NewsModal item={selected} onClose={() => setSelected(null)} />}
     </div>
   )
 }
