@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 
 function NewsModal({ item, onClose }) {
-  return (
+  return createPortal(
     <div className="news-modal-bg" onClick={onClose}>
       <div className="news-modal" onClick={e => e.stopPropagation()}>
         <div className="news-modal-img" style={{ background: item.bg_gradient }}>
@@ -15,7 +16,8 @@ function NewsModal({ item, onClose }) {
           {item.body && <p className="news-modal-text">{item.body}</p>}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
