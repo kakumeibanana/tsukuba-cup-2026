@@ -411,32 +411,50 @@ export default function AdminMatches() {
                 </div>
               )}
 
-              {status === 'finished' && (
-                <div>
-                  <div className="adm-field-label">MOM（Man of the Match）</div>
-                  <select
-                    value={mom}
-                    onChange={e => setMom(e.target.value)}
-                    style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, background: '#fff' }}
-                  >
-                    <option value="">— 未選定 —</option>
-                    {homeMembers.length > 0 && (
-                      <optgroup label={editing?.home_name}>
-                        {homeMembers.map(m => (
-                          <option key={m.id} value={m.name}>{m.name}</option>
-                        ))}
-                      </optgroup>
+              {status === 'finished' && (() => {
+                const allMembers = [...homeMembers, ...awayMembers]
+                const momIsGuest = mom !== '' && !allMembers.some(m => m.name === mom)
+                const selectVal  = momIsGuest ? '__guest__' : mom
+                return (
+                  <div>
+                    <div className="adm-field-label">MOM（Man of the Match）</div>
+                    <select
+                      value={selectVal}
+                      onChange={e => {
+                        if (e.target.value === '__guest__') setMom('')
+                        else setMom(e.target.value)
+                      }}
+                      style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, background: '#fff' }}
+                    >
+                      <option value="">— 未選定 —</option>
+                      {homeMembers.length > 0 && (
+                        <optgroup label={editing?.home_name}>
+                          {homeMembers.map(m => (
+                            <option key={m.id} value={m.name}>{m.name}</option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {awayMembers.length > 0 && (
+                        <optgroup label={editing?.away_name}>
+                          {awayMembers.map(m => (
+                            <option key={m.id} value={m.name}>{m.name}</option>
+                          ))}
+                        </optgroup>
+                      )}
+                      <option value="__guest__">✏️ 助っ人（手入力）</option>
+                    </select>
+                    {(selectVal === '__guest__') && (
+                      <input
+                        autoFocus
+                        value={mom}
+                        onChange={e => setMom(e.target.value)}
+                        placeholder="助っ人の名前を入力"
+                        style={{ width: '100%', marginTop: 6, padding: '8px 10px', border: '1px solid var(--purple-500)', borderRadius: 8, fontSize: 13 }}
+                      />
                     )}
-                    {awayMembers.length > 0 && (
-                      <optgroup label={editing?.away_name}>
-                        {awayMembers.map(m => (
-                          <option key={m.id} value={m.name}>{m.name}</option>
-                        ))}
-                      </optgroup>
-                    )}
-                  </select>
-                </div>
-              )}
+                  </div>
+                )
+              })()}
 
               <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
                 <button className="adm-btn-sm adm-btn-danger"
