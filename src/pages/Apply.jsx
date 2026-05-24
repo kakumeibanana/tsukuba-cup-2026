@@ -129,9 +129,9 @@ export default function Apply() {
 
     // 管理者にメール通知（失敗してもフォームは完了扱いにする）
     const memberList = members.map((m, i) => {
-      const cls = m.isTeacher ? '先生' : `${m.year}${m.cls}`
-      const tag = i === leaderIdx ? '★リーダー' : m.isSoccer ? '⚽' : ''
-      return `${m.name}（${cls}）${tag}`
+      const cls  = m.isTeacher ? '先生' : `${m.year}${m.cls}`
+      const tags = [i === leaderIdx && '★リーダー', m.isSoccer && '⚽サッカー部員'].filter(Boolean).join(' ')
+      return `${m.name}（${cls}）${tags ? ' ' + tags : ''}`
     }).join('\n')
     fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-application`, {
       method: 'POST',
