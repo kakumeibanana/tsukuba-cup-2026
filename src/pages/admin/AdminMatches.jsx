@@ -37,6 +37,7 @@ export default function AdminMatches() {
   const [scoreA, setScoreA]           = useState(0)
   const [pkWinner, setPkWinner]       = useState('')
   const [mom, setMom]                 = useState('')
+  const [momMode, setMomMode]         = useState('select') // 'select' | 'guest'
   const [goals, setGoals]             = useState([])
   const [pickerSide, setPickerSide]   = useState(null)
   const [guestName, setGuestName]     = useState('')
@@ -78,8 +79,12 @@ export default function AdminMatches() {
       supabase.from('teams').select('members(id, name, sort_order)').eq('name', m.away_name).single(),
     ])
     setGoals(goalsData ?? [])
-    setHomeMembers((homeTeam?.members ?? []).sort((a, b) => a.sort_order - b.sort_order))
-    setAwayMembers((awayTeam?.members ?? []).sort((a, b) => a.sort_order - b.sort_order))
+    const homeSorted = (homeTeam?.members ?? []).sort((a, b) => a.sort_order - b.sort_order)
+    const awaySorted = (awayTeam?.members ?? []).sort((a, b) => a.sort_order - b.sort_order)
+    setHomeMembers(homeSorted)
+    setAwayMembers(awaySorted)
+    const allNames = [...homeSorted, ...awaySorted].map(x => x.name)
+    setMomMode(m.mom && !allNames.includes(m.mom) ? 'guest' : 'select')
   }
 
   async function openCreate() {
@@ -90,7 +95,7 @@ export default function AdminMatches() {
     await fetchTeams()
   }
 
-  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setGuestName(''); setMom(''); setModalError(null) }
+  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setGuestName(''); setMom(''); setMomMode('select'); setModalError(null) }
 
   function pickGoal(side, memberName) {
     setGoals(prev => [...prev, {
@@ -411,50 +416,45 @@ export default function AdminMatches() {
                 </div>
               )}
 
-              {status === 'finished' && (() => {
-                const allMembers = [...homeMembers, ...awayMembers]
-                const momIsGuest = mom !== '' && !allMembers.some(m => m.name === mom)
-                const selectVal  = momIsGuest ? '__guest__' : mom
-                return (
-                  <div>
-                    <div className="adm-field-label">MOM（Man of the Match）</div>
-                    <select
-                      value={selectVal}
-                      onChange={e => {
-                        if (e.target.value === '__guest__') setMom('')
-                        else setMom(e.target.value)
-                      }}
-                      style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, background: '#fff' }}
-                    >
-                      <option value="">— 未選定 —</option>
-                      {homeMembers.length > 0 && (
-                        <optgroup label={editing?.home_name}>
-                          {homeMembers.map(m => (
-                            <option key={m.id} value={m.name}>{m.name}</option>
-                          ))}
-                        </optgroup>
-                      )}
-                      {awayMembers.length > 0 && (
-                        <optgroup label={editing?.away_name}>
-                          {awayMembers.map(m => (
-                            <option key={m.id} value={m.name}>{m.name}</option>
-                          ))}
-                        </optgroup>
-                      )}
-                      <option value="__guest__">✏️ 助っ人（手入力）</option>
-                    </select>
-                    {(selectVal === '__guest__') && (
-                      <input
-                        autoFocus
-                        value={mom}
-                        onChange={e => setMom(e.target.value)}
-                        placeholder="助っ人の名前を入力"
-                        style={{ width: '100%', marginTop: 6, padding: '8px 10px', border: '1px solid var(--purple-500)', borderRadius: 8, fontSize: 13 }}
-                      />
+              {status === 'finished' && (
+                <div>
+                  <div className="adm-field-label">MOM（Man of the Match）</div>
+                  <select
+                    value={momMode === 'guest' ? '__guest__' : mom}
+                    onChange={e => {
+                      if (e.target.value === '__guest__') { setMomMode('guest'); setMom('') }
+                      else { setMomMode('select'); setMom(e.target.value) }
+                    }}
+                    style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, background: '#fff' }}
+                  >
+                    <option value="">— 未選定 —</option>
+                    {homeMembers.length > 0 && (
+                      <optgroup label={editing?.home_name}>
+                        {homeMembers.map(m => (
+                          <option key={m.id} value={m.name}>{m.name}</option>
+                        ))}
+                      </optgroup>
                     )}
-                  </div>
-                )
-              })()}
+                    {awayMembers.length > 0 && (
+                      <optgroup label={editing?.away_name}>
+                        {awayMembers.map(m => (
+                          <option key={m.id} value={m.name}>{m.name}</option>
+                        ))}
+                      </optgroup>
+                    )}
+                    <option value="__guest__">✏️ 助っ人（手入力）</option>
+                  </select>
+                  {momMode === 'guest' && (
+                    <input
+                      autoFocus
+                      value={mom}
+                      onChange={e => setMom(e.target.value)}
+                      placeholder="助っ人の名前を入力"
+                      style={{ width: '100%', marginTop: 6, padding: '8px 10px', border: '1px solid var(--purple-500)', borderRadius: 8, fontSize: 13 }}
+                    />
+                  )}
+                </div>
+              )}
 
               <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
                 <button className="adm-btn-sm adm-btn-danger"
