@@ -414,12 +414,27 @@ export default function AdminMatches() {
               {status === 'finished' && (
                 <div>
                   <div className="adm-field-label">MOM（Man of the Match）</div>
-                  <input
+                  <select
                     value={mom}
                     onChange={e => setMom(e.target.value)}
-                    placeholder="例: 田中 太郎"
-                    style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13 }}
-                  />
+                    style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, background: '#fff' }}
+                  >
+                    <option value="">— 未選定 —</option>
+                    {homeMembers.length > 0 && (
+                      <optgroup label={editing?.home_name}>
+                        {homeMembers.map(m => (
+                          <option key={m.id} value={m.name}>{m.name}</option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {awayMembers.length > 0 && (
+                      <optgroup label={editing?.away_name}>
+                        {awayMembers.map(m => (
+                          <option key={m.id} value={m.name}>{m.name}</option>
+                        ))}
+                      </optgroup>
+                    )}
+                  </select>
                 </div>
               )}
 
