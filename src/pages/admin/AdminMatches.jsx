@@ -122,11 +122,14 @@ export default function AdminMatches() {
 
     if (error) { setSaving(false); setModalError(error.message); return }
 
-    await supabase.from('goals').delete().eq('match_id', editing.id)
+    const { error: delErr } = await supabase.from('goals').delete().eq('match_id', editing.id)
+    if (delErr) { setSaving(false); setModalError('得点者の保存に失敗しました: ' + delErr.message); return }
+
     if (goals.length > 0) {
-      await supabase.from('goals').insert(
+      const { error: insErr } = await supabase.from('goals').insert(
         goals.map(g => ({ match_id: editing.id, team_name: g.team_name, player_name: g.player_name }))
       )
+      if (insErr) { setSaving(false); setModalError('得点者の保存に失敗しました: ' + insErr.message); return }
     }
 
     setSaving(false)
@@ -359,47 +362,40 @@ export default function AdminMatches() {
                         <span style={{ color: pickerColor, fontWeight: 600, fontSize: 13 }}>{pickerTeamName}</span>
                         <button className="adm-btn-icon" onClick={() => setPickerSide(null)}>✕</button>
                       </div>
-                      {pickerMembers.length === 0
-                        ? <div className="adm-empty" style={{ fontSize: 12, padding: 8 }}>
-                            メンバーが登録されていません
-                          </div>
-                        : (
-                          <>
-                            <div className="adm-member-picker-list">
-                              {pickerMembers.map(m => (
-                                <button key={m.id} className="adm-member-pick-btn"
-                                  style={{ borderColor: pickerColor, color: pickerColor }}
-                                  onClick={() => pickGoal(pickerSide, m.name)}>
-                                  {m.name}
-                                </button>
-                              ))}
-                            </div>
-                            <div style={{ borderTop: '1px solid var(--line)', marginTop: 8, paddingTop: 8 }}>
-                              <div style={{ fontSize: 11, color: 'var(--sub)', marginBottom: 5, fontWeight: 600 }}>助っ人</div>
-                              <div style={{ display: 'flex', gap: 6 }}>
-                                <input
-                                  value={guestName}
-                                  onChange={e => setGuestName(e.target.value)}
-                                  onKeyDown={e => {
-                                    if (e.key === 'Enter' && guestName.trim()) {
-                                      pickGoal(pickerSide, guestName.trim())
-                                      setGuestName('')
-                                    }
-                                  }}
-                                  placeholder="氏名を入力"
-                                  style={{ flex: 1, padding: '5px 8px', border: '1px solid var(--line)', borderRadius: 6, fontSize: 13 }}
-                                />
-                                <button
-                                  onClick={() => { if (guestName.trim()) { pickGoal(pickerSide, guestName.trim()); setGuestName('') } }}
-                                  className="adm-btn-sm"
-                                  style={{ whiteSpace: 'nowrap', background: '#f3f4f6', color: 'var(--ink-700)' }}>
-                                  追加
-                                </button>
-                              </div>
-                            </div>
-                          </>
-                        )
-                      }
+                      {pickerMembers.length > 0 && (
+                        <div className="adm-member-picker-list">
+                          {pickerMembers.map(m => (
+                            <button key={m.id} className="adm-member-pick-btn"
+                              style={{ borderColor: pickerColor, color: pickerColor }}
+                              onClick={() => pickGoal(pickerSide, m.name)}>
+                              {m.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <div style={{ borderTop: pickerMembers.length > 0 ? '1px solid var(--line)' : 'none', marginTop: pickerMembers.length > 0 ? 8 : 0, paddingTop: pickerMembers.length > 0 ? 8 : 0 }}>
+                        <div style={{ fontSize: 11, color: 'var(--sub)', marginBottom: 5, fontWeight: 600 }}>助っ人</div>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <input
+                            value={guestName}
+                            onChange={e => setGuestName(e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter' && guestName.trim()) {
+                                pickGoal(pickerSide, guestName.trim())
+                                setGuestName('')
+                              }
+                            }}
+                            placeholder="氏名を入力"
+                            style={{ flex: 1, padding: '5px 8px', border: '1px solid var(--line)', borderRadius: 6, fontSize: 13 }}
+                          />
+                          <button
+                            onClick={() => { if (guestName.trim()) { pickGoal(pickerSide, guestName.trim()); setGuestName('') } }}
+                            className="adm-btn-sm"
+                            style={{ whiteSpace: 'nowrap', background: '#f3f4f6', color: 'var(--ink-700)' }}>
+                            追加
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <div className="adm-add-goal-row">
