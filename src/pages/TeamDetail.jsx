@@ -42,7 +42,7 @@ function MatchRow({ m, teamName, goalsMap }) {
     else                                     result = { label: '分', cls: 'td-res-d' }
   }
 
-  const stageLabel = m.stage === 'league' ? `予選 G${m.group_name}` : (m.round ?? '決勝T')
+  const stageLabel = m.stage === 'league' ? `グループ ${m.group_name}` : (m.round ?? '決勝T')
 
   return (
     <div className={`td-match-row${isFinished ? ' td-match-finished' : ''}`}>
@@ -302,7 +302,6 @@ export default function TeamDetail() {
 
       {/* Matches */}
       <div className="card">
-        <div className="td-section-label">試合</div>
         {teamMatches.length === 0 ? (
           <div className="no-results" style={{ paddingTop: 20 }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
