@@ -30,7 +30,7 @@ export default function UpcomingSchedule() {
           date,
           dow: grouped[date][0].match_dow,
           matches: grouped[date].map(m => ({
-            label: m.stage === 'league' ? `G${m.group_name}` : (m.round ?? 'トーナメント'),
+            label: m.stage === 'league' ? `グループ ${m.group_name}` : (m.round ?? 'トーナメント'),
             badge: m.gender === '女子' ? 'badge-green' : 'badge-purple',
             home: m.home_name,
             away: m.away_name,
