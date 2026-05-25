@@ -15,70 +15,73 @@ function MatchModal({ m, homeScorers, awayScorers, onClose }) {
     <div className="news-modal-bg" onClick={onClose}>
       <div className="mm-modal" onClick={e => e.stopPropagation()}>
 
-        {/* ── Header ── */}
-        <div className="mm-header">
+        {/* ── Top: meta + close ── */}
+        <div className="mm-top">
           <div className="mm-meta">
             {isLive && <span className="mm-live-dot" />}
             {m.match_date}（{m.match_dow}）&nbsp;·&nbsp;{stageLabel}
           </div>
-          <button className="mm-close" onClick={onClose}>✕</button>
+          <button className="mm-close" onClick={onClose} aria-label="閉じる">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <line x1="1" y1="1" x2="13" y2="13"/><line x1="13" y1="1" x2="1" y2="13"/>
+            </svg>
+          </button>
         </div>
 
-        {/* ── Body ── */}
-        <div className="mm-body">
-
-          {/* Scoreboard */}
-          <div className="mm-scoreboard">
-            <div className={`mm-team${homeWin ? ' mm-win' : ''}`}>{m.home_name}</div>
-            <div className="mm-score-block">
-              {shown && m.score_home != null ? (
-                <div className="mm-score-num num">
-                  <span className={homeWin ? 'mm-score-w' : ''}>{m.score_home}</span>
-                  <span className="mm-score-sep">-</span>
-                  <span className={awayWin ? 'mm-score-w' : ''}>{m.score_away}</span>
-                </div>
-              ) : (
-                <div className="mm-vs">vs</div>
-              )}
-              {!shown && m.match_time && m.status !== 'cancelled' && (
-                <div className="mm-time">{m.match_time}</div>
-              )}
-            </div>
-            <div className={`mm-team mm-team-r${awayWin ? ' mm-win' : ''}`}>{m.away_name}</div>
+        {/* ── Scoreboard ── */}
+        <div className="mm-scoreboard">
+          <div className={`mm-team mm-home${homeWin ? ' mm-win' : ''}`}>
+            {homeWin && <span className="mm-win-dot">●</span>}
+            <span>{m.home_name}</span>
           </div>
+          <div className="mm-score-block">
+            {shown && m.score_home != null ? (
+              <div className="mm-score-num num">
+                {m.score_home}<span className="mm-score-sep">-</span>{m.score_away}
+              </div>
+            ) : (
+              <div className="mm-vs">vs</div>
+            )}
+            {!shown && m.match_time && m.status !== 'cancelled' && (
+              <div className="mm-time">{m.match_time}</div>
+            )}
+          </div>
+          <div className={`mm-team mm-away${awayWin ? ' mm-win' : ''}`}>
+            <span>{m.away_name}</span>
+            {awayWin && <span className="mm-win-dot">●</span>}
+          </div>
+        </div>
 
-          {isFinished && m.pk_winner && (
-            <div className="mm-pk-note">PK戦：<strong>{m.pk_winner}</strong> 勝利</div>
-          )}
-          {m.status === 'cancelled' && (
-            <div className="mm-pk-note" style={{ color: '#9ca3af' }}>この試合は中止になりました</div>
-          )}
+        {isFinished && m.pk_winner && (
+          <div className="mm-pk-note">PK戦：<strong>{m.pk_winner}</strong> 勝利</div>
+        )}
+        {m.status === 'cancelled' && (
+          <div className="mm-pk-note" style={{ color: '#9ca3af' }}>この試合は中止になりました</div>
+        )}
 
-          {/* Scorers */}
-          {hasScorers && (
-            <div className="mm-section">
-              <div className="mm-section-label">⚽ 得点者</div>
-              <div className="mm-scorers">
-                <div className="mm-scorers-l">
-                  {homeScorers.map((s, i) => <span key={i} className="mm-scorer">{s}</span>)}
-                </div>
-                <div className="mm-scorers-div" />
-                <div className="mm-scorers-r">
-                  {awayScorers.map((s, i) => <span key={i} className="mm-scorer">{s}</span>)}
-                </div>
+        {/* ── Scorers ── */}
+        {hasScorers && (
+          <div className="mm-section">
+            <div className="mm-section-label">⚽ 得点者</div>
+            <div className="mm-scorers">
+              <div className="mm-scorers-l">
+                {homeScorers.map((s, i) => <span key={i} className="mm-scorer">{s}</span>)}
+              </div>
+              <div className="mm-scorers-r">
+                {awayScorers.map((s, i) => <span key={i} className="mm-scorer">{s}</span>)}
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* MOM */}
-          {isFinished && m.mom && (
-            <div className="mm-section">
-              <div className="mm-section-label">⭐ MOM</div>
-              <div className="mm-mom-name">{m.mom}</div>
-            </div>
-          )}
+        {/* ── MOM ── */}
+        {isFinished && m.mom && (
+          <div className="mm-mom-box">
+            <div className="mm-mom-label">⭐ MAN OF THE MATCH</div>
+            <div className="mm-mom-name">{m.mom}</div>
+          </div>
+        )}
 
-        </div>
       </div>
     </div>,
     document.body
