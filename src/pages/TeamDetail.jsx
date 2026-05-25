@@ -188,6 +188,8 @@ export default function TeamDetail() {
         </div>
       </div>
 
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
       {/* Members */}
       <div className="card">
         <div className="td-section-label">
@@ -332,6 +334,7 @@ export default function TeamDetail() {
         )}
       </div>
 
+      </div>{/* end card stack */}
     </main>
   )
 }

@@ -2637,7 +2637,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   border: 1px solid var(--line);
   border-radius: 16px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .td-hero-stripe { height: 7px; }
 .td-hero-body   { padding: 22px 24px 24px; }
