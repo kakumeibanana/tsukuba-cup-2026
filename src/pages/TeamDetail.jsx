@@ -179,12 +179,6 @@ export default function TeamDetail() {
             </div>
           </div>
           {team.description && <p className="td-desc">{team.description}</p>}
-          {team.color_name && (
-            <div className="td-hero-color">
-              <span className="td-hero-color-dot" style={{ background: team.color }} />
-              {team.color_name}
-            </div>
-          )}
         </div>
       </div>
 
