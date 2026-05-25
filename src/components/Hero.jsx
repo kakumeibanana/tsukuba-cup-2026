@@ -1,7 +1,27 @@
-export default function Hero() {
-  const today = new Date()
+import { useState, useEffect } from 'react'
+
+function calcDaysLeft() {
+  const now   = new Date()
   const start = new Date('2026-06-08')
-  const daysLeft = Math.max(0, Math.ceil((start - today) / (1000 * 60 * 60 * 24)))
+  return Math.max(0, Math.ceil((start - now) / (1000 * 60 * 60 * 24)))
+}
+
+export default function Hero() {
+  const [daysLeft, setDaysLeft] = useState(calcDaysLeft)
+
+  useEffect(() => {
+    let intervalId
+    const now      = new Date()
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0)
+    const msUntil  = midnight - now
+
+    const timeoutId = setTimeout(() => {
+      setDaysLeft(calcDaysLeft())
+      intervalId = setInterval(() => setDaysLeft(calcDaysLeft()), 24 * 60 * 60 * 1000)
+    }, msUntil)
+
+    return () => { clearTimeout(timeoutId); clearInterval(intervalId) }
+  }, [])
 
   return (
     <section className="hero">
