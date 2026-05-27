@@ -42,13 +42,7 @@ export default function Hero() {
           </div>
         </div>
         <div className="hero-actions">
-          <a href="#matches" className="btn btn-primary">
-            試合・結果を見る
-            <svg className="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </a>
-          <a href="/apply" className="btn btn-ghost">
+          <a href="/apply" className="btn btn-primary">
             参加申し込み
             <svg className="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M13 6l6 6-6 6" />
