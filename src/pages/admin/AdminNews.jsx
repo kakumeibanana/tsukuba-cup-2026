@@ -24,6 +24,7 @@ export default function AdminNews() {
   const [form, setForm]         = useState(EMPTY_FORM)
   const [saving, setSaving]     = useState(false)
   const [msg, setMsg]           = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
   useEffect(() => { fetchNews() }, [])
 
@@ -71,9 +72,12 @@ export default function AdminNews() {
   }
 
   async function handleDelete(id) {
-    if (!confirm('削除しますか？')) return
-    await supabase.from('news').delete().eq('id', id)
+    const { error } = await supabase.from('news').delete().eq('id', id)
+    if (error) { setMsg({ type: 'error', text: '削除に失敗しました: ' + error.message }); return }
+    setConfirmDelete(null)
     fetchNews()
+    setMsg({ type: 'ok', text: '削除しました' })
+    setTimeout(() => setMsg(null), 3000)
   }
 
   async function togglePublish(item) {
@@ -127,7 +131,15 @@ export default function AdminNews() {
                   {item.published ? '非公開' : '公開'}
                 </button>
                 <button className="adm-btn-sm" onClick={() => openEdit(item)}>編集</button>
-                <button className="adm-btn-sm adm-btn-danger" onClick={() => handleDelete(item.id)}>削除</button>
+                {confirmDelete === item.id ? (
+                  <>
+                    <span style={{ fontSize: 11, color: '#dc2626', fontWeight: 700 }}>本当に削除？</span>
+                    <button className="adm-btn-sm adm-btn-danger" onClick={() => handleDelete(item.id)}>はい</button>
+                    <button className="adm-btn-sm" onClick={() => setConfirmDelete(null)}>いいえ</button>
+                  </>
+                ) : (
+                  <button className="adm-btn-sm adm-btn-danger" onClick={() => setConfirmDelete(item.id)}>削除</button>
+                )}
               </div>
             </div>
           ))}
