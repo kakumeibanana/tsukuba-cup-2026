@@ -109,6 +109,12 @@ export default function TeamDetail() {
       setLoading(false)
     }
     load()
+    const channel = supabase
+      .channel(`team-detail-${id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'goals' },   load)
+      .subscribe()
+    return () => supabase.removeChannel(channel)
   }, [id])
 
   if (loading) return (

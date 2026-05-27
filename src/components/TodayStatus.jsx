@@ -14,7 +14,7 @@ export default function TodayStatus() {
   const [status, setStatus] = useState('normal')
   const [note, setNote]     = useState('')
 
-  useEffect(() => {
+  function loadStatus() {
     supabase
       .from('settings')
       .select('key, value')
@@ -24,6 +24,15 @@ export default function TodayStatus() {
         setStatus(data.find(r => r.key === 'event_status')?.value ?? 'normal')
         setNote(data.find(r => r.key === 'event_status_note')?.value ?? '')
       })
+  }
+
+  useEffect(() => {
+    loadStatus()
+    const channel = supabase
+      .channel('today-status-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, loadStatus)
+      .subscribe()
+    return () => supabase.removeChannel(channel)
   }, [])
 
   function handleTap() {
