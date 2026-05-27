@@ -30,7 +30,7 @@ export default function Hero() {
         <span className="hero-year-bg" aria-hidden="true">2026</span>
         <h1 className="hero-title">TSUKUBA<br />CUP 2026</h1>
         <div className="hero-tag">
-          <span>全力で、楽しんで、最高の夏にしよう。</span>
+          <span>筑波大学附属高校サッカークラブ主催</span>
           <span className="script">Enjoy Futsal!</span>
         </div>
         <div className="hero-countdown">
