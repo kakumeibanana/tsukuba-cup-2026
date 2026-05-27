@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
-const DEADLINE    = '6/5（金）'
+const DEADLINE      = '6/5（金）'
+const DEADLINE_DATE = new Date('2026-06-06')
 const MAX_MEMBERS = 10
 const MIN_MEMBERS = 7
 const MAX_SOCCER  = 5
@@ -99,7 +100,7 @@ export default function Apply() {
         color_name:   colorName.trim(),
         leader_email: leaderEmail.trim().toLowerCase(),
         color:        '#7c3aed',
-        group_name:   'A',
+        group_name:   null,
       })
       .select()
       .single()
@@ -153,6 +154,24 @@ export default function Apply() {
     setSending(false)
     setDone(true)
   }
+
+  if (new Date() >= DEADLINE_DATE) return (
+    <main className="page">
+      <div className="apply-done">
+        <div className="apply-done-icon" style={{ fontSize: 32 }}>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <h2 className="apply-done-title">申し込み受付は終了しました</h2>
+        <p className="apply-done-sub">
+          参加申し込みの受付は {DEADLINE} をもって終了しました。<br />
+          お問い合わせはInstagramまでご連絡ください。
+        </p>
+        <a href="/" className="apply-done-btn">ホームへ戻る</a>
+      </div>
+    </main>
+  )
 
   if (done) return (
     <main className="page">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings } from '../lib/standings'
 import TournamentBracket from '../components/TournamentBracket'
@@ -9,29 +9,40 @@ export default function Standings() {
   const [gender, setGender]   = useState('男子')
   const [tab, setTab]         = useState('league')
   const [matches, setMatches] = useState([])
-  const [scorers, setScorers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [allGoals, setAllGoals] = useState([])
+  const [loading, setLoading]   = useState(true)
+
+  async function load() {
+    setLoading(true)
+    const [{ data: mData }, { data: gData }] = await Promise.all([
+      supabase.from('matches').select('*'),
+      supabase.from('goals').select('player_name, team_name, match_id'),
+    ])
+    setMatches(mData ?? [])
+    setAllGoals(gData ?? [])
+    setLoading(false)
+  }
 
   useEffect(() => {
-    async function load() {
-      setLoading(true)
-      const [{ data: mData }, { data: gData }] = await Promise.all([
-        supabase.from('matches').select('*'),
-        supabase.from('goals').select('player_name, team_name'),
-      ])
-      setMatches(mData ?? [])
-
-      const counts = {}
-      ;(gData ?? []).forEach(g => {
-        if (!counts[g.player_name])
-          counts[g.player_name] = { name: g.player_name, team: g.team_name, goals: 0 }
-        counts[g.player_name].goals++
-      })
-      setScorers(Object.values(counts).sort((a, b) => b.goals - a.goals))
-      setLoading(false)
-    }
     load()
+    const channel = supabase
+      .channel('standings-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'goals' },   load)
+      .subscribe()
+    return () => supabase.removeChannel(channel)
   }, [])
+
+  const scorers = useMemo(() => {
+    const matchIds = new Set(matches.filter(m => m.gender === gender).map(m => m.id))
+    const counts = {}
+    allGoals.filter(g => matchIds.has(g.match_id)).forEach(g => {
+      if (!counts[g.player_name])
+        counts[g.player_name] = { name: g.player_name, team: g.team_name, goals: 0 }
+      counts[g.player_name].goals++
+    })
+    return Object.values(counts).sort((a, b) => b.goals - a.goals)
+  }, [allGoals, matches, gender])
 
   const groups = gender === '男子' ? ['A', 'B', 'C', 'D'] : ['A', 'B']
 
