@@ -1,25 +1,36 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const medals = ['gold', 'silver', 'bronze']
 
 export default function GroupRanking() {
-  const [scorers, setScorers] = useState([])
+  const [gender, setGender]   = useState('男子')
+  const [matches, setMatches] = useState([])
+  const [allGoals, setAllGoals] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('goals').select('player_name, team_name').then(({ data }) => {
-      const counts = {}
-      ;(data ?? []).forEach(g => {
-        if (!counts[g.player_name])
-          counts[g.player_name] = { name: g.player_name, team: g.team_name, goals: 0 }
-        counts[g.player_name].goals++
-      })
-      setScorers(Object.values(counts).sort((a, b) => b.goals - a.goals).slice(0, 5))
+    Promise.all([
+      supabase.from('matches').select('id, gender'),
+      supabase.from('goals').select('player_name, team_name, match_id'),
+    ]).then(([{ data: mData }, { data: gData }]) => {
+      setMatches(mData ?? [])
+      setAllGoals(gData ?? [])
       setLoading(false)
     })
   }, [])
+
+  const scorers = useMemo(() => {
+    const matchIds = new Set(matches.filter(m => m.gender === gender).map(m => m.id))
+    const counts = {}
+    allGoals.filter(g => matchIds.has(g.match_id)).forEach(g => {
+      if (!counts[g.player_name])
+        counts[g.player_name] = { name: g.player_name, team: g.team_name, goals: 0 }
+      counts[g.player_name].goals++
+    })
+    return Object.values(counts).sort((a, b) => b.goals - a.goals).slice(0, 5)
+  }, [allGoals, matches, gender])
 
   return (
     <div className="card">
@@ -37,6 +48,14 @@ export default function GroupRanking() {
           </svg>
         </Link>
       </div>
+
+      <div className="mc2-segment" style={{ maxWidth: 160, marginBottom: 10 }}>
+        {['男子', '女子'].map(g => (
+          <button key={g} className={`mc2-seg-btn${gender === g ? ' active' : ''}`}
+            onClick={() => setGender(g)}>{g}</button>
+        ))}
+      </div>
+
       {loading ? (
         <div style={{ padding: '16px 0', color: 'var(--sub)', fontSize: 13 }}>読み込み中...</div>
       ) : scorers.length === 0 ? (

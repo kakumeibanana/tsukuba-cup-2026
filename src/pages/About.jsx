@@ -11,7 +11,7 @@ const info = [
 const schedule = [
   { date: '5/27（水）',   events: ['参加申し込み開始'] },
   { date: '6/5（金）',    events: ['申し込み締め切り'] },
-  { date: '6/8（月）',    events: ['大会'] },
+  { date: '6/8（月）〜7/14（水）', events: ['大会'] },
   { date: '6/17〜19',    events: ['定期考査'] },
 ]
 
