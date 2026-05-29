@@ -4,16 +4,17 @@ import { supabase } from '../../lib/supabase'
 const EMPTY_FORM = { name: '', gender: '男子', group_name: 'A', color: '#7c3aed', description: '', color_name: '', leader_email: '' }
 
 export default function AdminTeams() {
-  const [teams, setTeams]       = useState([])
-  const [loading, setLoading]   = useState(true)
-  const [editing, setEditing]   = useState(null)
-  const [creating, setCreating] = useState(false)
-  const [form, setForm]         = useState(EMPTY_FORM)
-  const [members, setMembers]   = useState([])
-  const [saving, setSaving]     = useState(false)
-  const [toastMsg, setToastMsg] = useState(null)
+  const [teams, setTeams]           = useState([])
+  const [loading, setLoading]       = useState(true)
+  const [editing, setEditing]       = useState(null)
+  const [creating, setCreating]     = useState(false)
+  const [form, setForm]             = useState(EMPTY_FORM)
+  const [members, setMembers]       = useState([])
+  const [saving, setSaving]         = useState(false)
+  const [toastMsg, setToastMsg]     = useState(null)
   const [modalError, setModalError] = useState(null)
-  const [search, setSearch]     = useState('')
+  const [search, setSearch]         = useState('')
+  const [bulkBusy, setBulkBusy]     = useState(false)
 
   useEffect(() => { fetchTeams() }, [])
 
@@ -22,6 +23,23 @@ export default function AdminTeams() {
     const { data } = await supabase.from('teams').select('*, members(*)').order('gender').order('group_name')
     setTeams(data ?? [])
     setLoading(false)
+  }
+
+  async function togglePublish(team) {
+    const next = !team.is_published
+    const { error } = await supabase.from('teams').update({ is_published: next }).eq('id', team.id)
+    if (error) { showToast({ type: 'err', text: `更新失敗: ${error.message}` }); return }
+    setTeams(prev => prev.map(t => t.id === team.id ? { ...t, is_published: next } : t))
+    showToast({ type: 'ok', text: next ? `${team.name} を公開しました` : `${team.name} を非公開にしました` })
+  }
+
+  async function bulkPublish(publish) {
+    setBulkBusy(true)
+    const { error } = await supabase.from('teams').update({ is_published: publish }).neq('id', 0)
+    if (error) { showToast({ type: 'err', text: `一括更新失敗: ${error.message}` }); setBulkBusy(false); return }
+    await fetchTeams()
+    setBulkBusy(false)
+    showToast({ type: 'ok', text: publish ? '全チームを公開しました' : '全チームを非公開にしました' })
   }
 
   function openEdit(team) {
@@ -231,13 +249,29 @@ export default function AdminTeams() {
     <div className="adm-section">
       <div className="adm-section-head">
         <h2 className="adm-section-title">チーム管理</h2>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="チーム名で検索"
             style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, width: 140 }}
           />
+          <button
+            className="adm-btn"
+            onClick={() => bulkPublish(false)}
+            disabled={bulkBusy}
+            style={{ borderColor: 'var(--line)', color: 'var(--sub)' }}
+          >
+            {bulkBusy ? '処理中...' : '全て非公開'}
+          </button>
+          <button
+            className="adm-btn"
+            onClick={() => bulkPublish(true)}
+            disabled={bulkBusy}
+            style={{ background: '#16a34a', color: '#fff', border: 'none' }}
+          >
+            {bulkBusy ? '処理中...' : '全チーム一括公開'}
+          </button>
           <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ チームを追加</button>
         </div>
       </div>
@@ -262,7 +296,21 @@ export default function AdminTeams() {
                       <div key={team.id} className="adm-team-card">
                         <div className="adm-team-card-accent" style={{ background: team.color }} />
                         <div className="adm-team-card-body">
-                          <div className="adm-team-name">{team.name}</div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div className="adm-team-name">{team.name}</div>
+                            <button
+                              onClick={() => togglePublish(team)}
+                              title={team.is_published ? '公開中（クリックで非公開）' : '非公開（クリックで公開）'}
+                              style={{
+                                padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 700,
+                                border: 'none', cursor: 'pointer', flexShrink: 0, marginLeft: 6,
+                                background: team.is_published ? '#dcfce7' : 'var(--line)',
+                                color:      team.is_published ? '#16a34a' : 'var(--sub)',
+                              }}
+                            >
+                              {team.is_published ? '公開中' : '非公開'}
+                            </button>
+                          </div>
                           <div className="adm-team-meta">
                             グループ {team.group_name} · {(team.members ?? []).length}人
                           </div>

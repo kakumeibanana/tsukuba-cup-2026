@@ -10,6 +10,7 @@ export default function Teams() {
     supabase
       .from('teams')
       .select('*, members(*)')
+      .eq('is_published', true)
       .order('gender')
       .order('name')
       .then(({ data }) => {
