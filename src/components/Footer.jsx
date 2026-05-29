@@ -12,7 +12,7 @@ export default function Footer() {
               <div className="sub">筑波大学附属高校 フットサル大会</div>
             </div>
           </div>
-          <div className="footer-tagline">筑波大学附属高等学校<br />フットサル部 公式サイト</div>
+          <div className="footer-tagline">筑波大学附属高等学校<br />フットサル大会 公式サイト</div>
         </div>
 
         <div className="footer-block">
