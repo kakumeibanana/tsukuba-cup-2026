@@ -34,7 +34,7 @@ export default function Hero() {
           <span className="script">Enjoy Futsal!</span>
         </div>
         <div className="hero-countdown">
-          <div className="hero-countdown-dates">6/8(MON) ～ 7/12(MON)</div>
+          <div className="hero-countdown-dates">6/8(MON) ～ 7/14(WED)</div>
           <div className="hero-countdown-main">
             <span className="hero-countdown-label">あと</span>
             <span className="hero-countdown-num">{daysLeft}</span>
