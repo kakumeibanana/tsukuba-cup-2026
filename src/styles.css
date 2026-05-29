@@ -1917,7 +1917,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .sched-day-list { display: flex; flex-direction: column; }
 .sched-day-row {
   display: grid;
-  grid-template-columns: 76px 1fr;
+  grid-template-columns: auto 1fr;
   gap: 12px;
   padding: 11px 0;
   border-bottom: 1px solid var(--line);
