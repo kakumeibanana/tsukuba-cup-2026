@@ -1,3 +1,4 @@
+import HeroGallery from '../components/HeroGallery.jsx'
 import Hero from '../components/Hero.jsx'
 import TodayStatus from '../components/TodayStatus.jsx'
 import UpcomingSchedule from '../components/UpcomingSchedule.jsx'
@@ -8,20 +9,17 @@ import AboutCard from '../components/AboutCard.jsx'
 
 export default function Home() {
   return (
-    <main className="page">
-      <Hero />
-      <div className="body-grid">
-        <div className="col">
-          <div className="anim-up"><TodayStatus /></div>
-          <div className="anim-up anim-d1"><NewsList /></div>
-          <div className="anim-up anim-d2"><UpcomingSchedule /></div>
-          <div className="anim-up anim-d3"><RecentResults /></div>
-        </div>
-        <div className="col" id="ranking">
-          <div className="anim-up anim-d1"><GroupRanking /></div>
-          <div className="anim-up anim-d2"><AboutCard /></div>
-        </div>
-      </div>
-    </main>
+    <>
+      <HeroGallery />
+      <main className="page">
+        <Hero />
+        <div className="anim-up"><TodayStatus /></div>
+        <div className="anim-up anim-d1"><RecentResults /></div>
+        <div className="anim-up anim-d2"><GroupRanking /></div>
+        <div className="anim-up anim-d3"><UpcomingSchedule /></div>
+        <div className="anim-up anim-d4"><NewsList /></div>
+        <div className="anim-up anim-d5"><AboutCard /></div>
+      </main>
+    </>
   )
 }
