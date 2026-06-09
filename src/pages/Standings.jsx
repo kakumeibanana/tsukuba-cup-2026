@@ -2,8 +2,27 @@ import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings } from '../lib/standings'
 import TournamentBracket from '../components/TournamentBracket'
+import StTable from '../components/StTable'
 
-const medals = ['gold', 'silver', 'bronze']
+const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze', 4: 'fourth' }
+
+function rankOf(rows, i) {
+  const r = rows[i]
+  for (let j = 0; j < i; j++) {
+    if (rows[j].pts === r.pts && rows[j].gd === r.gd && rows[j].gf === r.gf) return j + 1
+  }
+  return i + 1
+}
+
+function scorerRank(scorers, i) {
+  const goals = scorers[i].goals
+  return scorers.findIndex(s => s.goals === goals) + 1
+}
+
+function assistRank(assists, i) {
+  const cnt = assists[i].assists
+  return assists.findIndex(a => a.assists === cnt) + 1
+}
 
 export default function Standings() {
   const [gender, setGender]   = useState('男子')
@@ -16,7 +35,7 @@ export default function Standings() {
     setLoading(true)
     const [{ data: mData }, { data: gData }] = await Promise.all([
       supabase.from('matches').select('*'),
-      supabase.from('goals').select('player_name, team_name, match_id'),
+      supabase.from('goals').select('player_name, team_name, match_id, assist_player'),
     ])
     setMatches(mData ?? [])
     setAllGoals(gData ?? [])
@@ -42,6 +61,17 @@ export default function Standings() {
       counts[g.player_name].goals++
     })
     return Object.values(counts).sort((a, b) => b.goals - a.goals)
+  }, [allGoals, matches, gender])
+
+  const assists = useMemo(() => {
+    const matchIds = new Set(matches.filter(m => m.gender === gender).map(m => m.id))
+    const counts = {}
+    allGoals.filter(g => g.assist_player && matchIds.has(g.match_id)).forEach(g => {
+      if (!counts[g.assist_player])
+        counts[g.assist_player] = { name: g.assist_player, team: g.team_name, assists: 0 }
+      counts[g.assist_player].assists++
+    })
+    return Object.values(counts).sort((a, b) => b.assists - a.assists)
   }, [allGoals, matches, gender])
 
   const groups = gender === '男子' ? ['A', 'B', 'C', 'D'] : ['A', 'B']
@@ -97,7 +127,7 @@ export default function Standings() {
                       グループ {group}
                     </div>
                   </div>
-                  <div className="table-wrap">
+                  <StTable>
                     <table className="table st-table">
                       <thead>
                         <tr>
@@ -114,12 +144,14 @@ export default function Standings() {
                         </tr>
                       </thead>
                       <tbody>
-                        {rows.map((row, i) => (
-                          <tr key={row.name} className={i === 0 ? 'top-row' : ''}>
+                        {rows.map((row, i) => {
+                          const rank = rankOf(rows, i)
+                          return (
+                          <tr key={row.name} className={rank === 1 ? 'top-row' : ''}>
                             <td className="rank">
-                              {medals[i]
-                                ? <span className={`rank-medal ${medals[i]}`}>{i + 1}</span>
-                                : i + 1}
+                              {MEDAL[rank]
+                                ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
+                                : rank}
                             </td>
                             <td className="team-cell">{row.name}</td>
                             <td className="right">{row.g}</td>
@@ -131,10 +163,11 @@ export default function Standings() {
                             <td className="right">{row.gd > 0 ? `+${row.gd}` : row.gd}</td>
                             <td className="pts">{row.pts}</td>
                           </tr>
-                        ))}
+                          )
+                        })}
                       </tbody>
                     </table>
-                  </div>
+                  </StTable>
                 </div>
               )
             })}
@@ -155,14 +188,12 @@ export default function Standings() {
               ) : (
                 <div className="scorer-list">
                   {scorers.map((s, i) => {
-                    const rank = i === 0 ? 1 : scorers[i - 1].goals === s.goals
-                      ? scorers.findIndex((x, j) => j < i && x.goals === s.goals) + 1
-                      : i + 1
+                    const rank = scorerRank(scorers, i)
                     return (
                       <div key={s.name} className="scorer-row">
                         <div className="scorer-rank">
-                          {medals[rank - 1]
-                            ? <span className={`rank-medal ${medals[rank - 1]}`}>{rank}</span>
+                          {MEDAL[rank]
+                            ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
                             : rank}
                         </div>
                         <div />
@@ -171,6 +202,41 @@ export default function Standings() {
                           <span className="team-tag">（{s.team}）</span>
                         </div>
                         <div className="scorer-goals num">{s.goals} 得点</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="card" style={{ marginTop: 16 }}>
+              <div className="card-head">
+                <div className="card-title">
+                  <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 5v14M5 12l7-7 7 7"/>
+                  </svg>
+                  アシストランキング
+                </div>
+              </div>
+              {assists.length === 0 ? (
+                <div style={{ padding: '16px', color: 'var(--sub)', fontSize: 13 }}>アシスト記録がありません</div>
+              ) : (
+                <div className="scorer-list">
+                  {assists.map((s, i) => {
+                    const rank = assistRank(assists, i)
+                    return (
+                      <div key={s.name} className="scorer-row">
+                        <div className="scorer-rank">
+                          {MEDAL[rank]
+                            ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
+                            : rank}
+                        </div>
+                        <div />
+                        <div className="scorer-name">
+                          {s.name}
+                          <span className="team-tag">（{s.team}）</span>
+                        </div>
+                        <div className="scorer-goals num">{s.assists} アシスト</div>
                       </div>
                     )
                   })}

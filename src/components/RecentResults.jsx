@@ -17,7 +17,7 @@ export default function RecentResults() {
     async function load() {
       const [{ data: mData }, { data: gData }] = await Promise.all([
         supabase.from('matches').select('*').eq('status', 'finished'),
-        supabase.from('goals').select('match_id, team_name, player_name'),
+        supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
       ])
       setResults((mData ?? []).sort(sortByMatchDateDesc).slice(0, 6))
 
@@ -25,7 +25,7 @@ export default function RecentResults() {
       ;(gData ?? []).forEach(g => {
         if (!map[g.match_id]) map[g.match_id] = {}
         if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
-        map[g.match_id][g.team_name].push(g.player_name)
+        map[g.match_id][g.team_name].push(g.assist_player ? `${g.player_name} (A: ${g.assist_player})` : g.player_name)
       })
       setGoalsMap(map)
       setLoading(false)

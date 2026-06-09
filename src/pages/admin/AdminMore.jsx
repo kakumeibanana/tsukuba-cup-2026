@@ -55,7 +55,7 @@ export default function AdminMore() {
   return (
     <div className="adm-section">
       <div className="adm-section-head">
-        <h2 className="adm-section-title">More</h2>
+        <h2 className="adm-section-title">その他</h2>
       </div>
 
       {msg && <div className={`adm-alert ${msg.type === 'ok' ? 'adm-alert-ok' : 'adm-alert-error'}`}>{msg.text}</div>}

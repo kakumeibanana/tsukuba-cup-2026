@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react'
 
-function calcDaysLeft() {
+const EVENT_START = new Date(2026, 5, 9)  // 6/9
+const EVENT_END   = new Date(2026, 6, 14) // 7/14
+
+function calcPhase() {
   const now   = new Date()
-  const start = new Date('2026-06-08')
-  return Math.max(0, Math.ceil((start - now) / (1000 * 60 * 60 * 24)))
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  if (today > EVENT_END)   return { phase: 'ended' }
+  const diff = Math.round((EVENT_START - today) / (1000 * 60 * 60 * 24))
+  if (diff <= 0) return { phase: 'today' }
+  return { phase: 'before', days: diff }
 }
 
 export default function Hero() {
-  const [daysLeft, setDaysLeft] = useState(calcDaysLeft)
+  const [info, setInfo] = useState(calcPhase)
 
   useEffect(() => {
     let intervalId
@@ -16,8 +22,8 @@ export default function Hero() {
     const msUntil  = midnight - now
 
     const timeoutId = setTimeout(() => {
-      setDaysLeft(calcDaysLeft())
-      intervalId = setInterval(() => setDaysLeft(calcDaysLeft()), 24 * 60 * 60 * 1000)
+      setInfo(calcPhase())
+      intervalId = setInterval(() => setInfo(calcPhase()), 24 * 60 * 60 * 1000)
     }, msUntil)
 
     return () => { clearTimeout(timeoutId); clearInterval(intervalId) }
@@ -25,7 +31,6 @@ export default function Hero() {
 
   return (
     <section className="hero">
-      <div className="grid-bg"></div>
       <div className="hero-copy">
         <span className="hero-year-bg" aria-hidden="true">2026</span>
         <h1 className="hero-title">TSUKUBA<br />CUP 2026</h1>
@@ -33,13 +38,26 @@ export default function Hero() {
           <span>筑波大学附属高校サッカークラブ主催</span>
           <span className="script">Enjoy Futsal!</span>
         </div>
-        <div className="hero-countdown">
-          <div className="hero-countdown-dates">6/8(MON) ～ 7/14(WED)</div>
-          <div className="hero-countdown-main">
-            <span className="hero-countdown-label">あと</span>
-            <span className="hero-countdown-num">{daysLeft}</span>
-            <span className="hero-countdown-label">日</span>
-          </div>
+        <div className={`hero-countdown${info.phase === 'today' ? ' hero-countdown--today' : ''}`}>
+          <div className="hero-countdown-dates">6/9(TUE) ～ 7/14(WED)</div>
+          {info.phase === 'ended' ? (
+            <div className="hero-countdown-main">
+              <span className="hero-countdown-ended">大会終了</span>
+            </div>
+          ) : info.phase === 'today' ? (
+            <div className="hero-countdown-main">
+              <span className="hero-countdown-today">
+                <span className="hero-countdown-dot" />
+                本日開催！
+              </span>
+            </div>
+          ) : (
+            <div className="hero-countdown-main">
+              <span className="hero-countdown-label">あと</span>
+              <span className="hero-countdown-num">{info.days}</span>
+              <span className="hero-countdown-label">日</span>
+            </div>
+          )}
         </div>
         <div className="hero-actions">
           <a href="/apply" className="btn btn-primary">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { MatchModal } from './MatchCard'
 
 function sortByMatchDate(a, b) {
   const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
@@ -8,18 +9,17 @@ function sortByMatchDate(a, b) {
 }
 
 export default function UpcomingSchedule() {
-  const [days, setDays]       = useState([])
-  const [loading, setLoading] = useState(true)
+  const [days, setDays]         = useState([])
+  const [loading, setLoading]   = useState(true)
+  const [selected, setSelected] = useState(null)
 
   useEffect(() => {
     supabase
       .from('matches')
-      .select('id, match_date, match_dow, match_time, home_name, away_name, gender, stage, group_name, round')
+      .select('id, match_date, match_dow, match_time, home_name, away_name, gender, stage, group_name, round, status')
       .eq('status', 'scheduled')
       .then(({ data }) => {
         const sorted = (data ?? []).sort(sortByMatchDate)
-
-        // 日付でグループ化（最初の3日分まで）
         const grouped = {}
         sorted.forEach(m => {
           if (!grouped[m.match_date]) grouped[m.match_date] = []
@@ -30,6 +30,7 @@ export default function UpcomingSchedule() {
           date,
           dow: grouped[date][0].match_dow,
           matches: grouped[date].map(m => ({
+            raw: m,
             label: m.stage === 'league' ? `グループ ${m.group_name}` : (m.round ?? 'トーナメント'),
             badge: m.gender === '女子' ? 'badge-green' : 'badge-purple',
             home: m.home_name,
@@ -70,11 +71,15 @@ export default function UpcomingSchedule() {
             <div key={day.date} className="usched-day">
               <div className="usched-day-header">
                 <span className="usched-date num">{day.date}（{day.dow}）</span>
-                <span className="usched-time-tag">{day.matches[0]?.time ?? '昼休み'}</span>
               </div>
               <div className="usched-matches">
                 {day.matches.map((m, i) => (
-                  <div key={i} className="usched-row">
+                  <div
+                    key={i}
+                    className="usched-row usched-row-clickable"
+                    onClick={() => setSelected(m.raw)}
+                  >
+                    <span className="usched-time-tag">{m.time ?? '昼休み'}</span>
                     <span className={`badge ${m.badge}`}>{m.label}</span>
                     <span className="usched-teams">
                       <span className="usched-team">{m.home}</span>
@@ -88,6 +93,15 @@ export default function UpcomingSchedule() {
           ))
         )}
       </div>
+
+      {selected && (
+        <MatchModal
+          m={selected}
+          homeScorers={[]}
+          awayScorers={[]}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </div>
   )
 }

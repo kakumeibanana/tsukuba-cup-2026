@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
-const DEADLINE      = '6/5（金）'
-const DEADLINE_DATE = new Date('2026-06-06')
+const MALE_DEADLINE        = '6/5（金）'
+const MALE_DEADLINE_DATE   = new Date('2026-06-06')
+const FEMALE_DEADLINE      = '6/12（金）'
+const FEMALE_DEADLINE_DATE = new Date('2026-06-13')
 const MAX_MEMBERS = 10
 const MIN_MEMBERS = 7
 const MAX_SOCCER  = 5
@@ -13,7 +15,9 @@ const emptyMember = () => ({ name: '', year: '2年', cls: '1組', isSoccer: fals
 
 
 export default function Apply() {
-  const [gender, setGender]         = useState('男子')
+  const maleEnded   = new Date() >= MALE_DEADLINE_DATE
+  const femaleEnded = new Date() >= FEMALE_DEADLINE_DATE
+  const [gender, setGender]         = useState(maleEnded ? '女子' : '男子')
   const [teamName, setTeamName]     = useState('')
   const [colorName, setColorName]   = useState('')
   const [leaderEmail, setLeaderEmail] = useState('')
@@ -155,7 +159,7 @@ export default function Apply() {
     setDone(true)
   }
 
-  if (new Date() >= DEADLINE_DATE) return (
+  if (femaleEnded) return (
     <main className="page">
       <div className="apply-done">
         <div className="apply-done-icon" style={{ fontSize: 32 }}>
@@ -165,7 +169,7 @@ export default function Apply() {
         </div>
         <h2 className="apply-done-title">申し込み受付は終了しました</h2>
         <p className="apply-done-sub">
-          参加申し込みの受付は {DEADLINE} をもって終了しました。<br />
+          参加申し込みの受付は終了しました。<br />
           お問い合わせはInstagramまでご連絡ください。
         </p>
         <a href="/" className="apply-done-btn">ホームへ戻る</a>
@@ -197,7 +201,9 @@ export default function Apply() {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
         </svg>
-        申し込み締め切り：{DEADLINE}
+        {gender === '女子'
+          ? `申し込み締め切り：${FEMALE_DEADLINE}（女子）`
+          : `申し込み締め切り：${MALE_DEADLINE}（男子）`}
       </div>
 
       <div className="apply-rules-card">
@@ -216,11 +222,18 @@ export default function Apply() {
         <div className="apply-field">
           <label className="apply-label">男女の部 <span className="apply-required">必須</span></label>
           <div className="apply-gender-pills">
-            {['男子', '女子'].map(g => (
-              <button type="button" key={g}
-                className={`apply-gender-pill${gender === g ? ' active' : ''}`}
-                onClick={() => setGender(g)}>{g}の部</button>
-            ))}
+            <button type="button"
+              className={`apply-gender-pill${gender === '男子' ? ' active' : ''}`}
+              onClick={() => !maleEnded && setGender('男子')}
+              disabled={maleEnded}
+              style={maleEnded ? { opacity: 0.4, cursor: 'not-allowed' } : {}}>
+              男子の部{maleEnded ? '（締切済）' : ''}
+            </button>
+            <button type="button"
+              className={`apply-gender-pill${gender === '女子' ? ' active' : ''}`}
+              onClick={() => setGender('女子')}>
+              女子の部
+            </button>
           </div>
         </div>
 

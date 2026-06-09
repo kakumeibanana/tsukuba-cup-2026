@@ -14,20 +14,25 @@ export default function AdminTeams() {
   const [toastMsg, setToastMsg]     = useState(null)
   const [modalError, setModalError] = useState(null)
   const [search, setSearch]         = useState('')
-  const [bulkBusy, setBulkBusy]     = useState(false)
+  const [bulkBusy, setBulkBusy]         = useState(false)
+  const [togglingIds, setTogglingIds]   = useState(new Set())
 
   useEffect(() => { fetchTeams() }, [])
 
   async function fetchTeams() {
     setLoading(true)
-    const { data } = await supabase.from('teams').select('*, members(*)').order('gender').order('group_name')
+    const { data, error } = await supabase.from('teams').select('*, members(*)').order('gender').order('group_name')
+    if (error) { showToast({ type: 'err', text: `取得失敗: ${error.message}` }); setLoading(false); return }
     setTeams(data ?? [])
     setLoading(false)
   }
 
   async function togglePublish(team) {
+    if (togglingIds.has(team.id) || bulkBusy) return
+    setTogglingIds(prev => new Set(prev).add(team.id))
     const next = !team.is_published
     const { error } = await supabase.from('teams').update({ is_published: next }).eq('id', team.id)
+    setTogglingIds(prev => { const s = new Set(prev); s.delete(team.id); return s })
     if (error) { showToast({ type: 'err', text: `更新失敗: ${error.message}` }); return }
     setTeams(prev => prev.map(t => t.id === team.id ? { ...t, is_published: next } : t))
     showToast({ type: 'ok', text: next ? `${team.name} を公開しました` : `${team.name} を非公開にしました` })
@@ -37,7 +42,7 @@ export default function AdminTeams() {
     setBulkBusy(true)
     const { error } = await supabase.from('teams').update({ is_published: publish }).neq('id', 0)
     if (error) { showToast({ type: 'err', text: `一括更新失敗: ${error.message}` }); setBulkBusy(false); return }
-    await fetchTeams()
+    setTeams(prev => prev.map(t => ({ ...t, is_published: publish })))
     setBulkBusy(false)
     showToast({ type: 'ok', text: publish ? '全チームを公開しました' : '全チームを非公開にしました' })
   }
@@ -177,7 +182,7 @@ export default function AdminTeams() {
     setSaving(true)
     const { data: teamData, error: teamErr } = await supabase
       .from('teams')
-      .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email })
+      .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email, is_published: false })
       .select().single()
     if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
 
@@ -249,31 +254,32 @@ export default function AdminTeams() {
     <div className="adm-section">
       <div className="adm-section-head">
         <h2 className="adm-section-title">チーム管理</h2>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="adm-section-head-actions">
           <input
+            className="adm-search-input"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="チーム名で検索"
-            style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, width: 140 }}
           />
-          <button
-            className="adm-btn"
-            onClick={() => bulkPublish(false)}
-            disabled={bulkBusy}
-            style={{ borderColor: 'var(--line)', color: 'var(--sub)' }}
-          >
-            {bulkBusy ? '処理中...' : '全て非公開'}
-          </button>
-          <button
-            className="adm-btn"
-            onClick={() => bulkPublish(true)}
-            disabled={bulkBusy}
-            style={{ background: '#16a34a', color: '#fff', border: 'none' }}
-          >
-            {bulkBusy ? '処理中...' : '全チーム一括公開'}
-          </button>
-          <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ チームを追加</button>
+          <button className="adm-btn adm-btn-primary" onClick={openCreate}>＋ 追加</button>
         </div>
+      </div>
+
+      <div className="adm-bulk-actions">
+        <button
+          className="adm-btn adm-btn-sm"
+          onClick={() => bulkPublish(false)}
+          disabled={bulkBusy}
+        >
+          {bulkBusy ? '処理中...' : '全て非公開'}
+        </button>
+        <button
+          className="adm-btn adm-btn-sm adm-btn-publish"
+          onClick={() => bulkPublish(true)}
+          disabled={bulkBusy}
+        >
+          {bulkBusy ? '処理中...' : '全チーム一括公開'}
+        </button>
       </div>
 
       {toastMsg && (
@@ -300,15 +306,18 @@ export default function AdminTeams() {
                             <div className="adm-team-name">{team.name}</div>
                             <button
                               onClick={() => togglePublish(team)}
+                              disabled={bulkBusy || togglingIds.has(team.id)}
                               title={team.is_published ? '公開中（クリックで非公開）' : '非公開（クリックで公開）'}
                               style={{
                                 padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 700,
-                                border: 'none', cursor: 'pointer', flexShrink: 0, marginLeft: 6,
+                                border: 'none', cursor: bulkBusy || togglingIds.has(team.id) ? 'not-allowed' : 'pointer',
+                                flexShrink: 0, marginLeft: 6,
+                                opacity: togglingIds.has(team.id) ? 0.5 : 1,
                                 background: team.is_published ? '#dcfce7' : 'var(--line)',
                                 color:      team.is_published ? '#16a34a' : 'var(--sub)',
                               }}
                             >
-                              {team.is_published ? '公開中' : '非公開'}
+                              {togglingIds.has(team.id) ? '...' : team.is_published ? '公開中' : '非公開'}
                             </button>
                           </div>
                           <div className="adm-team-meta">

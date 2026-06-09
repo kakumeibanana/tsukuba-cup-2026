@@ -2,10 +2,30 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings } from '../lib/standings'
+import StTable from '../components/StTable'
+
+const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze', 4: 'fourth' }
+
+function rankOf(rows, i) {
+  const r = rows[i]
+  for (let j = 0; j < i; j++) {
+    if (rows[j].pts === r.pts && rows[j].gd === r.gd && rows[j].gf === r.gf) return j + 1
+  }
+  return i + 1
+}
+
+function safeColor(hex) {
+  if (!hex || hex.length < 7) return 'var(--purple)'
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return (r * 299 + g * 587 + b * 114) / 1000 > 180 ? 'var(--purple)' : hex
+}
 
 function sortByDate(a, b) {
-  const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
-  return parse(a.match_date) - parse(b.match_date)
+  const pd = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
+  const pt = t => { if (!t) return 0; const [h, min] = t.split(':').map(Number); return h * 60 + (min || 0) }
+  return pd(a.match_date) - pd(b.match_date) || pt(a.match_time) - pt(b.match_time)
 }
 
 function calcStats(matches, teamName) {
@@ -47,7 +67,9 @@ function MatchRow({ m, teamName, goalsMap }) {
   return (
     <div className={`td-match-row${isFinished ? ' td-match-finished' : ''}`}>
       <div className="td-match-meta">
-        <span className="td-match-date num">{m.match_date}（{m.match_dow}）</span>
+        <span className="td-match-date num">
+          {m.match_date}（{m.match_dow}）{!isFinished && m.match_time ? <span className="td-match-time"> · {m.match_time}</span> : ''}
+        </span>
         <span className="td-match-stage-tag">{stageLabel}</span>
       </div>
       <div className="td-match-body">
@@ -185,6 +207,12 @@ export default function TeamDetail() {
             </div>
           </div>
           {team.description && <p className="td-desc">{team.description}</p>}
+          {team.color_name && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
+              <div style={{ width: 14, height: 14, borderRadius: '50%', background: team.color, border: '1.5px solid rgba(0,0,0,0.1)', flexShrink: 0 }} />
+              <span style={{ fontSize: 13, color: 'var(--ink-500)', fontWeight: 600 }}>チームカラー：{team.color_name}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -205,7 +233,7 @@ export default function TeamDetail() {
                 <div className="td-roster-num">{i + 1}</div>
                 <div className="td-roster-av" style={{
                   background: m.is_captain ? '#f59e0b' : `${team.color}18`,
-                  color: m.is_captain ? '#fff' : team.color,
+                  color: m.is_captain ? '#fff' : safeColor(team.color),
                 }}>
                   {m.is_captain
                     ? <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm2 3a1 1 0 0 0 0 2h10a1 1 0 0 0 0-2H7z"/></svg>
@@ -230,7 +258,7 @@ export default function TeamDetail() {
         <div className="td-section-label">成績（予選）</div>
         <div className="td-stats-row">
           {[
-            { label: '勝点', value: stats.pts, color: team.color, large: true },
+            { label: '勝点', value: stats.pts, color: safeColor(team.color), large: true },
             { label: '勝',   value: stats.w,   color: '#16a34a' },
             { label: '分',   value: stats.d,   color: '#6b7280' },
             { label: '負',   value: stats.l,   color: '#dc2626' },
@@ -251,7 +279,7 @@ export default function TeamDetail() {
       {groupRows.length > 0 && (
         <div className="card">
           <div className="td-section-label">グループ {team.group_name} 順位表</div>
-          <div className="table-wrap">
+          <StTable>
             <table className="table st-table">
               <thead>
                 <tr>
@@ -268,9 +296,15 @@ export default function TeamDetail() {
                 </tr>
               </thead>
               <tbody>
-                {groupRows.map((row, i) => (
-                  <tr key={row.name} className={`${i === 0 ? 'top-row' : ''}${row.name === team.name ? ' td-my-row' : ''}`}>
-                    <td className="rank">{i + 1}</td>
+                {groupRows.map((row, i) => {
+                  const rank = rankOf(groupRows, i)
+                  return (
+                  <tr key={row.name} className={`${rank === 1 ? 'top-row' : ''}${row.name === team.name ? ' td-my-row' : ''}`}>
+                    <td className="rank">
+                      {MEDAL[rank]
+                        ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
+                        : rank}
+                    </td>
                     <td className="team-cell" style={row.name === team.name ? { fontWeight: 800 } : {}}>
                       {row.name}
                     </td>
@@ -283,10 +317,11 @@ export default function TeamDetail() {
                     <td className="right">{row.gd > 0 ? `+${row.gd}` : row.gd}</td>
                     <td className="pts">{row.pts}</td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
-          </div>
+          </StTable>
         </div>
       )}
 

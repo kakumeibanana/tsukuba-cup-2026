@@ -20,11 +20,15 @@ const ALL_NAV = [
     icon: <><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2 20c1-3.5 3.5-5 6-5s5 1.5 6 5M14 20c.5-2.5 2-4 3.5-4s3 1.2 3.5 4"/></>,
   },
   {
-    to: '/admin/news', label: 'Posts', roles: ['admin', 'pr_staff'],
+    to: '/admin/news', label: '投稿', roles: ['admin', 'pr_staff'],
     icon: <><path d="M4 5a2 2 0 0 1 2-2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M13 3v5h5"/></>,
   },
   {
-    to: '/admin/more', label: 'More', roles: ['admin', 'match_staff', 'pr_staff'],
+    to: '/admin/shifts', label: 'シフト', roles: ['admin'],
+    icon: <><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></>,
+  },
+  {
+    to: '/admin/more', label: 'その他', roles: ['admin', 'match_staff', 'pr_staff'],
     icon: <><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></>,
   },
 ]

@@ -15,6 +15,7 @@ import AdminStandings from './pages/admin/AdminStandings.jsx'
 import AdminNews from './pages/admin/AdminNews.jsx'
 import AdminTeams from './pages/admin/AdminTeams.jsx'
 import AdminMore from './pages/admin/AdminMore.jsx'
+import AdminShifts from './pages/admin/AdminShifts.jsx'
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="standings" element={<AdminStandings />} />
             <Route path="news"      element={<AdminNews />} />
             <Route path="teams"     element={<AdminTeams />} />
+            <Route path="shifts"       element={<AdminShifts />} />
             <Route path="more"         element={<AdminMore />} />
           </Route>
 

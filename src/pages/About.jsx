@@ -3,15 +3,16 @@ const info = [
   { label: '主催',     value: 'サッカークラブ' },
   { label: '運営',     value: '「TSUKUBA CUP 2026夏」実行委員会' },
   { label: '責任者',   value: '末吉優希・河井駿一郎・高草木杏奈' },
-  { label: '開催期間', value: '6月8日〜', sub: '昼休み開催' },
+  { label: '開催期間', value: '6月9日〜', sub: '昼休み開催' },
   { label: '会場',     value: 'コート面（バスケコート側）' },
   { label: '形式',     value: '予選リーグ → 決勝トーナメント' },
 ]
 
 const schedule = [
   { date: '5/27（水）',   events: ['参加申し込み開始'] },
-  { date: '6/5（金）',    events: ['申し込み締め切り'] },
-  { date: '6/8（月）〜7/14（水）', events: ['大会'] },
+  { date: '6/5（金）',    events: ['申し込み締め切り（男子）'] },
+  { date: '6/12（金）',   events: ['申し込み締め切り（女子）'] },
+  { date: '6/9（火）〜7/14（水）', events: ['大会'] },
   { date: '6/17〜19',    events: ['定期考査'] },
 ]
 
@@ -79,7 +80,7 @@ export default function About() {
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
-              6/8〜
+              6/9〜
             </span>
             <span className="about-chip">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

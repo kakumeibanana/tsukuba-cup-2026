@@ -3,14 +3,16 @@ import { supabase } from '../lib/supabase'
 import TournamentBracket from '../components/TournamentBracket'
 import MatchCard from '../components/MatchCard'
 
-function sortByMatchDate(a, b) {
-  const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
-  return parse(a.match_date) - parse(b.match_date)
+function sortByDateTime(a, b) {
+  const pd = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
+  const pt = t => { if (!t) return 0; const [h, min] = t.split(':').map(Number); return h * 60 + (min || 0) }
+  return pd(a.match_date) - pd(b.match_date) || pt(a.match_time) - pt(b.match_time)
 }
 
 export default function Matches() {
   const [gender, setGender]     = useState('男子')
   const [stage, setStage]       = useState('league')
+  const [view, setView]         = useState('time')
   const [matches, setMatches]   = useState([])
   const [goalsMap, setGoalsMap] = useState({})
   const [loading, setLoading]   = useState(true)
@@ -19,14 +21,14 @@ export default function Matches() {
     setLoading(true)
     const [{ data: mData }, { data: gData }] = await Promise.all([
       supabase.from('matches').select('*'),
-      supabase.from('goals').select('match_id, team_name, player_name'),
+      supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
     ])
-    setMatches((mData ?? []).sort(sortByMatchDate))
+    setMatches((mData ?? []).sort(sortByDateTime))
     const map = {}
     ;(gData ?? []).forEach(g => {
       if (!map[g.match_id]) map[g.match_id] = {}
       if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
-      map[g.match_id][g.team_name].push(g.player_name)
+      map[g.match_id][g.team_name].push(g.assist_player ? `${g.player_name} (A: ${g.assist_player})` : g.player_name)
     })
     setGoalsMap(map)
     setLoading(false)
@@ -43,9 +45,74 @@ export default function Matches() {
   }, [])
 
   const filtered = matches.filter(m => m.gender === gender && m.stage === stage)
-  const sections = stage === 'league'
-    ? [...new Set(filtered.map(m => m.group_name))].filter(Boolean).sort()
-    : [...new Set(filtered.map(m => m.round))].filter(Boolean)
+
+  const renderLeague = () => {
+    if (view === 'time') {
+      const dates = [...new Set(filtered.map(m => m.match_date))].filter(Boolean)
+      if (dates.length === 0) return (
+        <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>
+          試合がまだ登録されていません
+        </div>
+      )
+      return (
+        <div className="mc2-sections" key={`${gender}-${stage}-time`}>
+          {dates.map(date => {
+            const cards = filtered.filter(m => m.match_date === date)
+            const first = cards[0]
+            const dow = first?.match_dow ?? ''
+            return (
+              <div key={date} className="mc2-section">
+                <div className="mc2-section-head">
+                  <span className="mc2-section-title">{date}（{dow}）</span>
+                </div>
+                <div className="mc2-card-list">
+                  {cards.map(m => (
+                    <MatchCard
+                      key={m.id}
+                      m={m}
+                      homeScorers={goalsMap[m.id]?.[m.home_name] ?? []}
+                      awayScorers={goalsMap[m.id]?.[m.away_name] ?? []}
+                    />
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
+    const groups = [...new Set(filtered.map(m => m.group_name))].filter(Boolean).sort()
+    if (groups.length === 0) return (
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>
+        試合がまだ登録されていません
+      </div>
+    )
+    return (
+      <div className="mc2-sections" key={`${gender}-${stage}-group`}>
+        {groups.map(s => {
+          const cards = filtered.filter(m => m.group_name === s)
+          return (
+            <div key={s} className="mc2-section">
+              <div className="mc2-section-head">
+                <span className="mc2-section-title">グループ {s}</span>
+              </div>
+              <div className="mc2-card-list">
+                {cards.map(m => (
+                  <MatchCard
+                    key={m.id}
+                    m={m}
+                    homeScorers={goalsMap[m.id]?.[m.home_name] ?? []}
+                    awayScorers={goalsMap[m.id]?.[m.away_name] ?? []}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
 
   return (
     <main className="page mc2-page">
@@ -66,6 +133,14 @@ export default function Matches() {
               onClick={() => setStage(key)}>{label}</button>
           ))}
         </div>
+        {stage === 'league' && (
+          <div className="mc2-view-toggle">
+            {[['time', '時間順'], ['group', 'グループ順']].map(([key, label]) => (
+              <button key={key} className={`mc2-view-btn${view === key ? ' active' : ''}`}
+                onClick={() => setView(key)}>{label}</button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="mc2-body-wrap">
@@ -78,33 +153,8 @@ export default function Matches() {
               goalsMap={goalsMap}
             />
           </div>
-        ) : sections.length === 0 ? (
-          <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>
-            試合がまだ登録されていません
-          </div>
         ) : (
-          <div className="mc2-sections" key={`${gender}-${stage}`}>
-            {sections.map(s => {
-              const cards = filtered.filter(m => m.group_name === s)
-              return (
-                <div key={s} className="mc2-section">
-                  <div className="mc2-section-head">
-                    <span className="mc2-section-title">グループ {s}</span>
-                  </div>
-                  <div className="mc2-card-list">
-                    {cards.map(m => (
-                      <MatchCard
-                        key={m.id}
-                        m={m}
-                        homeScorers={goalsMap[m.id]?.[m.home_name] ?? []}
-                        awayScorers={goalsMap[m.id]?.[m.away_name] ?? []}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          renderLeague()
         )}
       </div>
     </main>

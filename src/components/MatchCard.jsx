@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 
-function MatchModal({ m, homeScorers, awayScorers, onClose }) {
+export function MatchModal({ m, homeScorers, awayScorers, onClose }) {
   const isFinished = m.status === 'finished'
   const isLive     = m.status === 'live'
   const shown      = isFinished || isLive
