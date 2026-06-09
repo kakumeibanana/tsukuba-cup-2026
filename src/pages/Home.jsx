@@ -13,12 +13,14 @@ export default function Home() {
       <HeroGallery />
       <main className="page">
         <Hero />
-        <div className="anim-up"><TodayStatus /></div>
-        <div className="anim-up anim-d1"><RecentResults /></div>
-        <div className="anim-up anim-d2"><GroupRanking /></div>
-        <div className="anim-up anim-d3"><UpcomingSchedule /></div>
-        <div className="anim-up anim-d4"><NewsList /></div>
-        <div className="anim-up anim-d5"><AboutCard /></div>
+        <div className="col" style={{ marginTop: 22 }}>
+          <div className="anim-up"><TodayStatus /></div>
+          <div className="anim-up anim-d1"><RecentResults /></div>
+          <div className="anim-up anim-d2"><GroupRanking /></div>
+          <div className="anim-up anim-d3"><UpcomingSchedule /></div>
+          <div className="anim-up anim-d4"><NewsList /></div>
+          <div className="anim-up anim-d5"><AboutCard /></div>
+        </div>
       </main>
     </>
   )
