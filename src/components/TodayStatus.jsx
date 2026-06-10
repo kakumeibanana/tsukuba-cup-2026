@@ -2,7 +2,8 @@ import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
-const TOURNAMENT_START = new Date('2026-06-09T00:00:00')
+const TOURNAMENT_START  = new Date('2026-06-09T00:00:00')
+const NEXT_MATCH_START  = new Date('2026-06-22T00:00:00')
 
 const STATUS_MAP = {
   normal:    { label: '本日は予定通り開催します', badge: '開催中', badgeClass: 'ts-badge-open',      emoji: '⚽', grad: 'ts-grad-open' },
@@ -16,7 +17,9 @@ export default function TodayStatus() {
   const [status, setStatus] = useState('normal')
   const [note, setNote]     = useState('')
 
-  const beforeStart = new Date() < TOURNAMENT_START
+  const now           = new Date()
+  const beforeStart   = now < TOURNAMENT_START
+  const beforeNextMatch = now >= TOURNAMENT_START && now < NEXT_MATCH_START
 
   function loadStatus() {
     supabase
@@ -31,7 +34,7 @@ export default function TodayStatus() {
   }
 
   useEffect(() => {
-    if (beforeStart) return
+    if (beforeStart || beforeNextMatch) return
     loadStatus()
     const channel = supabase
       .channel('today-status-realtime')
@@ -59,6 +62,21 @@ export default function TodayStatus() {
             <div className="ts-msg">大会は 6/9(火) より開催です</div>
           </div>
           <span className="ts-badge ts-badge-pending">開幕前</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (beforeNextMatch) {
+    return (
+      <div className="ts-wrap ts-grad-pending" onClick={handleTap}>
+        <div className="ts-body">
+          <span className="ts-emoji">📅</span>
+          <div className="ts-text">
+            <div className="ts-title">本日の開催状況</div>
+            <div className="ts-msg">次の試合は 6/22(月) に開催されます</div>
+          </div>
+          <span className="ts-badge ts-badge-pending">次回 6/22</span>
         </div>
       </div>
     )
