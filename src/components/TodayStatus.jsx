@@ -71,12 +71,12 @@ export default function TodayStatus() {
     return (
       <div className="ts-wrap ts-grad-pending" onClick={handleTap}>
         <div className="ts-body">
-          <span className="ts-emoji">📅</span>
+          <span className="ts-emoji">📢</span>
           <div className="ts-text">
             <div className="ts-title">本日の開催状況</div>
-            <div className="ts-msg">次の試合は 6/22(月) に開催されます</div>
+            <div className="ts-msg">次の試合は6/22です</div>
           </div>
-          <span className="ts-badge ts-badge-pending">次回 6/22</span>
+          <span className="ts-badge ts-badge-pending">お知らせ</span>
         </div>
       </div>
     )
