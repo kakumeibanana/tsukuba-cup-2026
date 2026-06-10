@@ -4219,3 +4219,19 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; flex: none; }
 }
+
+/* Public Gate */
+.gate-page {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; background: #f8f7ff; padding: 24px;
+}
+.gate-card {
+  background: #fff; border: 1px solid var(--line);
+  border-radius: 20px; padding: 44px 36px;
+  width: 100%; max-width: 380px;
+  box-shadow: 0 8px 40px -8px rgba(109,40,217,0.12);
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+.gate-brand { text-align: center; }
+.gate-title { font-family: "Manrope", sans-serif; font-weight: 800; font-size: 20px; color: var(--ink-900); }
+.gate-sub   { font-size: 12px; color: var(--ink-400); font-weight: 600; margin-top: 6px; }

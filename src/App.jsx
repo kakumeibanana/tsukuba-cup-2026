@@ -8,6 +8,7 @@ import Teams from './pages/Teams.jsx'
 import TeamDetail from './pages/TeamDetail.jsx'
 import About from './pages/About.jsx'
 import Apply from './pages/Apply.jsx'
+import PublicGate from './components/PublicGate.jsx'
 import AdminLayout from './pages/admin/AdminLayout.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AdminMatches from './pages/admin/AdminMatches.jsx'
@@ -34,15 +35,17 @@ export default function App() {
             <Route path="more"         element={<AdminMore />} />
           </Route>
 
-          {/* 公開ページ */}
-          <Route element={<PublicLayout />}>
-            <Route path="/"          element={<Home />} />
-            <Route path="/matches"   element={<Matches />} />
-            <Route path="/standings" element={<Standings />} />
-            <Route path="/teams"     element={<Teams />} />
-            <Route path="/teams/:id" element={<TeamDetail />} />
-            <Route path="/about"     element={<About />} />
-            <Route path="/apply"     element={<Apply />} />
+          {/* 公開ページ（ログインゲート付き） */}
+          <Route element={<PublicGate />}>
+            <Route element={<PublicLayout />}>
+              <Route path="/"          element={<Home />} />
+              <Route path="/matches"   element={<Matches />} />
+              <Route path="/standings" element={<Standings />} />
+              <Route path="/teams"     element={<Teams />} />
+              <Route path="/teams/:id" element={<TeamDetail />} />
+              <Route path="/about"     element={<About />} />
+              <Route path="/apply"     element={<Apply />} />
+            </Route>
           </Route>
         </Routes>
       </AuthProvider>

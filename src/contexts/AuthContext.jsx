@@ -31,6 +31,15 @@ export function AuthProvider({ children }) {
     }
     const email = session.user.email ?? ''
 
+    // ドメインチェック
+    if (!email.endsWith('@sgh-tsukuba.org')) {
+      setAuthError('@sgh-tsukuba.org のアカウントのみアクセスできます。')
+      await supabase.auth.signOut()
+      setUser(null)
+      setRole(null)
+      return
+    }
+
     const { data: org, error } = await supabase
       .from('organizers')
       .select('role')
@@ -39,30 +48,28 @@ export function AuthProvider({ children }) {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        // organizers に未登録 → アクセス拒否
-        setAuthError('アクセス権限がありません。管理者に連絡してください。')
-        await supabase.auth.signOut()
-        setUser(null)
-        setRole(null)
+        // organizers 未登録 → 一般閲覧者として許可
+        setUser(session.user)
+        setRole('viewer')
+        setAuthError(null)
       } else {
-        // ネットワークエラーなど → ログアウトせず一時エラーとして表示
         console.error('[AuthContext] organizers query error:', error)
         setAuthError(`接続エラーが発生しました（${error.message}）。再読み込みしてください。`)
       }
       return
     }
 
-    // 正常
+    // 管理者
     setUser(session.user)
     setRole(org?.role ?? 'match_staff')
     setAuthError(null)
   }
 
-  async function signInWithGoogle() {
+  async function signInWithGoogle(redirectTo) {
     setAuthError(null)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/admin` },
+      options: { redirectTo: redirectTo ?? `${window.location.origin}/admin` },
     })
     if (error) setAuthError(error.message)
   }
