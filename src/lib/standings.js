@@ -1,6 +1,10 @@
-export function calcGroupStandings(matches, gender, group) {
+export function calcAllStandings(matches, gender) {
+  return calcGroupStandings(matches, gender, null, true)
+}
+
+export function calcGroupStandings(matches, gender, group, ignoreGroup = false) {
   const inGroup = matches.filter(m =>
-    m.gender === gender && m.stage === 'league' && m.group_name === group
+    m.gender === gender && m.stage === 'league' && (ignoreGroup || m.group_name === group)
   )
   const teamNames = [...new Set(inGroup.flatMap(m => [m.home_name, m.away_name]))]
   const table = {}

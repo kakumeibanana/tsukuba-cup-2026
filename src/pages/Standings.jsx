@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
-import { calcGroupStandings } from '../lib/standings'
+import { calcGroupStandings, calcAllStandings } from '../lib/standings'
 import TournamentBracket from '../components/TournamentBracket'
 import StTable from '../components/StTable'
 
@@ -74,7 +74,7 @@ export default function Standings() {
     return Object.values(counts).sort((a, b) => b.assists - a.assists)
   }, [allGoals, matches, gender])
 
-  const groups = gender === '男子' ? ['A', 'B', 'C', 'D'] : ['A', 'B']
+  const groups = ['A', 'B', 'C', 'D']
 
   return (
     <main className="page">
@@ -114,7 +114,63 @@ export default function Standings() {
       ) : (
         <>
           <div className="standings-groups">
-            {groups.map(group => {
+            {gender === '女子' ? (() => {
+              const rows = calcAllStandings(matches, '女子')
+              if (rows.length === 0) return null
+              return (
+                <div className="card">
+                  <div className="card-head">
+                    <div className="card-title">
+                      <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M8 21h8M12 17V21M17 5V3H7v2M5 5v6a7 7 0 0014 0V5H5z"/>
+                      </svg>
+                      女子 予選リーグ
+                    </div>
+                  </div>
+                  <StTable>
+                    <table className="table st-table">
+                      <thead>
+                        <tr>
+                          <th style={{ width: 28 }}></th>
+                          <th>チーム</th>
+                          <th className="r">試</th>
+                          <th className="r">勝</th>
+                          <th className="r">分</th>
+                          <th className="r">負</th>
+                          <th className="r">得</th>
+                          <th className="r">失</th>
+                          <th className="r">±</th>
+                          <th className="r">勝点</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rows.map((row, i) => {
+                          const rank = rankOf(rows, i)
+                          return (
+                          <tr key={row.name} className={rank === 1 ? 'top-row' : ''}>
+                            <td className="rank">
+                              {MEDAL[rank]
+                                ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
+                                : rank}
+                            </td>
+                            <td className="team-cell">{row.name}</td>
+                            <td className="right">{row.g}</td>
+                            <td className="right">{row.w}</td>
+                            <td className="right">{row.d}</td>
+                            <td className="right">{row.l}</td>
+                            <td className="right">{row.gf}</td>
+                            <td className="right">{row.ga}</td>
+                            <td className="right">{row.gd > 0 ? `+${row.gd}` : row.gd}</td>
+                            <td className="pts">{row.pts}</td>
+                          </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </StTable>
+                </div>
+              )
+            })() : groups.map(group => {
               const rows = calcGroupStandings(matches, gender, group)
               if (rows.length === 0) return null
               return (

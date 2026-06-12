@@ -35,7 +35,20 @@ export default function Teams() {
     </main>
   )
 
-  const byGroup = g => teams.filter(t => t.group_name === g)
+  const maleByGroup  = g => teams.filter(t => t.gender === '男子' && t.group_name === g)
+  const femaleTeams  = teams.filter(t => t.gender === '女子')
+
+  const TeamCard = ({ t }) => (
+    <Link key={t.id} to={`/teams/${t.id}`} className="team-card">
+      <div className="team-card-accent" style={{ background: t.color }} />
+      <div className="team-card-body">
+        <div className={`team-gender ${t.gender === '男子' ? 'team-gender-m' : 'team-gender-w'}`}>
+          {t.gender}
+        </div>
+        <div className="team-card-name">{t.name}</div>
+      </div>
+    </Link>
+  )
 
   return (
     <main className="page">
@@ -48,28 +61,29 @@ export default function Teams() {
           参加チームは現在非公開です
         </div>
       ) : (
-        ['A', 'B', 'C', 'D'].map(g => {
-          const list = byGroup(g)
-          if (list.length === 0) return null
-          return (
-            <div key={g} style={{ marginBottom: 32 }}>
-              <div className="adm-team-group-label" style={{ marginBottom: 12 }}>グループ {g}</div>
+        <>
+          {['A', 'B', 'C', 'D'].map(g => {
+            const list = maleByGroup(g)
+            if (list.length === 0) return null
+            return (
+              <div key={g} style={{ marginBottom: 32 }}>
+                <div className="adm-team-group-label" style={{ marginBottom: 12 }}>グループ {g}</div>
+                <div className="teams-grid">
+                  {list.map(t => <TeamCard key={t.id} t={t} />)}
+                </div>
+              </div>
+            )
+          })}
+
+          {femaleTeams.length > 0 && (
+            <div style={{ marginBottom: 32 }}>
+              <div className="adm-team-group-label" style={{ marginBottom: 12 }}>女子</div>
               <div className="teams-grid">
-                {list.map(t => (
-                  <Link key={t.id} to={`/teams/${t.id}`} className="team-card">
-                    <div className="team-card-accent" style={{ background: t.color }} />
-                    <div className="team-card-body">
-                      <div className={`team-gender ${t.gender === '男子' ? 'team-gender-m' : 'team-gender-w'}`}>
-                        {t.gender}
-                      </div>
-                      <div className="team-card-name">{t.name}</div>
-                    </div>
-                  </Link>
-                ))}
+                {femaleTeams.map(t => <TeamCard key={t.id} t={t} />)}
               </div>
             </div>
-          )
-        })
+          )}
+        </>
       )}
     </main>
   )
