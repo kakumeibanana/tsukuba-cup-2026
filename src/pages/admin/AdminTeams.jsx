@@ -141,12 +141,14 @@ export default function AdminTeams() {
             <option>男子</option><option>女子</option>
           </select>
         </div>
-        <div className="adm-field adm-field-sm">
-          <label>グループ</label>
-          <select value={form.group_name} onChange={f('group_name')}>
-            {['A','B','C','D'].map(g => <option key={g}>{g}</option>)}
-          </select>
-        </div>
+        {form.gender === '男子' && (
+          <div className="adm-field adm-field-sm">
+            <label>グループ</label>
+            <select value={form.group_name} onChange={f('group_name')}>
+              {['A','B','C','D'].map(g => <option key={g}>{g}</option>)}
+            </select>
+          </div>
+        )}
         <div className="adm-field adm-field-sm">
           <label>カラー</label>
           <input type="color" value={form.color} onChange={f('color')} className="adm-color-input" />
@@ -182,7 +184,7 @@ export default function AdminTeams() {
     setSaving(true)
     const { data: teamData, error: teamErr } = await supabase
       .from('teams')
-      .insert({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email, is_published: false })
+      .insert({ name: form.name, gender: form.gender, group_name: form.gender === '女子' ? null : form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email, is_published: false })
       .select().single()
     if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
 
@@ -208,7 +210,7 @@ export default function AdminTeams() {
   async function handleSave() {
     setSaving(true)
     const { error: teamErr } = await supabase.from('teams')
-      .update({ name: form.name, gender: form.gender, group_name: form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email, updated_at: new Date().toISOString() })
+      .update({ name: form.name, gender: form.gender, group_name: form.gender === '女子' ? null : form.group_name, color: form.color, description: form.description, color_name: form.color_name, leader_email: form.leader_email, updated_at: new Date().toISOString() })
       .eq('id', editing.id)
     if (teamErr) { setModalError(teamErr.message); setSaving(false); return }
 
@@ -321,7 +323,7 @@ export default function AdminTeams() {
                             </button>
                           </div>
                           <div className="adm-team-meta">
-                            グループ {team.group_name} · {(team.members ?? []).length}人
+                            {team.gender === '男子' ? `グループ ${team.group_name} · ` : ''}{(team.members ?? []).length}人
                           </div>
                           <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
                             <button className="adm-btn-sm" onClick={() => openEdit(team)}>編集</button>
