@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 const MALE_DEADLINE        = '6/5（金）'
 const MALE_DEADLINE_DATE   = new Date('2026-06-06')
 const FEMALE_DEADLINE      = '6/12（金）'
-const FEMALE_DEADLINE_DATE = new Date('2026-06-13')
+const FEMALE_DEADLINE_DATE = new Date('2026-06-12')
 const MAX_MEMBERS = 10
 const MIN_MEMBERS = 7
 const MAX_SOCCER  = 5
