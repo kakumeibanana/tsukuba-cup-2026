@@ -35,10 +35,10 @@ export default function Teams() {
     </main>
   )
 
-  const maleByGroup  = g => teams.filter(t => t.gender === '男子' && t.group_name === g)
-  const femaleTeams  = teams.filter(t => t.gender === '女子')
+  const maleByGroup = g => teams.filter(t => t.gender === '男子' && t.group_name === g)
+  const femaleTeams = teams.filter(t => t.gender === '女子')
 
-  const TeamCard = ({ t }) => (
+  const renderCard = t => (
     <Link key={t.id} to={`/teams/${t.id}`} className="team-card">
       <div className="team-card-accent" style={{ background: t.color }} />
       <div className="team-card-body">
@@ -68,9 +68,7 @@ export default function Teams() {
             return (
               <div key={g} style={{ marginBottom: 32 }}>
                 <div className="adm-team-group-label" style={{ marginBottom: 12 }}>グループ {g}</div>
-                <div className="teams-grid">
-                  {list.map(t => <TeamCard key={t.id} t={t} />)}
-                </div>
+                <div className="teams-grid">{list.map(renderCard)}</div>
               </div>
             )
           })}
@@ -78,9 +76,7 @@ export default function Teams() {
           {femaleTeams.length > 0 && (
             <div style={{ marginBottom: 32 }}>
               <div className="adm-team-group-label" style={{ marginBottom: 12 }}>女子</div>
-              <div className="teams-grid">
-                {femaleTeams.map(t => <TeamCard key={t.id} t={t} />)}
-              </div>
+              <div className="teams-grid">{femaleTeams.map(renderCard)}</div>
             </div>
           )}
         </>
