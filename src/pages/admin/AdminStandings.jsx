@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { calcGroupStandings } from '../../lib/standings'
+import { calcGroupStandings, calcAllStandings } from '../../lib/standings'
 
 export default function AdminStandings() {
   const [matches, setMatches] = useState([])
@@ -29,7 +29,7 @@ export default function AdminStandings() {
     load()
   }, [])
 
-  const groups = gender === '男子' ? ['A', 'B', 'C', 'D'] : ['A', 'B']
+  const groups = ['A', 'B', 'C', 'D']
 
   return (
     <div className="adm-section">
@@ -47,7 +47,38 @@ export default function AdminStandings() {
         <>
           <div className="adm-standings-note">試合結果から自動計算</div>
 
-          {groups.map(group => {
+          {gender === '女子' ? (() => {
+            const rows = calcAllStandings(matches, '女子')
+            if (rows.length === 0) return null
+            return (
+              <div className="adm-standings-group">
+                <div className="adm-standings-group-label">女子 予選リーグ</div>
+                <div className="adm-table-wrap">
+                  <table className="adm-table adm-st-table">
+                    <thead>
+                      <tr>
+                        <th>#</th><th>チーム</th>
+                        <th>試</th><th>勝</th><th>分</th><th>負</th>
+                        <th>得</th><th>失</th><th>±</th><th>勝点</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((r, i) => (
+                        <tr key={r.name} className={i === 0 ? 'adm-st-top' : ''}>
+                          <td className="adm-st-rank">{i + 1}</td>
+                          <td className="adm-st-name">{r.name}</td>
+                          <td>{r.g}</td><td>{r.w}</td><td>{r.d}</td><td>{r.l}</td>
+                          <td>{r.gf}</td><td>{r.ga}</td>
+                          <td>{r.gd > 0 ? `+${r.gd}` : r.gd}</td>
+                          <td className="adm-st-pts">{r.pts}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )
+          })() : groups.map(group => {
             const rows = calcGroupStandings(matches, gender, group)
             if (rows.length === 0) return null
             return (
