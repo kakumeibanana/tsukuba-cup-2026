@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import TournamentBracket from '../components/TournamentBracket'
 import MatchCard from '../components/MatchCard'
@@ -18,9 +18,10 @@ export default function Matches() {
   const [matches, setMatches]     = useState([])
   const [goalsMap, setGoalsMap]   = useState({})
   const [loading, setLoading]     = useState(true)
+  const isFirstLoad = useRef(true)
 
   async function load() {
-    setLoading(true)
+    if (isFirstLoad.current) setLoading(true)
     const [{ data: mData }, { data: gData }] = await Promise.all([
       supabase.from('matches').select('*'),
       supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
@@ -34,6 +35,7 @@ export default function Matches() {
     })
     setGoalsMap(map)
     setLoading(false)
+    isFirstLoad.current = false
   }
 
   useEffect(() => {

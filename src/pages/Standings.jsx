@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings, calcAllStandings } from '../lib/standings'
 import { normalizeMatch } from '../lib/normalizeMatch'
@@ -30,9 +30,10 @@ export default function Standings() {
   const [matches, setMatches] = useState([])
   const [allGoals, setAllGoals] = useState([])
   const [loading, setLoading]   = useState(true)
+  const isFirstLoad = useRef(true)
 
   async function load() {
-    setLoading(true)
+    if (isFirstLoad.current) setLoading(true)
     const [{ data: mData }, { data: gData }] = await Promise.all([
       supabase.from('matches').select('*'),
       supabase.from('goals').select('player_name, team_name, match_id, assist_player'),
@@ -40,6 +41,7 @@ export default function Standings() {
     setMatches((mData ?? []).map(normalizeMatch))
     setAllGoals(gData ?? [])
     setLoading(false)
+    isFirstLoad.current = false
   }
 
   useEffect(() => {
