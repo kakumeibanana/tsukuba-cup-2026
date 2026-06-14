@@ -11,12 +11,13 @@ function sortByDateTime(a, b) {
 }
 
 export default function Matches() {
-  const [gender, setGender]     = useState('男子')
-  const [stage, setStage]       = useState('league')
-  const [view, setView]         = useState('time')
-  const [matches, setMatches]   = useState([])
-  const [goalsMap, setGoalsMap] = useState({})
-  const [loading, setLoading]   = useState(true)
+  const [gender, setGender]       = useState('男子')
+  const [stage, setStage]         = useState('league')
+  const [view, setView]           = useState('time')
+  const [tournView, setTournView] = useState('bracket')
+  const [matches, setMatches]     = useState([])
+  const [goalsMap, setGoalsMap]   = useState({})
+  const [loading, setLoading]     = useState(true)
 
   async function load() {
     setLoading(true)
@@ -115,6 +116,40 @@ export default function Matches() {
     )
   }
 
+  const renderTournamentCards = () => {
+    const rounds = ['準々決勝', '準決勝', '決勝', '3位決定戦']
+    const present = rounds.filter(r => filtered.some(m => m.round === r))
+    if (present.length === 0) return (
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>
+        試合がまだ登録されていません
+      </div>
+    )
+    return (
+      <div className="mc2-sections" key={`${gender}-tournament-list`}>
+        {present.map(r => {
+          const cards = filtered.filter(m => m.round === r)
+          return (
+            <div key={r} className="mc2-section">
+              <div className="mc2-section-head">
+                <span className="mc2-section-title">{r}</span>
+              </div>
+              <div className="mc2-card-list">
+                {cards.map(m => (
+                  <MatchCard
+                    key={m.id}
+                    m={m}
+                    homeScorers={goalsMap[m.id]?.[m.home_name] ?? []}
+                    awayScorers={goalsMap[m.id]?.[m.away_name] ?? []}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <main className="page mc2-page">
       <div className="page-head">
@@ -142,6 +177,14 @@ export default function Matches() {
             ))}
           </div>
         )}
+        {stage === 'tournament' && (
+          <div className="mc2-view-toggle">
+            {[['bracket', 'ブラケット'], ['list', '試合一覧']].map(([key, label]) => (
+              <button key={key} className={`mc2-view-btn${tournView === key ? ' active' : ''}`}
+                onClick={() => setTournView(key)}>{label}</button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="mc2-body-wrap">
@@ -149,10 +192,11 @@ export default function Matches() {
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>読み込み中...</div>
         ) : stage === 'tournament' ? (
           <div style={{ padding: '12px 4px 0' }}>
-            <TournamentBracket
-              matches={filtered}
-              goalsMap={goalsMap}
-            />
+            {tournView === 'bracket' ? (
+              <TournamentBracket matches={filtered} goalsMap={goalsMap} />
+            ) : (
+              renderTournamentCards()
+            )}
           </div>
         ) : (
           renderLeague()
