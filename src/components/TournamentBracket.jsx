@@ -84,6 +84,10 @@ function ConnectorSVG({ pairs, h }) {
   return (
     <svg width={CXGAP} height={h} style={{ display: 'block', flexShrink: 0 }}>
       {pairs.map(({ y1, y2, yTo }, i) => {
+        if (y2 === null) {
+          // Direct horizontal connector (1→1: e.g. women's SF→Final)
+          return <line key={i} x1={0} y1={y1} x2={CXGAP} y2={yTo} stroke={s} strokeWidth={1.5} />
+        }
         const midY = (y1 + y2) / 2
         return (
           <g key={i}>
@@ -195,14 +199,20 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
   const fin   = tourn.find(m => m.round === '決勝') || null
   const third = tourn.find(m => m.round === '3位決定戦') || null
 
-  const hasQF   = qf.length > 0
+  const hasQF         = qf.length > 0
+  // Women's format: 1 SF match, no QF (SF winner vs 1st place bye in Final)
+  const isWomensBracket = !hasQF && sf.length === 1
   const sfR     = hasQF ? 1 : 0
   const finR    = hasQF ? 2 : 1
-  const nFirst  = hasQF ? 4 : 2
-  const bH      = nFirst * 2 * UNIT
+  const nFirst  = hasQF ? 4 : isWomensBracket ? 1 : 2
+  const bH      = isWomensBracket ? 2 * UNIT : nFirst * 2 * UNIT
 
-  // SF: always 2 slots (null = not created yet)
-  const sfSlots = [sf[0] || null, sf[1] || null]
+  // SF slots: women's bracket only needs 1 slot
+  const sfSlots = hasQF
+    ? [sf[0] || null, sf[1] || null]
+    : isWomensBracket
+      ? [sf[0]]
+      : [sf[0] || null, sf[1] || null]
 
   // Column definitions
   const cols = []
@@ -233,6 +243,44 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
   }
 
   const showThird = third || sf.some(m => matchLoser(m))
+
+  // Women's bracket: simple 2-card side-by-side layout (SF → Final)
+  if (isWomensBracket) {
+    const centerY = UNIT  // 96px — both cards aligned at the same height
+    const bW2 = 2 * CW + CXGAP
+    return (
+      <div className="bk-outer">
+        <div className="bk-scroll-wrap">
+          <div style={{ position: 'relative', height: 28, width: bW2, marginBottom: 10 }}>
+            <div className="bk-col-label-text" style={{ position: 'absolute', left: 0, width: CW }}>準決勝</div>
+            <div className="bk-col-label-text" style={{ position: 'absolute', left: CW + CXGAP, width: CW }}>決勝</div>
+          </div>
+          <div style={{ position: 'relative', width: bW2, height: centerY * 2 }}>
+            <BracketCard
+              m={sf[0]}
+              homeN={sf[0]?.home_name || 'TBD'}
+              awayN={sf[0]?.away_name || 'TBD'}
+              top={centerY - CH / 2} left={0}
+              onClick={() => sf[0] && setDetail(sf[0])}
+            />
+            <div style={{ position: 'absolute', left: CW, top: 0 }}>
+              <ConnectorSVG pairs={[{ y1: centerY, y2: null, yTo: centerY }]} h={centerY * 2} />
+            </div>
+            <BracketCard
+              m={fin}
+              homeN={fin?.home_name || 'TBD'}
+              awayN={fin?.away_name || 'TBD'}
+              top={centerY - CH / 2} left={CW + CXGAP}
+              onClick={() => fin && setDetail(fin)}
+            />
+          </div>
+        </div>
+        {detail && (
+          <MatchDetailModal m={detail} goalsMap={goalsMap} onClose={() => setDetail(null)} />
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="bk-outer">
@@ -271,12 +319,17 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
           {cols.slice(0, -1).map((col, ci) => {
             const nextR = cols[ci + 1].r
             const pairs = []
-            for (let i = 0; i + 1 < col.items.length; i += 2) {
-              pairs.push({
-                y1:  cY(col.r, i),
-                y2:  cY(col.r, i + 1),
-                yTo: cY(nextR, i / 2),
-              })
+            if (col.items.length === 1) {
+              // Single item: direct horizontal connector
+              pairs.push({ y1: cY(col.r, 0), y2: null, yTo: cY(nextR, 0) })
+            } else {
+              for (let i = 0; i + 1 < col.items.length; i += 2) {
+                pairs.push({
+                  y1:  cY(col.r, i),
+                  y2:  cY(col.r, i + 1),
+                  yTo: cY(nextR, i / 2),
+                })
+              }
             }
             return (
               <div
