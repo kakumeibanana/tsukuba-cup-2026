@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings } from '../lib/standings'
+import { normalizeMatch } from '../lib/normalizeMatch'
 import StTable from '../components/StTable'
 
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze', 4: 'fourth' }
@@ -125,7 +126,7 @@ export default function TeamDetail() {
       })
 
       setTeam(teamData)
-      setAllMatches(mData ?? [])
+      setAllMatches((mData ?? []).map(normalizeMatch))
       setGoalsMap(map)
       setRawGoals(gData ?? [])
       setLoading(false)

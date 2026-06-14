@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { normalizeMatch } from '../../lib/normalizeMatch'
 
 const STATUS_OPTS = [
   { key: 'scheduled', label: '予定' },
@@ -19,8 +20,8 @@ function ScoreCounter({ value, onChange }) {
 }
 
 const EMPTY_CFORM = {
-  gender: '男子', stage: 'league', group_name: 'A', round: '',
-  match_date: '', match_dow: '月', match_time: '昼休み',
+  gender: '男子', stage: 'league', group_name: 'A', round: '準決勝',
+  match_date: '', match_dow: '月', match_time: '',
   home_name: '', away_name: '',
 }
 
@@ -56,9 +57,10 @@ export default function AdminMatches() {
   async function fetchMatches() {
     setLoading(true)
     const { data } = await supabase.from('matches').select('*')
+    const normalized = (data ?? []).map(normalizeMatch)
     const pd = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
     const pt = t => { if (!t) return 0; const [h, min] = t.split(':').map(Number); return h * 60 + (min || 0) }
-    setMatches((data ?? []).sort((a, b) => pd(a.match_date) - pd(b.match_date) || pt(a.match_time) - pt(b.match_time)))
+    setMatches(normalized.sort((a, b) => pd(a.match_date) - pd(b.match_date) || pt(a.match_time) - pt(b.match_time)))
     setLoading(false)
   }
 
@@ -125,13 +127,12 @@ export default function AdminMatches() {
     const hasScore = status === 'finished' || status === 'live'
     const isDraw   = hasScore && scoreH === scoreA
     const { error } = await supabase.from('matches').update({
-      status,
-      score_home: hasScore ? scoreH : null,
-      score_away: hasScore ? scoreA : null,
+      status:     status === 'finished' ? 'completed' : status,
+      home_score: hasScore ? scoreH : null,
+      away_score: hasScore ? scoreA : null,
       pk_winner:  (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner)
                     ? pkWinner : null,
       mom:        status === 'finished' && mom.trim() ? mom.trim() : null,
-      updated_at: new Date().toISOString(),
     }).eq('id', editing.id)
 
     if (error) { setSaving(false); setModalError(error.message); return }
@@ -160,17 +161,23 @@ export default function AdminMatches() {
       setModalError('ホームとアウェイに同じチームは選べません'); return
     }
     setSaving(true)
+    const [monthStr, dayStr] = (cform.match_date ?? '').split('/')
+    const ROUND_TO_CAT = { '準々決勝': 'quarterfinal', '準決勝': 'semifinal', '決勝': 'final', '3位決定戦': 'third' }
+    const category  = cform.stage === 'league' ? 'group' : (ROUND_TO_CAT[cform.round] ?? 'final')
+    const group_name = cform.stage === 'league'
+      ? (cform.gender === '女子' ? '女子' : cform.group_name)
+      : null
     const { error } = await supabase.from('matches').insert({
-      gender: cform.gender,
-      stage: cform.stage,
-      group_name: cform.stage === 'league' ? cform.group_name : null,
-      round: cform.stage === 'tournament' ? cform.round : null,
-      match_date: cform.match_date,
-      match_dow: cform.match_dow,
-      match_time: cform.match_time || '昼休み',
-      home_name: cform.home_name,
-      away_name: cform.away_name,
-      status: 'scheduled',
+      gender:       cform.gender,
+      category,
+      group_name,
+      month:        parseInt(monthStr) || null,
+      day:          parseInt(dayStr)   || null,
+      weekday:      cform.match_dow,
+      kickoff_time: cform.match_time || null,
+      home_team:    cform.home_name,
+      away_team:    cform.away_name,
+      status:       'scheduled',
     })
     setSaving(false)
     if (error) { setModalError(error.message); return }
@@ -580,7 +587,9 @@ export default function AdminMatches() {
                 ) : (
                   <div className="adm-field">
                     <label>ラウンド</label>
-                    <input value={cform.round} onChange={cfld('round')} placeholder="準決勝 / 決勝" />
+                    <select value={cform.round} onChange={cfld('round')}>
+                      {['準々決勝','準決勝','決勝','3位決定戦'].map(r => <option key={r}>{r}</option>)}
+                    </select>
                   </div>
                 )}
               </div>

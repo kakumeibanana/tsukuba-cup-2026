@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import MatchCard from './MatchCard'
+import { normalizeMatch } from '../lib/normalizeMatch'
 
 function sortByMatchDateDesc(a, b) {
   const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
@@ -16,10 +17,11 @@ export default function RecentResults() {
   useEffect(() => {
     async function load() {
       const [{ data: mData }, { data: gData }] = await Promise.all([
-        supabase.from('matches').select('*').eq('status', 'finished'),
+        supabase.from('matches').select('*').eq('status', 'completed'),
         supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
       ])
-      setResults((mData ?? []).sort(sortByMatchDateDesc).slice(0, 6))
+      const normalized = (mData ?? []).map(normalizeMatch)
+      setResults(normalized.sort(sortByMatchDateDesc).slice(0, 6))
 
       const map = {}
       ;(gData ?? []).forEach(g => {

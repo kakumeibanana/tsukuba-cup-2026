@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings, calcAllStandings } from '../lib/standings'
+import { normalizeMatch } from '../lib/normalizeMatch'
 import TournamentBracket from '../components/TournamentBracket'
 import StTable from '../components/StTable'
 
@@ -37,7 +38,7 @@ export default function Standings() {
       supabase.from('matches').select('*'),
       supabase.from('goals').select('player_name, team_name, match_id, assist_player'),
     ])
-    setMatches(mData ?? [])
+    setMatches((mData ?? []).map(normalizeMatch))
     setAllGoals(gData ?? [])
     setLoading(false)
   }

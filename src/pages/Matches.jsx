@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import TournamentBracket from '../components/TournamentBracket'
 import MatchCard from '../components/MatchCard'
+import { normalizeMatch } from '../lib/normalizeMatch'
 
 function sortByDateTime(a, b) {
   const pd = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
@@ -23,7 +24,7 @@ export default function Matches() {
       supabase.from('matches').select('*'),
       supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
     ])
-    setMatches((mData ?? []).sort(sortByDateTime))
+    setMatches((mData ?? []).map(normalizeMatch).sort(sortByDateTime))
     const map = {}
     ;(gData ?? []).forEach(g => {
       if (!map[g.match_id]) map[g.match_id] = {}

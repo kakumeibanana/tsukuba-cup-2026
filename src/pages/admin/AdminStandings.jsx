@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { calcGroupStandings, calcAllStandings } from '../../lib/standings'
+import { normalizeMatch } from '../../lib/normalizeMatch'
 
 export default function AdminStandings() {
   const [matches, setMatches] = useState([])
@@ -15,7 +16,7 @@ export default function AdminStandings() {
         supabase.from('matches').select('*'),
         supabase.from('goals').select('player_name, team_name'),
       ])
-      setMatches(mData ?? [])
+      setMatches((mData ?? []).map(normalizeMatch))
 
       const counts = {}
       ;(gData ?? []).forEach(g => {

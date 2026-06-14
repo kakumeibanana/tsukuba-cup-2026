@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { MatchModal } from './MatchCard'
+import { normalizeMatch } from '../lib/normalizeMatch'
 
 function sortByMatchDate(a, b) {
   const parse = d => { const [m, day] = (d ?? '0/0').split('/').map(Number); return m * 100 + day }
@@ -16,10 +17,10 @@ export default function UpcomingSchedule() {
   useEffect(() => {
     supabase
       .from('matches')
-      .select('id, match_date, match_dow, match_time, home_name, away_name, gender, stage, group_name, round, status')
+      .select('*')
       .eq('status', 'scheduled')
       .then(({ data }) => {
-        const sorted = (data ?? []).sort(sortByMatchDate)
+        const sorted = (data ?? []).map(normalizeMatch).sort(sortByMatchDate)
         const grouped = {}
         sorted.forEach(m => {
           if (!grouped[m.match_date]) grouped[m.match_date] = []
