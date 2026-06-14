@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { calcGroupStandings, calcAllStandings } from '../lib/standings'
 import { normalizeMatch } from '../lib/normalizeMatch'
-import TournamentBracket from '../components/TournamentBracket'
 import StTable from '../components/StTable'
 
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze', 4: 'fourth' }
@@ -91,7 +90,7 @@ export default function Standings() {
           ))}
         </div>
         <div className="mc2-stage-tabs">
-          {[['league', '予選リーグ'], ['tournament', 'トーナメント表']].map(([key, label]) => (
+          {[['league', '予選リーグ'], ['scoring', '得点・アシスト']].map(([key, label]) => (
             <button key={key} className={`mc2-stage-tab${tab === key ? ' active' : ''}`}
               onClick={() => setTab(key)}>{label}</button>
           ))}
@@ -100,21 +99,80 @@ export default function Standings() {
 
       {loading ? (
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>読み込み中...</div>
-      ) : tab === 'tournament' ? (
-        <div className="card" style={{ marginTop: 8 }}>
-          <div className="card-head">
-            <div className="card-title">
-              <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 21h8M12 17V21M17 5V3H7v2M5 5v6a7 7 0 0014 0V5H5z"/>
-              </svg>
-              決勝トーナメント — {gender}
+      ) : tab === 'scoring' ? (
+        <div className="st-scorer-wrap" style={{ marginTop: 8 }}>
+          <div className="card">
+            <div className="card-head">
+              <div className="card-title">
+                <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="8" r="5"/><path d="M12 13v8M9 18l3 3 3-3"/>
+                </svg>
+                得点ランキング
+              </div>
             </div>
+            {scorers.length === 0 ? (
+              <div style={{ padding: '16px', color: 'var(--sub)', fontSize: 13 }}>得点記録がありません</div>
+            ) : (
+              <div className="scorer-list">
+                {scorers.map((s, i) => {
+                  const rank = scorerRank(scorers, i)
+                  return (
+                    <div key={s.name} className="scorer-row">
+                      <div className="scorer-rank">
+                        {MEDAL[rank]
+                          ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
+                          : rank}
+                      </div>
+                      <div />
+                      <div className="scorer-name">
+                        {s.name}
+                        <span className="team-tag">（{s.team}）</span>
+                      </div>
+                      <div className="scorer-goals num">{s.goals} 得点</div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
-          <TournamentBracket matches={matches.filter(m => m.gender === gender)} />
+
+          <div className="card" style={{ marginTop: 16 }}>
+            <div className="card-head">
+              <div className="card-title">
+                <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 5v14M5 12l7-7 7 7"/>
+                </svg>
+                アシストランキング
+              </div>
+            </div>
+            {assists.length === 0 ? (
+              <div style={{ padding: '16px', color: 'var(--sub)', fontSize: 13 }}>アシスト記録がありません</div>
+            ) : (
+              <div className="scorer-list">
+                {assists.map((s, i) => {
+                  const rank = assistRank(assists, i)
+                  return (
+                    <div key={s.name} className="scorer-row">
+                      <div className="scorer-rank">
+                        {MEDAL[rank]
+                          ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
+                          : rank}
+                      </div>
+                      <div />
+                      <div className="scorer-name">
+                        {s.name}
+                        <span className="team-tag">（{s.team}）</span>
+                      </div>
+                      <div className="scorer-goals num">{s.assists} アシスト</div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </div>
       ) : (
-        <>
-          <div className="standings-groups">
+        <div className="standings-groups">
             {gender === '女子' ? (() => {
               const rows = calcAllStandings(matches, '女子')
               if (rows.length === 0) return null
@@ -229,79 +287,6 @@ export default function Standings() {
               )
             })}
           </div>
-
-          <div className="st-scorer-wrap">
-            <div className="card">
-              <div className="card-head">
-                <div className="card-title">
-                  <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="8" r="5"/><path d="M12 13v8M9 18l3 3 3-3"/>
-                  </svg>
-                  得点ランキング
-                </div>
-              </div>
-              {scorers.length === 0 ? (
-                <div style={{ padding: '16px', color: 'var(--sub)', fontSize: 13 }}>得点記録がありません</div>
-              ) : (
-                <div className="scorer-list">
-                  {scorers.map((s, i) => {
-                    const rank = scorerRank(scorers, i)
-                    return (
-                      <div key={s.name} className="scorer-row">
-                        <div className="scorer-rank">
-                          {MEDAL[rank]
-                            ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
-                            : rank}
-                        </div>
-                        <div />
-                        <div className="scorer-name">
-                          {s.name}
-                          <span className="team-tag">（{s.team}）</span>
-                        </div>
-                        <div className="scorer-goals num">{s.goals} 得点</div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            <div className="card" style={{ marginTop: 16 }}>
-              <div className="card-head">
-                <div className="card-title">
-                  <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 5v14M5 12l7-7 7 7"/>
-                  </svg>
-                  アシストランキング
-                </div>
-              </div>
-              {assists.length === 0 ? (
-                <div style={{ padding: '16px', color: 'var(--sub)', fontSize: 13 }}>アシスト記録がありません</div>
-              ) : (
-                <div className="scorer-list">
-                  {assists.map((s, i) => {
-                    const rank = assistRank(assists, i)
-                    return (
-                      <div key={s.name} className="scorer-row">
-                        <div className="scorer-rank">
-                          {MEDAL[rank]
-                            ? <span className={`rank-medal ${MEDAL[rank]}`}>{rank}</span>
-                            : rank}
-                        </div>
-                        <div />
-                        <div className="scorer-name">
-                          {s.name}
-                          <span className="team-tag">（{s.team}）</span>
-                        </div>
-                        <div className="scorer-goals num">{s.assists} アシスト</div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </>
       )}
     </main>
   )
