@@ -56,10 +56,6 @@ export default function Teams() {
         <h2 className="page-title">チーム</h2>
       </div>
 
-      <div style={{ fontSize: 11, color: 'var(--sub)', padding: '4px 0 8px' }}>
-        debug: 全{teams.length}チーム / 女子{femaleTeams.length}チーム
-      </div>
-
       {teams.length === 0 ? (
         <div style={{ padding: 60, textAlign: 'center', color: 'var(--sub)', fontSize: 14 }}>
           参加チームは現在非公開です
