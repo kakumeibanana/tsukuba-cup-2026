@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { normalizeMatch } from '../../lib/normalizeMatch'
+import { autoSeedLeague, propagateWinner } from '../../lib/seedTournament'
 
 const STATUS_OPTS = [
   { key: 'scheduled', label: '予定' },
@@ -147,10 +148,26 @@ export default function AdminMatches() {
       if (insErr) { setSaving(false); setModalError('得点者の保存に失敗しました: ' + insErr.message); return }
     }
 
+    let seedMsg = ''
+    if (status === 'finished') {
+      if (editing.stage === 'league') {
+        const patchedMatches = matches.map(m =>
+          m.id === editing.id
+            ? { ...m, status: 'finished', score_home: scoreH, score_away: scoreA }
+            : m
+        )
+        const seeded = await autoSeedLeague(patchedMatches, editing.gender, editing.group_name)
+        if (seeded.length > 0) seedMsg = ' ／ トーナメント組み合わせを更新'
+      } else if (editing.stage === 'tournament') {
+        const nextId = await propagateWinner(editing.id, editing.home_name, editing.away_name, scoreH, scoreA, pkWinner)
+        if (nextId) seedMsg = ' ／ 次ラウンドに勝者を反映'
+      }
+    }
+
     setSaving(false)
     closeModal()
     fetchMatches()
-    showToast({ type: 'ok', text: '保存しました' })
+    showToast({ type: 'ok', text: `保存しました${seedMsg}` })
   }
 
   async function handleCreate() {
