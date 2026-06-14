@@ -78,23 +78,36 @@ function BracketCard({ m, homeN, awayN, top, left, onClick }) {
 }
 
 /* ── ConnectorSVG ─────────────────────────────────────── */
+// winTop / winBottom: whether the top/bottom match has produced a winner
 function ConnectorSVG({ pairs, h }) {
-  const mx = CXGAP / 2
-  const s  = 'rgba(139,92,246,0.4)'
+  const mx      = CXGAP / 2
+  const cActive = '#7c3aed'
+  const cDim    = 'rgba(139,92,246,0.13)'
+  const cDef    = 'rgba(139,92,246,0.38)'
   return (
     <svg width={CXGAP} height={h} style={{ display: 'block', flexShrink: 0 }}>
-      {pairs.map(({ y1, y2, yTo }, i) => {
+      {pairs.map(({ y1, y2, yTo, winTop, winBottom }, i) => {
         if (y2 === null) {
-          // Direct horizontal connector (1→1: e.g. women's SF→Final)
-          return <line key={i} x1={0} y1={y1} x2={CXGAP} y2={yTo} stroke={s} strokeWidth={1.5} />
+          const active = winTop
+          return (
+            <line key={i} x1={0} y1={y1} x2={CXGAP} y2={yTo}
+              stroke={active ? cActive : cDef} strokeWidth={active ? 2 : 1.5} />
+          )
         }
-        const midY = (y1 + y2) / 2
+        const midY   = (y1 + y2) / 2
+        const anyWin = winTop || winBottom
+        const sTop  = winTop    ? cActive : winBottom ? cDim : cDef
+        const sBot  = winBottom ? cActive : winTop    ? cDim : cDef
+        const wTop  = winTop    ? 2 : 1.5
+        const wBot  = winBottom ? 2 : 1.5
+        const sMid  = anyWin ? cActive : cDef
+        const wMid  = anyWin ? 2 : 1.5
         return (
           <g key={i}>
-            <line x1={0} y1={y1}   x2={mx}    y2={y1}   stroke={s} strokeWidth={1.5} />
-            <line x1={0} y1={y2}   x2={mx}    y2={y2}   stroke={s} strokeWidth={1.5} />
-            <line x1={mx} y1={y1}  x2={mx}    y2={y2}   stroke={s} strokeWidth={1.5} />
-            <line x1={mx} y1={midY} x2={CXGAP} y2={yTo} stroke={s} strokeWidth={1.5} />
+            <line x1={0}  y1={y1}   x2={mx}    y2={y1}   stroke={sTop} strokeWidth={wTop} />
+            <line x1={0}  y1={y2}   x2={mx}    y2={y2}   stroke={sBot} strokeWidth={wBot} />
+            <line x1={mx} y1={y1}   x2={mx}    y2={y2}   stroke={anyWin ? cDim : cDef} strokeWidth={1.5} />
+            <line x1={mx} y1={midY} x2={CXGAP} y2={yTo}  stroke={sMid} strokeWidth={wMid} />
           </g>
         )
       })}
@@ -264,7 +277,7 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
               onClick={() => sf[0] && setDetail(sf[0])}
             />
             <div style={{ position: 'absolute', left: CW, top: 0 }}>
-              <ConnectorSVG pairs={[{ y1: centerY, y2: null, yTo: centerY }]} h={centerY * 2} />
+              <ConnectorSVG pairs={[{ y1: centerY, y2: null, yTo: centerY, winTop: !!matchWinner(sf[0]) }]} h={centerY * 2} />
             </div>
             <BracketCard
               m={fin}
@@ -320,14 +333,15 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
             const nextR = cols[ci + 1].r
             const pairs = []
             if (col.items.length === 1) {
-              // Single item: direct horizontal connector
-              pairs.push({ y1: cY(col.r, 0), y2: null, yTo: cY(nextR, 0) })
+              pairs.push({ y1: cY(col.r, 0), y2: null, yTo: cY(nextR, 0), winTop: !!matchWinner(col.items[0]) })
             } else {
               for (let i = 0; i + 1 < col.items.length; i += 2) {
                 pairs.push({
-                  y1:  cY(col.r, i),
-                  y2:  cY(col.r, i + 1),
-                  yTo: cY(nextR, i / 2),
+                  y1:        cY(col.r, i),
+                  y2:        cY(col.r, i + 1),
+                  yTo:       cY(nextR, i / 2),
+                  winTop:    !!matchWinner(col.items[i]),
+                  winBottom: !!matchWinner(col.items[i + 1]),
                 })
               }
             }
