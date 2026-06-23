@@ -4,6 +4,13 @@ import { supabase } from '../lib/supabase'
 
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze' }
 
+// 5位の値と同率の選手を全員含める
+function cutAtRank5(sorted, key) {
+  if (sorted.length <= 5) return sorted
+  const threshold = sorted[4][key]
+  return sorted.filter(s => s[key] >= threshold)
+}
+
 function tiedRank(list, i, key) {
   const val = list[i][key]
   return list.findIndex(s => s[key] === val) + 1
@@ -60,7 +67,7 @@ export default function GroupRanking() {
         counts[g.player_name] = { name: g.player_name, team: g.team_name, goals: 0 }
       counts[g.player_name].goals++
     })
-    return Object.values(counts).sort((a, b) => b.goals - a.goals).slice(0, 5)
+    return cutAtRank5(Object.values(counts).sort((a, b) => b.goals - a.goals), 'goals')
   }, [allGoals, matches, gender])
 
   const assists = useMemo(() => {
@@ -71,7 +78,7 @@ export default function GroupRanking() {
         counts[g.assist_player] = { name: g.assist_player, team: g.team_name, assists: 0 }
       counts[g.assist_player].assists++
     })
-    return Object.values(counts).sort((a, b) => b.assists - a.assists).slice(0, 5)
+    return cutAtRank5(Object.values(counts).sort((a, b) => b.assists - a.assists), 'assists')
   }, [allGoals, matches, gender])
 
   const genderSeg = (
