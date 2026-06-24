@@ -52,7 +52,8 @@ export default function GroupRanking() {
     Promise.all([
       supabase.from('matches').select('id, gender'),
       supabase.from('goals').select('player_name, team_name, match_id, assist_player'),
-    ]).then(([{ data: mData }, { data: gData }]) => {
+    ]).then(([{ data: mData, error: mErr }, { data: gData, error: gErr }]) => {
+      if (mErr || gErr) { setLoading(false); return }
       setMatches(mData ?? [])
       setAllGoals(gData ?? [])
       setLoading(false)

@@ -41,7 +41,7 @@ export default function TodayStatus() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, loadStatus)
       .subscribe()
     return () => supabase.removeChannel(channel)
-  }, [beforeStart])
+  }, [beforeStart, beforeNextMatch])
 
   function handleTap() {
     const now = Date.now()

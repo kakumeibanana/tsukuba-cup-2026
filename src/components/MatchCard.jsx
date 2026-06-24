@@ -116,7 +116,7 @@ export default function MatchCard({ m, homeScorers = [], awayScorers = [] }) {
           {isLive      && <span className="mc2-badge mc2-badge-live">🔴 LIVE</span>}
           <span className="mc2-group-label">
             {m.match_date}（{m.match_dow}）&nbsp;·&nbsp;
-            {m.stage === 'league' ? `グループ ${m.group_name}` : m.round}
+            {m.stage === 'league' ? `グループ ${m.group_name}` : (m.round ?? 'トーナメント')}
           </span>
         </div>
 

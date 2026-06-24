@@ -113,10 +113,11 @@ export default function TeamDetail() {
 
       if (error || !teamData) { setNotFound(true); setLoading(false); return }
 
-      const [{ data: mData }, { data: gData }] = await Promise.all([
+      const [{ data: mData, error: mErr }, { data: gData, error: gErr }] = await Promise.all([
         supabase.from('matches').select('*'),
         supabase.from('goals').select('match_id, team_name, player_name'),
       ])
+      if (mErr || gErr) { setNotFound(true); setLoading(false); return }
 
       const map = {}
       ;(gData ?? []).forEach(g => {
@@ -160,7 +161,7 @@ export default function TeamDetail() {
     </main>
   )
 
-  const sortedMembers = [...(team.members ?? [])].sort((a, b) => a.sort_order - b.sort_order)
+  const sortedMembers = [...(team.members ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
   const teamMatches   = allMatches.filter(m => m.home_name === team.name || m.away_name === team.name).sort(sortByDate)
   const stats         = calcStats(teamMatches, team.name)
   const finished      = teamMatches.filter(m => m.status === 'finished')

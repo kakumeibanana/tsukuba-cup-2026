@@ -16,10 +16,11 @@ export default function RecentResults() {
 
   useEffect(() => {
     async function load() {
-      const [{ data: mData }, { data: gData }] = await Promise.all([
+      const [{ data: mData, error: mErr }, { data: gData, error: gErr }] = await Promise.all([
         supabase.from('matches').select('*').eq('status', 'completed'),
         supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
       ])
+      if (mErr || gErr) { setLoading(false); return }
       const normalized = (mData ?? []).map(normalizeMatch)
       setResults(normalized.sort(sortByMatchDateDesc).slice(0, 6))
 
