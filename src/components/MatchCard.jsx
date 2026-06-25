@@ -59,7 +59,9 @@ export function MatchModal({ m, homeScorers, awayScorers, onClose }) {
           <div className="mm-pk-note" style={{ color: '#9ca3af' }}>この試合は中止になりました</div>
         )}
         {m.status === 'postponed' && (
-          <div className="mm-pk-note" style={{ color: '#b45309' }}>この試合は延期になりました</div>
+          <div className="mm-pk-note" style={{ color: '#b45309' }}>
+            {m.postponed_to ? `この試合は${m.postponed_to}に延期されました` : 'この試合は延期になりました'}
+          </div>
         )}
 
         {/* ── Scorers ── */}
