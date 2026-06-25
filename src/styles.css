@@ -1615,6 +1615,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .mc2-badge-scheduled { background: #f1f5f9; color: #64748b; }
 .mc2-badge-finished  { background: #ede9fe; color: #5b21b6; }
 .mc2-badge-cancelled { background: #e5e7eb; color: #6b7280; }
+.mc2-badge-postponed { background: #fef3c7; color: #b45309; }
 
 /* Pulse dot (red for LIVE) */
 .mc2-dot {

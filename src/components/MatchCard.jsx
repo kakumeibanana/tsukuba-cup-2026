@@ -42,7 +42,7 @@ export function MatchModal({ m, homeScorers, awayScorers, onClose }) {
             ) : (
               <div className="mm-vs">vs</div>
             )}
-            {!shown && m.match_time && m.status !== 'cancelled' && (
+            {!shown && m.match_time && m.status !== 'cancelled' && m.status !== 'postponed' && (
               <div className="mm-time">{m.match_time}</div>
             )}
           </div>
@@ -57,6 +57,9 @@ export function MatchModal({ m, homeScorers, awayScorers, onClose }) {
         )}
         {m.status === 'cancelled' && (
           <div className="mm-pk-note" style={{ color: '#9ca3af' }}>この試合は中止になりました</div>
+        )}
+        {m.status === 'postponed' && (
+          <div className="mm-pk-note" style={{ color: '#b45309' }}>この試合は延期になりました</div>
         )}
 
         {/* ── Scorers ── */}
@@ -94,6 +97,7 @@ export default function MatchCard({ m, homeScorers = [], awayScorers = [] }) {
   const isFinished  = m.status === 'finished'
   const isLive      = m.status === 'live'
   const isCancelled = m.status === 'cancelled'
+  const isPostponed = m.status === 'postponed'
   const isDraw      = isFinished && m.score_home === m.score_away
   const homeWin     = isFinished && (m.score_home > m.score_away || (isDraw && m.pk_winner === m.home_name))
   const awayWin     = isFinished && (m.score_away > m.score_home || (isDraw && m.pk_winner === m.away_name))
@@ -107,12 +111,14 @@ export default function MatchCard({ m, homeScorers = [], awayScorers = [] }) {
           isFinished  && 'mc2-finished',
           isLive      && 'mc2-live',
           isCancelled && 'mc2-cancelled',
+          isPostponed && 'mc2-cancelled',
         ].filter(Boolean).join(' ')}
         onClick={() => setOpen(true)}
         style={{ cursor: 'pointer' }}
       >
         <div className="mc2-top">
           {isCancelled && <span className="mc2-badge mc2-badge-cancelled">Cancelled</span>}
+          {isPostponed && <span className="mc2-badge mc2-badge-postponed">延期</span>}
           {isLive      && <span className="mc2-badge mc2-badge-live">🔴 LIVE</span>}
           <span className="mc2-group-label">
             {m.match_date}（{m.match_dow}）&nbsp;·&nbsp;
@@ -145,7 +151,7 @@ export default function MatchCard({ m, homeScorers = [], awayScorers = [] }) {
                 ? <div className="mc2-kickoff num">{m.match_time}</div>
                 : <div className="mc2-time-label">{m.match_time ?? '昼休み'}</div>
             )}
-            {isCancelled && <div className="mc2-cancelled-sep">—</div>}
+            {(isCancelled || isPostponed) && <div className="mc2-cancelled-sep">—</div>}
           </div>
 
           <div className={`mc2-team mc2-away${awayWin ? ' mc2-winner' : ''}`}>
