@@ -22,7 +22,16 @@ export function calcGroupStandings(matches, gender, group, ignoreGroup = false) 
     else if (m.score_home < m.score_away) { a.w++; h.l++; a.pts += 3 }
     else                                   { h.d++; a.d++; h.pts++; a.pts++ }
   })
-  return Object.values(table).sort((a, b) =>
-    b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name)
-  )
+  return Object.values(table).sort((a, b) => {
+    const base = b.pts - a.pts || b.gd - a.gd || b.gf - a.gf
+    if (base !== 0) return base
+    // 完全同率：両チーム間の試合で行った順位決定PKの勝者を上位にする
+    const h2h = inGroup.find(m =>
+      (m.home_name === a.name && m.away_name === b.name) ||
+      (m.home_name === b.name && m.away_name === a.name)
+    )
+    if (h2h?.pk_winner === a.name) return -1
+    if (h2h?.pk_winner === b.name) return 1
+    return a.name.localeCompare(b.name)
+  })
 }
