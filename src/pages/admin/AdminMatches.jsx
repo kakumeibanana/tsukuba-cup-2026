@@ -138,11 +138,11 @@ export default function AdminMatches() {
       status:     status === 'finished' ? 'completed' : status,
       home_score: hasScore ? scoreH : null,
       away_score: hasScore ? scoreA : null,
-      pk_winner:  (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner)
+      pk_winner:  (status === 'finished' && isDraw && pkWinner)
                     ? pkWinner : null,
-      pk_home:    (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner && pkH !== '')
+      pk_home:    (status === 'finished' && isDraw && pkWinner && pkH !== '')
                     ? Number(pkH) : null,
-      pk_away:    (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner && pkA !== '')
+      pk_away:    (status === 'finished' && isDraw && pkWinner && pkA !== '')
                     ? Number(pkA) : null,
       mom:        status === 'finished' && mom.trim() ? mom.trim() : null,
       postponed_to: status === 'postponed' && postponedTo.trim() ? postponedTo.trim() : null,
@@ -252,7 +252,7 @@ export default function AdminMatches() {
   const genderedTeams = teamOptions.filter(t => t.gender === cform.gender)
 
   // PK入力を表示する条件
-  const showPk = editing?.stage === 'tournament' && status === 'finished' && scoreH === scoreA
+  const showPk = status === 'finished' && scoreH === scoreA
 
   return (
     <div className="adm-section">
