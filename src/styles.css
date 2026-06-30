@@ -2562,7 +2562,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 }
 
 /* ── 状態ピル ── */
-.adm-status-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.adm-status-pills { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .adm-status-pill {
   padding: 10px 4px; border-radius: 10px;
   font-size: 12px; font-weight: 700;
@@ -2573,6 +2573,7 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .adm-status-pill.active-live      { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
 .adm-status-pill.active-finished  { background: #ede9fe; color: #5b21b6; border-color: #a78bfa; }
 .adm-status-pill.active-cancelled { background: #f3f4f6; color: #9ca3af; border-color: #d1d5db; }
+.adm-status-pill.active-postponed { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
 
 /* ── スコアカウンター ── */
 .adm-score-area {

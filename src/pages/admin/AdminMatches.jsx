@@ -7,6 +7,7 @@ const STATUS_OPTS = [
   { key: 'scheduled', label: '予定' },
   { key: 'live',      label: '🔴 LIVE' },
   { key: 'finished',  label: '終了' },
+  { key: 'postponed', label: '延期' },
   { key: 'cancelled', label: '中止' },
 ]
 
@@ -40,6 +41,7 @@ export default function AdminMatches() {
   const [pkWinner, setPkWinner]       = useState('')
   const [pkH, setPkH]                 = useState('')
   const [pkA, setPkA]                 = useState('')
+  const [postponedTo, setPostponedTo] = useState('')
   const [mom, setMom]                 = useState('')
   const [momMode, setMomMode]         = useState('select') // 'select' | 'guest'
   const [goals, setGoals]             = useState([])
@@ -80,6 +82,7 @@ export default function AdminMatches() {
     setPkWinner(m.pk_winner ?? '')
     setPkH(m.pk_home ?? '')
     setPkA(m.pk_away ?? '')
+    setPostponedTo(m.postponed_to ?? '')
     setMom(m.mom ?? '')
     setPickerSide(null)
     setModalError(null)
@@ -142,6 +145,7 @@ export default function AdminMatches() {
       pk_away:    (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner && pkA !== '')
                     ? Number(pkA) : null,
       mom:        status === 'finished' && mom.trim() ? mom.trim() : null,
+      postponed_to: status === 'postponed' && postponedTo.trim() ? postponedTo.trim() : null,
     }).eq('id', editing.id)
 
     if (error) { setSaving(false); setModalError(error.message); return }
@@ -304,6 +308,8 @@ export default function AdminMatches() {
                         </>
                       ) : m.status === 'cancelled' ? (
                         <span className="adm-status-badge" style={{ background: '#f3f4f6', color: '#9ca3af' }}>中止</span>
+                      ) : m.status === 'postponed' ? (
+                        <span className="adm-status-badge" style={{ background: '#fef3c7', color: '#b45309' }}>延期</span>
                       ) : (
                         <span className="adm-mc-enter-result">結果入力 ›</span>
                       )}
@@ -346,6 +352,22 @@ export default function AdminMatches() {
                   ))}
                 </div>
               </div>
+
+              {status === 'postponed' && (
+                <div>
+                  <div className="adm-field-label">延期先（任意）</div>
+                  <input
+                    className="adm-search-input"
+                    value={postponedTo}
+                    onChange={e => setPostponedTo(e.target.value)}
+                    placeholder="例：7/2（木）"
+                    style={{ width: '100%' }}
+                  />
+                  <div style={{ fontSize: 11, color: 'var(--sub)', marginTop: 4 }}>
+                    入力すると詳細画面に「○○に延期されました」と表示されます
+                  </div>
+                </div>
+              )}
 
               {(status === 'finished' || status === 'live') && (
                 <div className="adm-score-area">
