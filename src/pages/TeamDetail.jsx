@@ -157,7 +157,7 @@ export default function TeamDetail() {
   const teamMatches   = allMatches.filter(m => m.home_name === team.name || m.away_name === team.name).sort(sortByDate)
   const stats         = calcStats(teamMatches, team.name)
   const finished      = teamMatches.filter(m => m.status === 'finished')
-  const upcoming      = teamMatches.filter(m => m.status !== 'finished')
+  const upcoming      = teamMatches.filter(m => m.status === 'scheduled' || m.status === 'live')
   const groupRows     = team.group_name ? calcGroupStandings(allMatches, team.gender, team.group_name) : []
 
   const scorerCounts = {}
