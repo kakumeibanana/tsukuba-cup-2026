@@ -38,6 +38,8 @@ export default function AdminMatches() {
   const [scoreH, setScoreH]           = useState(0)
   const [scoreA, setScoreA]           = useState(0)
   const [pkWinner, setPkWinner]       = useState('')
+  const [pkH, setPkH]                 = useState('')
+  const [pkA, setPkA]                 = useState('')
   const [mom, setMom]                 = useState('')
   const [momMode, setMomMode]         = useState('select') // 'select' | 'guest'
   const [goals, setGoals]             = useState([])
@@ -76,6 +78,8 @@ export default function AdminMatches() {
     setScoreH(m.score_home ?? 0)
     setScoreA(m.score_away ?? 0)
     setPkWinner(m.pk_winner ?? '')
+    setPkH(m.pk_home ?? '')
+    setPkA(m.pk_away ?? '')
     setMom(m.mom ?? '')
     setPickerSide(null)
     setModalError(null)
@@ -133,6 +137,10 @@ export default function AdminMatches() {
       away_score: hasScore ? scoreA : null,
       pk_winner:  (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner)
                     ? pkWinner : null,
+      pk_home:    (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner && pkH !== '')
+                    ? Number(pkH) : null,
+      pk_away:    (status === 'finished' && editing?.stage === 'tournament' && isDraw && pkWinner && pkA !== '')
+                    ? Number(pkA) : null,
       mom:        status === 'finished' && mom.trim() ? mom.trim() : null,
     }).eq('id', editing.id)
 
@@ -377,6 +385,19 @@ export default function AdminMatches() {
                       </button>
                     ))}
                   </div>
+                  {pkWinner && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
+                      <span style={{ fontSize: 13, color: 'var(--ink-600)' }}>{editing.home_name}</span>
+                      <input type="number" min="0" inputMode="numeric" value={pkH}
+                        onChange={e => setPkH(e.target.value)}
+                        style={{ width: 52, padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line)', textAlign: 'center', fontSize: 15 }} />
+                      <span style={{ fontWeight: 700, color: 'var(--sub)' }}>－</span>
+                      <input type="number" min="0" inputMode="numeric" value={pkA}
+                        onChange={e => setPkA(e.target.value)}
+                        style={{ width: 52, padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line)', textAlign: 'center', fontSize: 15 }} />
+                      <span style={{ fontSize: 13, color: 'var(--ink-600)' }}>{editing.away_name}</span>
+                    </div>
+                  )}
                 </div>
               )}
 

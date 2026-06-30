@@ -53,7 +53,9 @@ export function MatchModal({ m, homeScorers, awayScorers, onClose }) {
         </div>
 
         {isFinished && m.pk_winner && (
-          <div className="mm-pk-note">PK戦：<strong>{m.pk_winner}</strong> 勝利</div>
+          <div className="mm-pk-note">
+            PK戦{m.pk_home != null && m.pk_away != null ? ` ${m.pk_home}-${m.pk_away}` : ''}：<strong>{m.pk_winner}</strong> 勝利
+          </div>
         )}
         {m.status === 'cancelled' && (
           <div className="mm-pk-note" style={{ color: '#9ca3af' }}>この試合は中止になりました</div>
@@ -143,7 +145,9 @@ export default function MatchCard({ m, homeScorers = [], awayScorers = [] }) {
                 </div>
                 {isFinished && m.pk_winner && (
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', color: '#6b7280', textAlign: 'center', marginTop: 2 }}>
-                    PK: {m.pk_winner}
+                    {m.pk_home != null && m.pk_away != null
+                      ? `PK ${m.pk_home}-${m.pk_away} ${m.pk_winner}`
+                      : `PK: ${m.pk_winner}`}
                   </div>
                 )}
               </>
