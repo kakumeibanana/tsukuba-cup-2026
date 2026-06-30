@@ -7,14 +7,6 @@ import StTable from '../components/StTable'
 
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze', 4: 'fourth' }
 
-function rankOf(rows, i) {
-  const r = rows[i]
-  for (let j = 0; j < i; j++) {
-    if (rows[j].pts === r.pts && rows[j].gd === r.gd && rows[j].gf === r.gf) return j + 1
-  }
-  return i + 1
-}
-
 function safeColor(hex) {
   if (!hex || hex.length < 7) return 'var(--purple)'
   const r = parseInt(hex.slice(1, 3), 16)
@@ -299,7 +291,7 @@ export default function TeamDetail() {
               </thead>
               <tbody>
                 {groupRows.map((row, i) => {
-                  const rank = rankOf(groupRows, i)
+                  const rank = row.rank
                   return (
                   <tr key={row.name} className={`${rank === 1 ? 'top-row' : ''}${row.name === team.name ? ' td-my-row' : ''}`}>
                     <td className="rank">

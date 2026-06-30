@@ -6,14 +6,6 @@ import StTable from '../components/StTable'
 
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze', 4: 'fourth' }
 
-function rankOf(rows, i) {
-  const r = rows[i]
-  for (let j = 0; j < i; j++) {
-    if (rows[j].pts === r.pts && rows[j].gd === r.gd && rows[j].gf === r.gf) return j + 1
-  }
-  return i + 1
-}
-
 function scorerRank(scorers, i) {
   const goals = scorers[i].goals
   return scorers.findIndex(s => s.goals === goals) + 1
@@ -206,7 +198,7 @@ export default function Standings() {
                       </thead>
                       <tbody>
                         {rows.map((row, i) => {
-                          const rank = rankOf(rows, i)
+                          const rank = row.rank
                           return (
                           <tr key={row.name} className={rank === 1 ? 'top-row' : ''}>
                             <td className="rank">
@@ -262,7 +254,7 @@ export default function Standings() {
                       </thead>
                       <tbody>
                         {rows.map((row, i) => {
-                          const rank = rankOf(rows, i)
+                          const rank = row.rank
                           return (
                           <tr key={row.name} className={rank === 1 ? 'top-row' : ''}>
                             <td className="rank">
