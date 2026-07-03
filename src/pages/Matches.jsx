@@ -10,9 +10,13 @@ function sortByDateTime(a, b) {
   return pd(a.match_date) - pd(b.match_date) || pt(a.match_time) - pt(b.match_time)
 }
 
+// 7/7(火)以降は決勝トーナメントを先頭・初期表示にする
+const TOURNAMENT_FIRST_DATE = new Date('2026-07-07T00:00:00')
+const tournamentFirst = new Date() >= TOURNAMENT_FIRST_DATE
+
 export default function Matches() {
   const [gender, setGender]       = useState('男子')
-  const [stage, setStage]         = useState('league')
+  const [stage, setStage]         = useState(tournamentFirst ? 'tournament' : 'league')
   const [view, setView]           = useState('time')
   const [tournView, setTournView] = useState('bracket')
   const [matches, setMatches]     = useState([])
@@ -166,7 +170,10 @@ export default function Matches() {
           ))}
         </div>
         <div className="mc2-stage-tabs">
-          {[['league', '予選リーグ'], ['tournament', '決勝トーナメント']].map(([key, label]) => (
+          {(tournamentFirst
+            ? [['tournament', '決勝トーナメント'], ['league', '予選リーグ']]
+            : [['league', '予選リーグ'], ['tournament', '決勝トーナメント']]
+          ).map(([key, label]) => (
             <button key={key} className={`mc2-stage-tab${stage === key ? ' active' : ''}`}
               onClick={() => setStage(key)}>{label}</button>
           ))}
