@@ -7,7 +7,9 @@ const CW    = 164  // card width (px)
 const CXGAP = 44   // connector column width (px)
 
 /* ── Helpers ──────────────────────────────────────────── */
-const byCreated = (a, b) => new Date(a.created_at) - new Date(b.created_at)
+// トーナメント構造は試合番号(M23→M29 等)で決まるため、必ず match_number 順で並べる。
+// created_at 順だと日付変更・シードでソートが揺れ、準決勝の上下が入れ替わる原因になる。
+const byNum = (a, b) => (a.match_number ?? 0) - (b.match_number ?? 0)
 
 function matchWinner(m) {
   if (!m || m.status !== 'finished') return null
@@ -207,8 +209,8 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
     )
   }
 
-  const qf    = [...tourn.filter(m => m.round === '準々決勝')].sort(byCreated)
-  const sf    = [...tourn.filter(m => m.round === '準決勝')].sort(byCreated)
+  const qf    = [...tourn.filter(m => m.round === '準々決勝')].sort(byNum)
+  const sf    = [...tourn.filter(m => m.round === '準決勝')].sort(byNum)
   const fin   = tourn.find(m => m.round === '決勝') || null
   const third = tourn.find(m => m.round === '3位決定戦') || null
 
