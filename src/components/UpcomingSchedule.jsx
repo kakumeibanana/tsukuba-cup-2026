@@ -9,6 +9,11 @@ function sortByMatchDate(a, b) {
   return parse(a.match_date) - parse(b.match_date)
 }
 
+function sortByMatchTime(a, b) {
+  const parse = t => { const [h, min] = (t ?? '99:99').split(':').map(Number); return h * 60 + min }
+  return parse(a.match_time) - parse(b.match_time)
+}
+
 export default function UpcomingSchedule() {
   const [days, setDays]         = useState([])
   const [loading, setLoading]   = useState(true)
@@ -31,7 +36,7 @@ export default function UpcomingSchedule() {
         const limited = dates.slice(0, 4).map(date => ({
           date,
           dow: grouped[date][0].match_dow,
-          matches: grouped[date].map(m => ({
+          matches: grouped[date].sort(sortByMatchTime).map(m => ({
             raw: m,
             label: m.stage === 'league' ? `グループ ${m.group_name}` : (m.round ?? 'トーナメント'),
             badge: m.gender === '女子' ? 'badge-green' : 'badge-purple',
