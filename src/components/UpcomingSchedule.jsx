@@ -21,7 +21,7 @@ export default function UpcomingSchedule() {
       .eq('status', 'scheduled')
       .then(({ data, error }) => {
         if (error) { setLoading(false); return }
-        const sorted = (data ?? []).map(normalizeMatch).sort(sortByMatchDate)
+        const sorted = (data ?? []).map(normalizeMatch).filter(m => m.home_name).sort(sortByMatchDate)
         const grouped = {}
         sorted.forEach(m => {
           if (!grouped[m.match_date]) grouped[m.match_date] = []
