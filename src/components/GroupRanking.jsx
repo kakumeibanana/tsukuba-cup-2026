@@ -51,7 +51,7 @@ export default function GroupRanking() {
   useEffect(() => {
     Promise.all([
       supabase.from('matches').select('id, gender'),
-      supabase.from('goals').select('player_name, team_name, match_id, assist_player'),
+      supabase.from('goals').select('player_name, team_name, match_id, assist_player, own_goal'),
     ]).then(([{ data: mData, error: mErr }, { data: gData, error: gErr }]) => {
       if (mErr || gErr) { setLoading(false); return }
       setMatches(mData ?? [])
@@ -63,7 +63,7 @@ export default function GroupRanking() {
   const scorers = useMemo(() => {
     const matchIds = new Set(matches.filter(m => m.gender === gender).map(m => m.id))
     const counts = {}
-    allGoals.filter(g => matchIds.has(g.match_id)).forEach(g => {
+    allGoals.filter(g => !g.own_goal && matchIds.has(g.match_id)).forEach(g => {
       if (!counts[g.player_name])
         counts[g.player_name] = { name: g.player_name, team: g.team_name, goals: 0 }
       counts[g.player_name].goals++

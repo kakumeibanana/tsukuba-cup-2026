@@ -28,14 +28,17 @@ export default function Matches() {
     if (isFirstLoad.current) setLoading(true)
     const [{ data: mData }, { data: gData }] = await Promise.all([
       supabase.from('matches').select('*'),
-      supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
+      supabase.from('goals').select('match_id, team_name, player_name, assist_player, own_goal'),
     ])
     setMatches((mData ?? []).map(normalizeMatch).sort(sortByDateTime))
     const map = {}
     ;(gData ?? []).forEach(g => {
       if (!map[g.match_id]) map[g.match_id] = {}
       if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
-      map[g.match_id][g.team_name].push(g.assist_player ? `${g.player_name} (A: ${g.assist_player})` : g.player_name)
+      const label = g.own_goal
+        ? `${g.player_name} (OG)`
+        : (g.assist_player ? `${g.player_name} (A: ${g.assist_player})` : g.player_name)
+      map[g.match_id][g.team_name].push(label)
     })
     setGoalsMap(map)
     setLoading(false)

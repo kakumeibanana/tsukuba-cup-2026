@@ -14,12 +14,12 @@ export default function AdminStandings() {
       setLoading(true)
       const [{ data: mData }, { data: gData }] = await Promise.all([
         supabase.from('matches').select('*'),
-        supabase.from('goals').select('player_name, team_name'),
+        supabase.from('goals').select('player_name, team_name, own_goal'),
       ])
       setMatches((mData ?? []).map(normalizeMatch))
 
       const counts = {}
-      ;(gData ?? []).forEach(g => {
+      ;(gData ?? []).filter(g => !g.own_goal).forEach(g => {
         if (!counts[g.player_name])
           counts[g.player_name] = { name: g.player_name, team: g.team_name, goals: 0 }
         counts[g.player_name].goals++

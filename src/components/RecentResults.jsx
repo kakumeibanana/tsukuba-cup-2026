@@ -18,7 +18,7 @@ export default function RecentResults() {
     async function load() {
       const [{ data: mData, error: mErr }, { data: gData, error: gErr }] = await Promise.all([
         supabase.from('matches').select('*').eq('status', 'completed'),
-        supabase.from('goals').select('match_id, team_name, player_name, assist_player'),
+        supabase.from('goals').select('match_id, team_name, player_name, assist_player, own_goal'),
       ])
       if (mErr || gErr) { setLoading(false); return }
       const normalized = (mData ?? []).map(normalizeMatch)
@@ -28,7 +28,10 @@ export default function RecentResults() {
       ;(gData ?? []).forEach(g => {
         if (!map[g.match_id]) map[g.match_id] = {}
         if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
-        map[g.match_id][g.team_name].push(g.assist_player ? `${g.player_name} (A: ${g.assist_player})` : g.player_name)
+        const label = g.own_goal
+          ? `${g.player_name} (OG)`
+          : (g.assist_player ? `${g.player_name} (A: ${g.assist_player})` : g.player_name)
+        map[g.match_id][g.team_name].push(label)
       })
       setGoalsMap(map)
       setLoading(false)

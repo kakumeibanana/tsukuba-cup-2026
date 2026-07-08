@@ -107,7 +107,7 @@ export default function TeamDetail() {
 
       const [{ data: mData, error: mErr }, { data: gData, error: gErr }] = await Promise.all([
         supabase.from('matches').select('*'),
-        supabase.from('goals').select('match_id, team_name, player_name'),
+        supabase.from('goals').select('match_id, team_name, player_name, own_goal'),
       ])
       if (mErr || gErr) { setNotFound(true); setLoading(false); return }
 
@@ -115,7 +115,7 @@ export default function TeamDetail() {
       ;(gData ?? []).forEach(g => {
         if (!map[g.match_id]) map[g.match_id] = {}
         if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
-        map[g.match_id][g.team_name].push(g.player_name)
+        map[g.match_id][g.team_name].push(g.own_goal ? `${g.player_name} (OG)` : g.player_name)
       })
 
       setTeam(teamData)
@@ -161,7 +161,7 @@ export default function TeamDetail() {
   const groupRows     = team.group_name ? calcGroupStandings(allMatches, team.gender, team.group_name) : []
 
   const scorerCounts = {}
-  rawGoals.filter(g => g.team_name === team.name).forEach(g => {
+  rawGoals.filter(g => g.team_name === team.name && !g.own_goal).forEach(g => {
     scorerCounts[g.player_name] = (scorerCounts[g.player_name] ?? 0) + 1
   })
   const teamScorers = Object.entries(scorerCounts)
