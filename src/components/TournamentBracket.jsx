@@ -217,6 +217,8 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
   const hasQF         = qf.length > 0
   // Women's format: 1 SF match, no QF (SF winner vs 1st place bye in Final)
   const isWomensBracket = !hasQF && sf.length === 1
+  // 準決勝が組まれず決勝だけになったケース(棄権等)
+  const isFinalOnly     = !hasQF && sf.length === 0 && !!fin
   const sfR     = hasQF ? 1 : 0
   const finR    = hasQF ? 2 : 1
   const nFirst  = hasQF ? 4 : isWomensBracket ? 1 : 2
@@ -258,6 +260,32 @@ export default function TournamentBracket({ matches, goalsMap = {} }) {
   }
 
   const showThird = third || sf.some(m => matchLoser(m))
+
+  // 準決勝が組まれず決勝だけになったケース: 決勝カード1枚のみ表示
+  if (isFinalOnly) {
+    const centerY = UNIT
+    return (
+      <div className="bk-outer">
+        <div className="bk-scroll-wrap">
+          <div style={{ position: 'relative', height: 28, width: CW, marginBottom: 10 }}>
+            <div className="bk-col-label-text" style={{ position: 'absolute', left: 0, width: CW }}>決勝</div>
+          </div>
+          <div style={{ position: 'relative', width: CW, height: centerY * 2 }}>
+            <BracketCard
+              m={fin}
+              homeN={fin?.home_name || 'TBD'}
+              awayN={fin?.away_name || 'TBD'}
+              top={centerY - CH / 2} left={0}
+              onClick={() => fin && setDetail(fin)}
+            />
+          </div>
+        </div>
+        {detail && (
+          <MatchDetailModal m={detail} goalsMap={goalsMap} onClose={() => setDetail(null)} />
+        )}
+      </div>
+    )
+  }
 
   // Women's bracket: simple 2-card side-by-side layout (SF → Final)
   if (isWomensBracket) {
