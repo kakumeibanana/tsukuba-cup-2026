@@ -29,7 +29,7 @@ export default function RecentResults() {
         if (!map[g.match_id]) map[g.match_id] = {}
         if (!map[g.match_id][g.team_name]) map[g.match_id][g.team_name] = []
         const label = g.own_goal
-          ? `${g.player_name} (OG)`
+          ? 'オウンゴール'
           : (g.assist_player ? `${g.player_name} (A: ${g.assist_player})` : g.player_name)
         map[g.match_id][g.team_name].push(label)
       })
