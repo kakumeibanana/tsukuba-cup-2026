@@ -46,7 +46,7 @@ export default function AdminMatches() {
   const [momMode, setMomMode]         = useState('select') // 'select' | 'guest'
   const [goals, setGoals]             = useState([])
   const [pickerSide, setPickerSide]     = useState(null)
-  const [ogFor, setOgFor]               = useState(null) // 'home' | 'away' — オウンゴールで得点が入る側
+  const [ogMode, setOgMode]             = useState(false) // true: このピッカーはオウンゴール選択中(相手チームの選手を表示)
   const [guestName, setGuestName]       = useState('')
   const [homeMembers, setHomeMembers]   = useState([])
   const [awayMembers, setAwayMembers]   = useState([])
@@ -86,7 +86,7 @@ export default function AdminMatches() {
     setPostponedTo(m.postponed_to ?? '')
     setMom(m.mom ?? '')
     setPickerSide(null)
-    setOgFor(null)
+    setOgMode(false)
     setModalError(null)
 
     const [{ data: goalsData }, { data: homeTeam }, { data: awayTeam }] = await Promise.all([
@@ -111,27 +111,24 @@ export default function AdminMatches() {
     await fetchTeams()
   }
 
-  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setOgFor(null); setGuestName(''); setMom(''); setMomMode('select'); setModalError(null); setPendingGoal(null); setAssistGuest('') }
+  function closeModal() { setEditing(null); setCreating(false); setPickerSide(null); setOgMode(false); setGuestName(''); setMom(''); setMomMode('select'); setModalError(null); setPendingGoal(null); setAssistGuest('') }
 
   function pickGoal(side, memberName) {
-    if (ogFor) {
-      // オウンゴール: 選んだ選手は相手チーム所属、得点は ogFor 側に加算。アシストなし。
+    const teamName = side === 'home' ? editing.home_name : editing.away_name
+    if (ogMode) {
+      // オウンゴール: 選んだ選手(相手チーム)のゴールが side 側に加算。アシストなし。
       setGoals(prev => [...prev, {
         id: `tmp-${Date.now()}-${Math.random()}`,
-        team_name: ogFor === 'home' ? editing.home_name : editing.away_name,
+        team_name: teamName,
         player_name: memberName,
         assist_player: null,
         own_goal: true,
       }])
       setPickerSide(null)
-      setOgFor(null)
+      setOgMode(false)
       return
     }
-    setPendingGoal({
-      side,
-      scorer: memberName,
-      teamName: side === 'home' ? editing.home_name : editing.away_name,
-    })
+    setPendingGoal({ side, scorer: memberName, teamName })
   }
 
   function confirmGoal(assistName) {
@@ -261,8 +258,11 @@ export default function AdminMatches() {
   })
   const cfld  = key => e => setCform(p => ({ ...p, [key]: e.target.value }))
 
-  const pickerMembers  = pickerSide === 'home' ? homeMembers : awayMembers
+  const pickerMembers  = pickerSide === 'home'
+    ? (ogMode ? awayMembers : homeMembers)
+    : (ogMode ? homeMembers : awayMembers)
   const pickerTeamName = pickerSide === 'home' ? editing?.home_name : editing?.away_name
+  const pickerOppName  = pickerSide === 'home' ? editing?.away_name : editing?.home_name
   const pickerColor    = pickerSide === 'home' ? '#7c3aed' : '#db2777'
 
   const genderedTeams = teamOptions.filter(t => t.gender === cform.gender)
@@ -504,13 +504,13 @@ export default function AdminMatches() {
                         /* ── 得点者選択 ── */
                         <>
                           <div className="adm-member-picker-header">
-                            <span style={{ color: pickerColor, fontWeight: 600, fontSize: 13 }}>
-                              {ogFor
-                                ? `オウンゴール（${pickerTeamName}の選手 → ${ogFor === 'home' ? editing.home_name : editing.away_name}に加点）`
-                                : pickerTeamName}
-                            </span>
-                            <button className="adm-btn-icon" onClick={() => { setPickerSide(null); setOgFor(null) }}>✕</button>
+                            <span style={{ color: pickerColor, fontWeight: 600, fontSize: 13 }}>{pickerTeamName}の得点</span>
+                            <button className="adm-btn-icon" onClick={() => { setPickerSide(null); setOgMode(false) }}>✕</button>
                           </div>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: ogMode ? '#dc2626' : 'var(--ink-500)', margin: '2px 0 8px', cursor: 'pointer' }}>
+                            <input type="checkbox" checked={ogMode} onChange={e => setOgMode(e.target.checked)} />
+                            オウンゴール（{pickerOppName}の選手が決めた）
+                          </label>
                           {pickerMembers.length > 0 ? (
                             <>
                               <div className="adm-member-picker-list">
@@ -551,28 +551,16 @@ export default function AdminMatches() {
                       )}
                     </div>
                   ) : (
-                    <>
-                      <div className="adm-add-goal-row">
-                        <button className="adm-add-goal-btn adm-add-goal-home"
-                          onClick={() => setPickerSide('home')}>
-                          ＋ {editing.home_name}
-                        </button>
-                        <button className="adm-add-goal-btn adm-add-goal-away"
-                          onClick={() => setPickerSide('away')}>
-                          ＋ {editing.away_name}
-                        </button>
-                      </div>
-                      <div className="adm-add-goal-row" style={{ marginTop: 6 }}>
-                        <button className="adm-add-goal-btn" style={{ borderColor: '#dc2626', color: '#dc2626' }}
-                          onClick={() => { setOgFor('home'); setPickerSide('away') }}>
-                          OG ＋ {editing.home_name}
-                        </button>
-                        <button className="adm-add-goal-btn" style={{ borderColor: '#dc2626', color: '#dc2626' }}
-                          onClick={() => { setOgFor('away'); setPickerSide('home') }}>
-                          OG ＋ {editing.away_name}
-                        </button>
-                      </div>
-                    </>
+                    <div className="adm-add-goal-row">
+                      <button className="adm-add-goal-btn adm-add-goal-home"
+                        onClick={() => setPickerSide('home')}>
+                        ＋ {editing.home_name}
+                      </button>
+                      <button className="adm-add-goal-btn adm-add-goal-away"
+                        onClick={() => setPickerSide('away')}>
+                        ＋ {editing.away_name}
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
