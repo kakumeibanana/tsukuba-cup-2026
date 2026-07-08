@@ -10,6 +10,8 @@ const SLIDES = [
   { src: '/futsal-image2.png', pos: 'center center' },
   { src: '/futsal-image.png',  pos: 'center 30%'    },
   { src: '/futsal-image2.png', pos: 'center 40%'    },
+  { src: '/futsal-semifinal1.jpg', pos: 'center center' },
+  { src: '/futsal-semifinal2.jpg', pos: 'center center' },
 ]
 
 export default function HeroGallery() {
