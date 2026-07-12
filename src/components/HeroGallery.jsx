@@ -6,8 +6,8 @@ import 'swiper/css/navigation'
 import 'swiper/css/effect-fade'
 
 const SLIDES = [
-  { src: '/futsal-semifinal1.jpg', pos: 'center center' },
-  { src: '/futsal-semifinal2.jpg', pos: 'center center' },
+  { src: '/futsal-final-men.jpg',   pos: 'center center' },
+  { src: '/futsal-final-women.jpg', pos: 'center center' },
 ]
 
 export default function HeroGallery() {
