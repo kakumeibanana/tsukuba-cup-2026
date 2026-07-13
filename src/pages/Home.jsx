@@ -1,5 +1,6 @@
 import HeroGallery from '../components/HeroGallery.jsx'
 import Hero from '../components/Hero.jsx'
+import ChampionBanner from '../components/ChampionBanner.jsx'
 import TodayStatus from '../components/TodayStatus.jsx'
 import UpcomingSchedule from '../components/UpcomingSchedule.jsx'
 import RecentResults from '../components/RecentResults.jsx'
@@ -14,6 +15,7 @@ export default function Home() {
       <main className="page">
         <Hero />
         <div className="col" style={{ marginTop: 22 }}>
+          <div className="anim-up"><ChampionBanner /></div>
           <div className="anim-up"><TodayStatus /></div>
           <div className="anim-up anim-d1"><RecentResults /></div>
           <div className="anim-up anim-d2"><GroupRanking /></div>

@@ -653,6 +653,26 @@ button { font: inherit; cursor: pointer; border: 0; background: transparent; col
 .ts-badge-pending   { background: #fef3c7; color: #92400e; }
 .ts-badge-no-match  { background: #f1f5f9; color: #64748b; }
 
+/* Champion banner */
+.champ-wrap { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%); }
+.champ-body {
+  background: #fffbeb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.champ-row { display: flex; align-items: center; gap: 12px; }
+.champ-row + .champ-row { padding-top: 10px; border-top: 1px dashed rgba(217,119,6,0.25); }
+.champ-emoji { font-size: 26px; line-height: 1; flex-shrink: 0; }
+.champ-text { flex: 1; min-width: 0; }
+.champ-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #b45309; margin-bottom: 2px;
+}
+.champ-name { font-size: 17px; font-weight: 800; color: #78350f; }
+
 /* Sched list (horizontal rows) */
 .sched-list { display: flex; flex-direction: column; gap: 6px; }
 .sched-row {
